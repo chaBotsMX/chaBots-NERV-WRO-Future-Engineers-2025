@@ -205,23 +205,28 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 ### Voltage Regulation
 - 5V, 5.5A Step-Down Voltage Regulator D36V50F5
 ---
-## Printing Circuit Board
-Our Robot have a custo PCB, cause we want relief in our circuit, and use cables could be a problem cause is frequent to have false conctact and issues in the communication, so we make  two pcbs, one that work as a HAT for the raspberry pi pico with buttons and JST XH connectors, and other were is the teensy 4.0, 
+
+### Printing Circuit Board
+
+Our robot features custom-designed PCBs to reduce wiring complexity and eliminate issues related to loose cables and unreliable connections. We designed two PCBs: a HAT for the Raspberry Pi and a main PCB that hosts the Teensy 4.0.
 
 ### HAT PCB
-Our HAT PCB ensure that we can have a relief conecction between rasppberry pi 5 and others components, specifcally  teensy 4.0 and OTOS, also we have space for more i2c components if needed and we have 2 buttons to manipulate our robot.
 
-#### future improvements for national phase
-- Changue circuit for better acomodo
-- use smd bottons to avoid short circuits
+The HAT PCB allows us to manage clean and secure connections between the Raspberry Pi 5 and other components, particularly the Teensy 4.0 and the OTOS. It also includes additional I2C ports for future sensors and two buttons for user interaction.
 
+**Future Improvements for National Phase:**
+- Redesign layout for better component placement
+- Replace current buttons with SMD versions to avoid shorts
 
 ### Main PCB
-Our main pcb not is just to avoid have floating cables, we also have ICs in our board, here we have a 5V regulator that brind power to our teensy 4.0 from STMicroelectronics LD29150DT50R, but to be able to bring power to the raspberry pi 5 we have another voltage regulator, cause LD29150DT50R only have a amx output of 1 A, we use a Pololu D36V50F5, this PCB have space for our VNH5019 and XT30 SMD conectors,
-#### future improvement for national phase
-- use VNH7070 for better performnace and integrated in our pcb instead of Pololu VNH7070 breakout board
-- changue placing and add better protection circuits
-- add switch and button in circuit, changue XT30 as input for battery to a smd XT60 connector
+
+The main PCB eliminates floating wires and integrates critical circuitry. It features a 5V voltage regulator (STMicroelectronics LD29150DT50R) to power the Teensy 4.0. However, because this regulator only supplies up to 1A, we added a Pololu D36V50F5 to power the Raspberry Pi 5. The board also includes footprints for VNH5019 motor drivers and XT30 SMD connectors.
+
+**Future Improvements for National Phase:**
+- Replace VNH5019 with integrated VNH7070 chips for better performance
+- Reorganize layout and include enhanced protection circuits
+- Integrate a power switch and onboard button
+- Replace XT30 battery input with an SMD XT60 connector
 
 
 ## Code Overview <a name="code-overview"></a>
@@ -307,7 +312,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc4MzUwMzA0NCwxODYyMzk5MTcsNzU3Nz
+eyJoaXN0b3J5IjpbMTUwOTcyODU3NCwxODYyMzk5MTcsNzU3Nz
 cxNjE4LC0xODM0Njk3MTMsMTE0MzgyOTI1NiwxOTQyMjc0NDY3
 LC0zNzY1MzYwMzldfQ==
 -->
