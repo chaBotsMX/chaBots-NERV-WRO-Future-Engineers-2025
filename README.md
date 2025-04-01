@@ -168,6 +168,7 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 
 ## Power and Sense Management <a name="power-and-sense-management"></a>
 
+
 ### Battery
 - ZEEE
 - 11.1V 3S LiPo, 2200mAh
@@ -278,5 +279,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk0MjI3NDQ2NywtMzc2NTM2MDM5XX0=
+eyJoaXN0b3J5IjpbLTUxNTAyNTI2MywxOTQyMjc0NDY3LC0zNz
+Y1MzYwMzldfQ==
 -->
