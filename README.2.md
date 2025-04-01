@@ -191,22 +191,19 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 - Teenst 4.0 at 600 MHz clock
 
 ### IMU
-- [BMI088 / MPU6050 / Insert model]  
+- LSM6DSO
 - Used to calculate angular velocity and compensate drift for better trajectory
 
 ### Camera
-- OpenMV Cam H7 R2 with custom color filters
-- UART communication with Arduino
+- Raspberry pi V1.3
+-  CSI Interface
 
 **Camera uses:**
-- Line detection
 - Color-based cube detection
 - Parking wall identification
 
 ### Voltage Regulation
-- L7805CV for 5V logic rail
-- 3.3V internal regulator for camera
-
+- 
 ---
 
 ## Code Overview <a name="code-overview"></a>
@@ -292,6 +289,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4MzQ2OTcxMywxMTQzODI5MjU2LDE5ND
-IyNzQ0NjcsLTM3NjUzNjAzOV19
+eyJoaXN0b3J5IjpbMzc0MjUwNTksLTE4MzQ2OTcxMywxMTQzOD
+I5MjU2LDE5NDIyNzQ0NjcsLTM3NjUzNjAzOV19
 -->
