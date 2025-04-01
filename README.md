@@ -95,7 +95,7 @@ Read more: [WRO Official Site](https://wro-association.org/)
 ### Drivetrain
 
 **Design notes:**  
-We opted for self-made steel axis with a widht of 4mm, connected to a Pololu 25D motor that grant us enough power and speed to our requeriments, max speed was 480, but our torq was to high, so we decide use an extra reduction to 2:1 to have double speed and aprox 1.8 kg/ torque that should be enough,  base and gears were manufactured by ourselfs usign a [lego/custom 3D-printed] axlesQIDI Q1 pro, and PLA CF for extra resistance, we designed Double Helicoidal Gears that should perform better than traditional gears, this way we have max energy tranmission and reduce mechanical wear, also the axis were made by our self using an steel rod, we cut it at the needed size, and used a dremel to make D Shaft to ensure grip from our wheels, our wheels were also made using 3d print, using the same qidi, the made the tire rim, and used some 
+We opted for self-made steel axis with a widht of 4mm, connected to a Pololu 25D motor that grant us enough power and speed to our requeriments, max speed was 480, but our torq was to high, so we decide use an extra reduction to 2:1 to have double speed and aprox 1.8 kg/ torque that should be enough,  base and gears were manufactured by ourselfs usign a [lego/custom 3D-printed] axlesQIDI Q1 pro, and PLA CF for extra resistance, we designed Double Helicoidal Gears that should perform better than traditional gears, this way we have max energy tranmission and reduce mechanical wear, also the axis were made by our self using an steel rod, we cut it at the needed size, and used a dremel to make D Shaft to ensure grip from our wheels, our wheels were also made using , using the same qidi, the made the tire rim, and used some 
 
 **Motor:** [Insert model]  
 **Gear Ratio:** [Insert ratio]  
@@ -229,6 +229,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzMjcxMDUyMjMsMTI4Nzc5NjY0LC00OD
-E2MzMzODBdfQ==
+eyJoaXN0b3J5IjpbLTI4Mzc1NzE3LC0xMzI3MTA1MjIzLDEyOD
+c3OTY2NCwtNDgxNjMzMzgwXX0=
 -->
