@@ -70,6 +70,20 @@ Scoring is based on:
 Read more: [WRO Official Site](https://wro-association.org/)
 
 ---
+### Discussion
+
+This challenge pushed us to explore new areas outside our previous experience. Although we had competed in RoboCup Junior Soccer Lightweight before, and that background proved useful, we still had to research and apply new technologies and methodologies for this new context.
+
+For this challenge, we decided to implement advanced techniques and algorithms to maximize the robot's speed and reliability. Inspired by micromouse robots, our approach centers on mapping the entire maze and using Dijkstra’s algorithm to find the optimal path—always aiming to take straight-line segments when planning trajectories.
+
+To enable this, we needed a reliable SLAM (Simultaneous Localization and Mapping) system and accurate odometry data. We used the SparkFun Optical Tracking Odometry Sensor (OTOS), which works like a computer mouse optical sensor and includes an integrated IMU. For obstacle detection, we chose the RPLiDAR C1. Together, these three systems—LiDAR, optical sensor, and IMU—provide redundancy, enhancing the reliability of our SLAM algorithm. Additionally, we plan to add encoders to the drivetrain motors to further increase accuracy.
+
+To classify obstacles, we integrated a Raspberry Pi Camera v1.3 (5MP). All high-level data processing is handled by a Raspberry Pi 5 (8GB), but to avoid overloading it, we delegated low-level motor control to a secondary microcontroller: the Teensy 4.0. The Raspberry Pi calculates the desired heading angle, and the Teensy, using a PID algorithm, ensures the robot aligns quickly and accurately to that angle.
+
+We use the YOLO (You Only Look Once) algorithm for obstacle recognition. The camera is not constantly active; it only turns on when classification is required to update the SLAM map. Once we complete the initial mapping lap, we can perform subsequent laps at higher speeds following the optimized path.
+
+
+---
 
 ## Robot Overview <a name="robot-overview"></a>
 
@@ -167,9 +181,6 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 ---
 
 ## Power and Sense Management <a name="power-and-sense-management">
-## Discusion
-El reto plantea cambios y explorar areas nuevas para nosotros, anteriormente habiamos participado en Robocup Junior soccer Ligthweigth y aunque la experiencia que adquirimos nos sirvio al momento de abordar este nuevo reto igualmente tuvimos que buscar documentacion sobre temas nuevos, para este reto decidimos implementar tecnicas y algoritmos avanzados para maximizar la fiabilidad y velocidad con la que se puede resolver el reto, la tecnica que planeamos se basa en los micromouse, mapear todo el recorrido para despues usar un algoritmo DJIKSTRA y tener un camino optimo, siempre buscando lineas rectas al momento de trazar la trayectoria, para esto necesitamos realizar un algortimos SLAM y tener datos de odometria de nuestro robot, implementamos un OTOS de sparkun (Sparkfun Optical Tracking Odometry sensor) que nos da informacion usando un sensor optico como los que usan los mouse de computadora, ademas de esto cuenta con un imu integrado, ademas para la deteccion de obstaculos optamos por un LiDAr, especificamente un RPLiDAr C1, en base a estos 3 sistemas, Lidar, Sensor optico e IMU somos capaces de obtener un algoritmo SLAM fiable debido a la redundancia, ademas de esto planeado a;adir un encoder al motor del drive sistem para tener aun mas fiabilidad, con esto podemos obtener un mapeo preciso pero para detectar especificamente el tipo de obstaculo necesitabamos una camara, otpamos por una raspberry pi camera v1.3 de 5mp, para procesar toda la informacion usamos una raspberry pi 5 de 8GB, mas sin embargo no queriamos sobre cargar a la misma por lo que tenemos un micro controlador secundario, en este caso una teensy 4.0, la teensy 4.0 es la que se encarga de mover tanto el motor de potencia, como el servo motor de direccion, la raspberry pi 5 da una salida esperaba en forma de angulo como por ejemplo 45 grados, y la teensy mediante un algortimo de pid se encarga de asegurar que el robot en si vaya de forma rapida y preciza al angulo que la teensy manda, para la camara implementamos el algoritmo YOLO (You Only Look Once) de esta forma en realidad la camara no esta siempre prendida, solo cuando es necesario clasificar un obstaculo y a;adirlo al SLAM, una vez que realizamos la primera vuelta, estamos listos para realizar las restantes a una velocidad mayor con una ruta trasada anteriormente.
-
 
 ### Battery
 - ZEEE
@@ -281,6 +292,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE0MzgyOTI1NiwxOTQyMjc0NDY3LC0zNz
-Y1MzYwMzldfQ==
+eyJoaXN0b3J5IjpbLTE4MzQ2OTcxMywxMTQzODI5MjU2LDE5ND
+IyNzQ0NjcsLTM3NjUzNjAzOV19
 -->
