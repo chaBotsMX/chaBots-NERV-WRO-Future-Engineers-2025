@@ -92,25 +92,29 @@ Read more: [WRO Official Site](https://wro-association.org/)
 
 ## Mobility Management <a name="mobility-management"></a>
 
+
 ### Drivetrain
 
-**Design notes:**  
-We opted for self-made steel axis with a widht of 4mm, connected to a Pololu 25D motor that grant us enough power and speed to our requeriments, max speed was 480, but our torq was to high, so we decide use an extra reduction to 2:1 to have double speed and aprox 1.8 kg/ torque that should be enough,  base and gears were manufactured by ourselfs usign a [lego/custom 3D-printed] axlesQIDI Q1 pro, and PLA CF for extra resistance, we designed Double Helicoidal Gears that should perform better than traditional gears, this way we have max energy tranmission and reduce mechanical wear, also the axis were made by our self using an steel rod, we cut it at the needed size, and used a dremel to make D Shaft to ensure grip from our wheels, our wheels were also made using , using the same qidi, the made the tire rim, and used some motor coupler shaft we bugth from aliexpress, we used lego wheels tires as we realize that was to dificult to make our selfs tires, 
+**Design Notes:**  
+We opted for custom-built steel axles with a diameter of 4mm, connected to Pololu 25D 6V HP motors, which provided sufficient power and torque to meet our performance requirements. The motors have a maximum RPM of 480, but the torque output was initially too high for optimal speed. To address this, we implemented an additional 2:1 gear reduction, effectively doubling the speed while maintaining approximately 1.8 kg·cm of torque—suitable for our application.
+
+The drivetrain base and gear assembly were manufactured in-house. We used PLA Carbon Fiber filament on a QIDI Q1 Pro 3D printer for extra strength and durability. We designed and printed double helical gears to maximize energy transmission efficiency and reduce mechanical wear.
+
+The steel axles were cut to size manually and shaped using a Dremel tool to create D-shaped shafts, which ensured a secure grip with the wheel hubs. Our wheels were also custom-built using 3D-printed rims and motor shaft couplers sourced from AliExpress. For tires, we repurposed LEGO rubber tires after determining that fabricating our own rubber tires was not viable.
 
 **Motor:** Pololu 25D 6V HP  
-**Gear Ratio:** 20.4:1 
-**Max RPM:** 480 
+**Gear Ratio:** 20.4:1  
+**Max RPM:** 480
 
-**Planedd improvements for national:**
-- Use Maxon DCX 19
-- Add diferential gear
-- 
+**Planned Improvements for National Phase:**
+- Upgrade to Maxon DCX19 motors for better power-to-weight ratio.
+- Implement a differential gear system for smoother cornering.
+- Replace LEGO tires with higher-grip, custom-molded polyurethane ones.
 
-**Potential improvements:**
-- Switch to brushless motors
-- Redesign wheel hubs for quicker swapping
-
-- Make our self tires using poliuretane
+**Potential Improvements:**
+- Switch to brushless motors for better efficiency and thermal performance.
+- Redesign wheel hubs to allow quicker swapping and maintenance.
+- Manufacture custom tires using cast polyurethane for improved traction.
 
 
 ### Steering
@@ -237,6 +241,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE0NzYwNzQ5LC0yODM3NTcxNywtMTMyNz
-EwNTIyMywxMjg3Nzk2NjQsLTQ4MTYzMzM4MF19
+eyJoaXN0b3J5IjpbMTI0ODM4NDEzNSwtMjgzNzU3MTcsLTEzMj
+cxMDUyMjMsMTI4Nzc5NjY0LC00ODE2MzMzODBdfQ==
 -->
