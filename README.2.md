@@ -131,6 +131,11 @@ We build an ackermann stering systedm to ensure smooth and better turns, we used
 **Servo Model:** MG995 
 **Rotation Range:** 0-180
 
+
+**Planned Improvements for National Phase:**
+
+ - Changue Servo for a better one
+
 **Future Upgrades:**
 - Improve servo angle feedback
 - Add software-based correction via IMU
@@ -248,5 +253,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM3NjUzNjAzOV19
+eyJoaXN0b3J5IjpbLTI2MTc5ODU0NywtMzc2NTM2MDM5XX0=
 -->
