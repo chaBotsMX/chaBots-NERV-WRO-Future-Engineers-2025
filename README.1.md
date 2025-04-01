@@ -32,7 +32,7 @@ This repository contains the documentation for **Chabots** participation in the 
 **Location:** San Luis Potosí, México  
 **Role:** Team Lead, Electronics & Software Design  
 
-I am  a self-taught robotics enthusiast with experience in embedded systems, software, and mechanical integration and achieved multiple national awards in programming and robotics.
+I am  a self-taught robotics enthusiast with experience in embedded systems, software, and mechanical integration. my team ChaBots Ocelot win Mexico Robocup soccer Open second place  and achieved multiple national awards in programming and robotics.
 
 > "I enjoy setting nearly impossible goals to push myself while learning. I believe that learning should always lead to building something real."
 
@@ -95,7 +95,7 @@ Read more: [WRO Official Site](https://wro-association.org/)
 ### Drivetrain
 
 **Design notes:**  
-We opted for [lego/custom 3D-printed] axles connected to a differential and custom mounts. The main goal was to reduce friction, increase efficiency, and maintain modularity for easy repairs.
+We opted for [lego/custom 3D-printed] axles connected to a different
 
 **Motor:** [Insert model]  
 **Gear Ratio:** [Insert ratio]  
@@ -229,5 +229,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc2MTE5MzcxNiwtNDgxNjMzMzgwXX0=
+eyJoaXN0b3J5IjpbLTIwMDQ2ODczNDksLTQ4MTYzMzM4MF19
 -->
