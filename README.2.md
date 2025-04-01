@@ -205,10 +205,8 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 ### Voltage Regulation
 - 5V, 5.5A Step-Down Voltage Regulator D36V50F5
 ---
-##
+## Printing Cir
 
-
----
 ## Code Overview <a name="code-overview"></a>
 
 Our codebase is structured in modular components:
@@ -292,7 +290,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkzNzI4MTk0OSw3NTc3NzE2MTgsLTE4Mz
-Q2OTcxMywxMTQzODI5MjU2LDE5NDIyNzQ0NjcsLTM3NjUzNjAz
-OV19
+eyJoaXN0b3J5IjpbLTE5NTkzMjM1OTEsNzU3NzcxNjE4LC0xOD
+M0Njk3MTMsMTE0MzgyOTI1NiwxOTQyMjc0NDY3LC0zNzY1MzYw
+MzldfQ==
 -->
