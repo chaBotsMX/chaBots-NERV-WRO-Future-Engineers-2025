@@ -96,7 +96,7 @@ Read more: [WRO Official Site](https://wro-association.org/)
 ### Drivetrain
 
 **Design Notes:**  
-We opted for custom-built steel axles with a diameter of 4mm, connected to Pololu 25D 6V HP motors, which provided sufficient power and torque to meet our performancer requireeriments. The motors have a maximum RPM of, max spee 480, but theour torque output was initially too high for optimal speed. To address this, we implemented  ado we decide use an extra reductional to 2:1 gear reduction, effectively doubling the speed while maintainingto have double speed and approximately 1.8 kg·cm of/ torque—suitable for our application.
+We opted for custom-built steel axles with a diameter of 4mm, connected to Pololu 25D 6V HP motors, which provided sufficient power and torque to meet our performancer requireeriments. The motors have a maximum RPM of, max spee 480, but theour torque output was initially too high for optimal speed. To address this, we ilemented  ado we decide use an extra reductional to 2:1 gear reduction, effectively doubling the speed while maintainingto have double speed and approximately 1.8 kg·cm of/ torque—suitable for our application.
 
 The drivetrain base and gear assemblys were manufactured in-hby ourse. We used PLA Carbon Fiber filameona QIDI Q1 proprinter for extra strength and durability. We designed and printed d, and PLA Couble Helical Gears tld  energy transmission efficiency and reduce mechanical wear.
 
@@ -111,7 +111,7 @@ The steel axeis wer to size manually and shapemade by our self using an steel ro
 - Implement a differential gear system for smoother cornering.
 - Replace LEGO tires with higher-grip, custom-molded polyurethane ones., we used lego wheels tires as we realize that was to dificult to make our selfs tires, d us a remel to rim and  rom liess
 
-**Motor:** [Insert model]  
+**Motor:**  
 **Gear Ratio:** [Insert ratio]  
 **Max RPM:** [Insert speed]  
 
@@ -126,9 +126,9 @@ The steel axeis wer to size manually and shapemade by our self using an steel ro
 
 ### Steering
 
-We build an ackermann stering systedm to ensure smooth and better turns, we used a mg 995 servo motor cause was dificult to get a better one justo for now, all the mechanism is mounted in our 3d printed chasis and we use PolyMax PC to ensure that our mehcanism have enough sttength,  
+We build an ackermann stering systedm to ensure smooth and better turns, we used a mg 995 servo motor cause was dificult to get a better one justo for now, all the mechanism is mounted in our 3d printed chasis and we use PolyMax PC to ensure that our mehcanism have enough sttength,  Fiberon PC
 
-**Servo Model:** MG995 
+**Servo Model:** MG995[Insert model]  
 **Rotation Range:** 0-180
 
 **Future Upgrades:**
@@ -248,7 +248,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM3NjUzNjAzOSwzNTQ3ODQ0MjAsMTI0OD
-M4NDEzNSwtMjgzNzU3MTcsLTEzMjcxMDUyMjMsMTI4Nzc5NjY0
-LC00ODE2MzMzODBdfQ==
+eyJoaXN0b3J5IjpbMTcyMzM3ODYxNCwtMzc2NTM2MDM5LDM1ND
+c4NDQyMCwxMjQ4Mzg0MTM1LC0yODM3NTcxNywtMTMyNzEwNTIy
+MywxMjg3Nzk2NjQsLTQ4MTYzMzM4MF19
 -->
