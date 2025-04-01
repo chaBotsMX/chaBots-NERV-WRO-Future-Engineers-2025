@@ -209,7 +209,7 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 Our Robot have a custo PCB, cause we want relief in our circuit, and use cables could be a problem cause is frequent to have false conctact and issues in the communication, so we make  two pcbs, one that work as a HAT for the raspberry pi pico with buttons and JST XH connectors, and other were is the teensy 4.0, 
 
 ### HAT PCB
-Our HAT PCB ensure that we can have a relief conecction between rasppberry pi 5 and teensy 4.0
+Our HAT PCB ensure that we can have a relief conecction between rasppberry pi 5 and others components, specifcally  teensy 4.0 and OTOS, also we have space for more i2c components if needed and we have 2 buttons to manipulate our robot, 
 
 
 
@@ -296,7 +296,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU1OTgzNzgxMSwxODYyMzk5MTcsNzU3Nz
+eyJoaXN0b3J5IjpbLTM1MTQ5OTM0NywxODYyMzk5MTcsNzU3Nz
 cxNjE4LC0xODM0Njk3MTMsMTE0MzgyOTI1NiwxOTQyMjc0NDY3
 LC0zNzY1MzYwMzldfQ==
 -->
