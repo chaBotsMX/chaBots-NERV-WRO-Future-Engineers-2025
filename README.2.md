@@ -124,28 +124,52 @@ The steel axeis wer to size manually and shapemade by our self using an steel ro
 
 - Use Ma
 
-### Steering
 
-We build an ackermann stering systedm to ensure smooth and better turns, we used a mg 995 servo motor cause was dificult to get a better one justo for now, all the mechanism is mounted in our 3d printed chasis and we use PolyMax PC to ensure that our mehcanism have enough sttength,  
+### Drivetrain
 
-**Servo Model:** MG995 
-**Rotation Range:** 0-180
+**Design Notes:**  
+We opted for custom-built steel axles with a diameter of 4mm, connected to Pololu 25D 6V HP motors, which provided sufficient power and torque to meet our performance requirements. The motors have a maximum RPM of 480, but the torque output was initially too high for optimal speed. To address this, we implemented an additional 2:1 gear reduction, effectively doubling the speed while maintaining approximately 1.8 kg·cm of torque—suitable for our application.
 
+The drivetrain base and gear assembly were manufactured in-house. We used PLA Carbon Fiber filament on a QIDI Q1 Pro 3D printer for extra strength and durability. We designed and printed double helical gears to maximize energy transmission efficiency and reduce mechanical wear.
+
+The steel axles were cut to size manually and shaped using a Dremel tool to create D-shaped shafts, which ensured a secure grip with the wheel hubs. Our wheels were also custom-built using 3D-printed rims and motor shaft couplers sourced from AliExpress. For tires, we repurposed LEGO rubber tires after determining that fabricating our own rubber tires was not viable.
+
+**Motor:** Pololu 25D 6V HP  
+**Gear Ratio:** 20.4:1  
+**Max RPM:** 480
 
 **Planned Improvements for National Phase:**
+- Upgrade to Maxon DCX19 motors for better power-to-weight ratio.
+- Implement a differential gear system for smoother cornering.
+- Replace LEGO tires with higher-grip, custom-molded polyurethane ones.
 
- - Changue Servo for a better one
- - Improve max stearing angle
- - Improve maths for ackermann smooth
+**Potential Improvements:**
+- Switch to brushless motors for better efficiency and thermal performance.
+- Redesign wheel hubs to allow quicker swapping and maintenance.
+- Manufacture custom tires using cast polyurethane for improved traction.
+
+### Steering
+
+**Design Notes:**  
+We built an Ackermann steering system to enable smoother and more efficient turns. At the moment, we are using an MG995 servo motor due to availability constraints, although it is not ideal in terms of precision or speed. The steering assembly is integrated into our custom 3D-printed chassis, manufactured with PolyMax PC filament to provide the required structural strength for competitive performance.
+
+**Servo Model:** MG995  
+**Rotation Range:** 0–180°
+
+**Planned Improvements for National Phase:**
+- Replace MG995 with a higher-precision servo.
+- Increase the maximum steering angle to enhance maneuverability.
+- Improve Ackermann geometry calculations for smoother turns.
 
 **Future Upgrades:**
-- Improve servo angle feedback
-
+- Add servo angle feedback for closed-loop control.
+- Integrate steering system with path-planning algorithms for smarter turns.
 ---
 
 ## Power and Sense Management <a name="power-and-sense-management"></a>
 
 ### Battery
+- ZEEE 11.1 
 - 7.4V 2S LiPo, 450mAh
 - Mounted with 3D-printed clip-in bracket
 
@@ -254,5 +278,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkwNjMyOTc1MywtMzc2NTM2MDM5XX0=
+eyJoaXN0b3J5IjpbMTc3MzgzMTg5NiwtMzc2NTM2MDM5XX0=
 -->
