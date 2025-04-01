@@ -95,7 +95,7 @@ Read more: [WRO Official Site](https://wro-association.org/)
 ### Drivetrain
 
 **Design notes:**  
-We opted for [lego/custom 3D-printed] axles
+We opted for self-made steel axis with a widht of 4mm, connected to a Pololu 25D motor that grant us enough power and spee
 
 **Motor:** [Insert model]  
 **Gear Ratio:** [Insert ratio]  
@@ -229,5 +229,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4MjQ1NjE4MSwtNDgxNjMzMzgwXX0=
+eyJoaXN0b3J5IjpbODM0MzYyNjc1LC00ODE2MzMzODBdfQ==
 -->
