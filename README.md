@@ -166,7 +166,9 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 - Integrate steering system with path-planning algorithms for smarter turns.
 ---
 
-## Power and Sense Management <a name="power-and-sense-management"></a>
+## Power and Sense Management <a name="power-and-sense-management">
+## Discusion
+El reto plantea cambios y explorar areas nuevas para nosotros, anteriormente h
 
 
 ### Battery
@@ -279,6 +281,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTUxNTAyNTI2MywxOTQyMjc0NDY3LC0zNz
+eyJoaXN0b3J5IjpbLTg3MDcwODgyNiwxOTQyMjc0NDY3LC0zNz
 Y1MzYwMzldfQ==
 -->
