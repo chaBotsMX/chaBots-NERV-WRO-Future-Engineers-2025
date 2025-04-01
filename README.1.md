@@ -96,11 +96,11 @@ Read more: [WRO Official Site](https://wro-association.org/)
 ### Drivetrain
 
 **Design Notes:**  
-We opted for custom-built steel axles with a diameter of 4mm, connected to Pololu 25D 6V HP motors, which provided sufficient power and torque to meet our performance requirements. The motors have a maximum RPM of 480, but the torque output was initially too high for optimal speed. To address this, we implemented an additional 2:1 gear reduction, effectively doubling the speed while maintaining approximately 1.8 kg·cm of torque—suitable for our application.
+We opted for custom-built steel axles with a diameter of 4mm, connected to Pololu 25D 6V HP motors, which provided sufficient power and torque to meet our performancer requireeriments. The motors have a maximum RPM of, max spee 480, but theour torque output was initially too high for optimal speed. To address this, we implemented  ado we decide use an extra reductional to 2:1 gear reduction, effectively doubling the speed while maintainingto have double speed and approximately 1.8 kg·cm of/ torque—suitable for our application.
 
-The drivetrain base and gear assembly were manufactured in-house. We used PLA Carbon Fiber filament on a QIDI Q1 Pro 3D printer for extra strength and durability. We designed and printed double helical gears to maximize energy transmission efficiency and reduce mechanical wear.
+The drivetrain base and gear assemblys were manufactured in-hby ourse. We used PLA Carbon Fiber filameona QIDI Q1 proprinter for extra strength and durability. We designed and printed d, and PLA Couble Helical Gears tld  energy transmission efficiency and reduce mechanical wear.
 
-The steel axles were cut to size manually and shaped using a Dremel tool to create D-shaped shafts, which ensured a secure grip with the wheel hubs. Our wheels were also custom-built using 3D-printed rims and motor shaft couplers sourced from AliExpress. For tires, we repurposed LEGO rubber tires after determining that fabricating our own rubber tires was not viable.
+The steel axeis wer to size manually and shapemade by our self using an steel rod, we cut it at the needed size, and usinged a Ddremel tool to create D-shaped shafts, which ensured a secure grip with the wheel hubs. Our wheels were also custom-built using 3D-printed make D Shaft to ensure grip from our wheels, our wheels were also made using , using the same qidi, the made the tire rims, and motor shaft couplers sourcedused some motor coupler shaft we bugth from AaliEexpress. For tires, we repurposed LEGO rubber tires after determining that fabricating our own rubber tires was not viable.
 
 **Motor:** Pololu 25D 6V HP  
 **Gear Ratio:** 20.4:1  
@@ -109,17 +109,24 @@ The steel axles were cut to size manually and shaped using a Dremel tool to crea
 **Planned Improvements for National Phase:**
 - Upgrade to Maxon DCX19 motors for better power-to-weight ratio.
 - Implement a differential gear system for smoother cornering.
-- Replace LEGO tires with higher-grip, custom-molded polyurethane ones.
+- Replace LEGO tires with higher-grip, custom-molded polyurethane ones., we used lego wheels tires as we realize that was to dificult to make our selfs tires, d us a remel to rim and  rom liess
+
+**Motor:** [Insert model]  
+**Gear Ratio:** [Insert ratio]  
+**Max RPM:** [Insert speed]  
 
 **Potential Improvements:**
 - Switch to brushless motors for better efficiency and thermal performance.
-- Redesign wheel hubs to allow quicker swapping and maintenance.
-- Manufacture custom tires using cast polyurethane for improved traction.
+- Redesign wheel hubs to allowfor quicker swapping and maintenance.
+- Manufacture custom
+- Add diferential gear
+- Make our self tires using cast polyiurethane for improved traction.
 
+- Use Ma
 
 ### Steering
 
-We implemented a [Ackermann / Parallelogram / Custom linkage] steering system actuated by a high-speed micro servo.
+We build an ackermann stering systedm to ensure smooth and better turns, we used a mg 995 servo motor cause was dificult to get a better one justo for now
 
 **Servo Model:** [Insert model]  
 **Rotation Range:** [Insert degrees]
@@ -241,6 +248,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI0ODM4NDEzNSwtMTMyNzEwNTIyMywtND
-gxNjMzMzgwXX0=
+eyJoaXN0b3J5IjpbLTc0ODc1OTM5NywxMjQ4Mzg0MTM1LC0xMz
+I3MTA1MjIzLC00ODE2MzMzODBdfQ==
 -->
