@@ -168,7 +168,7 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 
 ## Power and Sense Management <a name="power-and-sense-management">
 ## Discusion
-El reto plantea cambios y explorar areas nuevas para nosotros, anteriormente habiamos participado en Robocup Junior soccer Ligthweigth y aunque la experiencia que adquirimos nos sirvio al momento de abordar este nuevo reto igualmente tuvimos que buscar documentacion sobre 
+El reto plantea cambios y explorar areas nuevas para nosotros, anteriormente habiamos participado en Robocup Junior soccer Ligthweigth y aunque la experiencia que adquirimos nos sirvio al momento de abordar este nuevo reto igualmente tuvimos que buscar documentacion sobre temas nuevos, para este reto decidimos implementar tecnicas y algoritmos avanzados para maximizar la fiabilidad y velocidad con la que se puede resolver el reto, la tecnica que planeamos se basa en los micromouse, mapear todo el recorrido para despues usar un algoritmo DJIKSTRA y tener un camino
 
 
 ### Battery
@@ -281,6 +281,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTY4NzE1MzQ1LDE5NDIyNzQ0NjcsLTM3Nj
-UzNjAzOV19
+eyJoaXN0b3J5IjpbLTE5OTEwMjI2NzgsMTk0MjI3NDQ2NywtMz
+c2NTM2MDM5XX0=
 -->
