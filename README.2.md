@@ -220,7 +220,8 @@ Our HAT PCB ensure that we can have a relief conecction between rasppberry pi 5 
 Our main pcb not is just to avoid have floating cables, we also have ICs in our board, here we have a 5V regulator that brind power to our teensy 4.0 from STMicroelectronics LD29150DT50R, but to be able to bring power to the raspberry pi 5 we have another voltage regulator, cause LD29150DT50R only have a amx output of 1 A, we use a Pololu D36V50F5, this PCB have space for our VNH5019 and XT30 SMD conectors,
 #### future improvement for national phase
 - use VNH7070 for better performnace and integrated in our pcb instead of Pololu VNH7070 breakout board
-- changue s
+- changue placing and add better protection circuits
+- add switch and 
 
 
 ## Code Overview <a name="code-overview"></a>
@@ -306,7 +307,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTg2Nzk1MTQyNywxODYyMzk5MTcsNzU3Nz
-cxNjE4LC0xODM0Njk3MTMsMTE0MzgyOTI1NiwxOTQyMjc0NDY3
-LC0zNzY1MzYwMzldfQ==
+eyJoaXN0b3J5IjpbLTExMjU3NDYzNzgsMTg2MjM5OTE3LDc1Nz
+c3MTYxOCwtMTgzNDY5NzEzLDExNDM4MjkyNTYsMTk0MjI3NDQ2
+NywtMzc2NTM2MDM5XX0=
 -->
