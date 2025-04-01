@@ -212,7 +212,7 @@ Our Robot have a custo PCB, cause we want relief in our circuit, and use cables 
 Our HAT PCB ensure that we can have a relief conecction between rasppberry pi 5 and others components, specifcally  teensy 4.0 and OTOS, also we have space for more i2c components if needed and we have 2 buttons to manipulate our robot.
 
 ### Main PCB
-Our main pcb not is just to avoid have floating cables, we also have
+Our main pcb not is just to avoid have floating cables, we also have ICs in our board, here we have a 5V regulator that brind power to our teensy 4.0
 
 
 
@@ -299,7 +299,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTI0MjM1NjM4NCwxODYyMzk5MTcsNzU3Nz
+eyJoaXN0b3J5IjpbMTQxNzgxNjA4OSwxODYyMzk5MTcsNzU3Nz
 cxNjE4LC0xODM0Njk3MTMsMTE0MzgyOTI1NiwxOTQyMjc0NDY3
 LC0zNzY1MzYwMzldfQ==
 -->
