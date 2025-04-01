@@ -248,7 +248,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM3NjUzNjAzOSwzNTQ3ODQ0MjAsMTI0OD
-M4NDEzNSwtMjgzNzU3MTcsLTEzMjcxMDUyMjMsMTI4Nzc5NjY0
-LC00ODE2MzMzODBdfQ==
+eyJoaXN0b3J5IjpbLTM3NjUzNjAzOV19
 -->
