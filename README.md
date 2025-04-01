@@ -135,11 +135,11 @@ We build an ackermann stering systedm to ensure smooth and better turns, we used
 **Planned Improvements for National Phase:**
 
  - Changue Servo for a better one
- - 
+ - Improve max stearing angle
+ - Improve maths for ackermann smooth
 
 **Future Upgrades:**
 - Improve servo angle feedback
-- Add software-based correction via IMU
 
 ---
 
@@ -254,5 +254,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjEwNDY2ODExMiwtMzc2NTM2MDM5XX0=
+eyJoaXN0b3J5IjpbMTkwNjMyOTc1MywtMzc2NTM2MDM5XX0=
 -->
