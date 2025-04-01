@@ -211,14 +211,16 @@ Our Robot have a custo PCB, cause we want relief in our circuit, and use cables 
 ### HAT PCB
 Our HAT PCB ensure that we can have a relief conecction between rasppberry pi 5 and others components, specifcally  teensy 4.0 and OTOS, also we have space for more i2c components if needed and we have 2 buttons to manipulate our robot.
 
-#### future improvements
+#### future improvements for national phase
 - Changue circuit for better acomodo
 - use smd bottons to avoid short circuits
-- 
+-
 
 ### Main PCB
 Our main pcb not is just to avoid have floating cables, we also have ICs in our board, here we have a 5V regulator that brind power to our teensy 4.0 from STMicroelectronics LD29150DT50R, but to be able to bring power to the raspberry pi 5 we have another voltage regulator, cause LD29150DT50R only have a amx output of 1 A, we use a Pololu D36V50F5, this PCB have space for our VNH5019 and XT30 SMD conectors,
-
+#### future improvement for national phase
+- use VNH7070 for better performnace and integrated in our pcb instead of Pololu VNH7070 breakout board
+- changue 
 
 
 ## Code Overview <a name="code-overview"></a>
@@ -304,7 +306,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjI1NjA3OTU5LDE4NjIzOTkxNyw3NTc3Nz
-E2MTgsLTE4MzQ2OTcxMywxMTQzODI5MjU2LDE5NDIyNzQ0Njcs
-LTM3NjUzNjAzOV19
+eyJoaXN0b3J5IjpbMzM3NjE3MzQsMTg2MjM5OTE3LDc1Nzc3MT
+YxOCwtMTgzNDY5NzEzLDExNDM4MjkyNTYsMTk0MjI3NDQ2Nywt
+Mzc2NTM2MDM5XX0=
 -->
