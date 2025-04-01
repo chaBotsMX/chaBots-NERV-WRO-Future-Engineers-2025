@@ -168,7 +168,7 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 
 ## Power and Sense Management <a name="power-and-sense-management">
 ## Discusion
-El reto plantea cambios y explorar areas nuevas para nosotros, anteriormente habiamos participado en Robocup Junior soccer Ligthweigth y aunque la experiencia que adquirimos nos sirvio al momento de abordar este nuevo reto igualmente tuvimos que buscar documentacion sobre temas nuevos, para este reto decidimos implementar tecnicas y algoritmos avanzados para maximizar la fiabilidad y velocidad con la que se puede resolver el reto, la tecnica que planeamos se basa en los micromouse, mapear todo el recorrido para despues usar un algoritmo DJIKSTRA y tener un camino optimo, siempre buscando lineas rectas al momento de trazar la trayectoria, para esto necesitamos realizar un algortimos SLAM y tener datos de odometria de nuestro robot, implementamos un OTOS de sparkun (Sparkfun Optical Tracking Odometry sensor) que nos da informacion usando un sensor optico como
+El reto plantea cambios y explorar areas nuevas para nosotros, anteriormente habiamos participado en Robocup Junior soccer Ligthweigth y aunque la experiencia que adquirimos nos sirvio al momento de abordar este nuevo reto igualmente tuvimos que buscar documentacion sobre temas nuevos, para este reto decidimos implementar tecnicas y algoritmos avanzados para maximizar la fiabilidad y velocidad con la que se puede resolver el reto, la tecnica que planeamos se basa en los micromouse, mapear todo el recorrido para despues usar un algoritmo DJIKSTRA y tener un camino optimo, siempre buscando lineas rectas al momento de trazar la trayectoria, para esto necesitamos realizar un algortimos SLAM y tener datos de odometria de nuestro robot, implementamos un OTOS de sparkun (Sparkfun Optical Tracking Odometry sensor) que nos da informacion usando un sensor optico como los que usan los mouse de computadora, ademas de esto cuenta con un imu integrado, ademas para la deteccion de obstaculos optamos por un LiDAr, especificamente un RPLiDAr C1, en base a estos 3 sistemas, Lidar, Sensor optico e IMU somos capaces de obtener un algoritmo SLAM fiable debido a la redundancia, ademas de esto planeado a; 
 
 
 ### Battery
@@ -281,6 +281,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4MjQ4NzQxMTUsMTk0MjI3NDQ2NywtMz
-c2NTM2MDM5XX0=
+eyJoaXN0b3J5IjpbMjA2NTkyNzkxMiwxOTQyMjc0NDY3LC0zNz
+Y1MzYwMzldfQ==
 -->
