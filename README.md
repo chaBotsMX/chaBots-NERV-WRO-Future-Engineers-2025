@@ -126,10 +126,10 @@ The steel axeis wer to size manually and shapemade by our self using an steel ro
 
 ### Steering
 
-We build an ackermann stering systedm to ensure smooth and better turns, we used a mg 995 servo motor cause was dificult to get a better one justo for now, all the mechanism is mounted in our 3d printed chasis and we use Fiberon PC
+We build an ackermann stering systedm to ensure smooth and better turns, we used a mg 995 servo motor cause was dificult to get a better one justo for now, all the mechanism is mounted in our 3d printed chasis and we use PolyMax PC to ensure that our mehcanism have enough sttength,  
 
-**Servo Model:** [Insert model]  
-**Rotation Range:** [Insert degrees]
+**Servo Model:** MG995 
+**Rotation Range:** 0-180
 
 **Future Upgrades:**
 - Improve servo angle feedback
@@ -248,7 +248,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM4OTEyNDMxNSwzNTQ3ODQ0MjAsMTI0OD
+eyJoaXN0b3J5IjpbLTM3NjUzNjAzOSwzNTQ3ODQ0MjAsMTI0OD
 M4NDEzNSwtMjgzNzU3MTcsLTEzMjcxMDUyMjMsMTI4Nzc5NjY0
 LC00ODE2MzMzODBdfQ==
 -->
