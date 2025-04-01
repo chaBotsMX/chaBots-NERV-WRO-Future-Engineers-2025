@@ -203,7 +203,7 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 - Parking wall identification
 
 ### Voltage Regulation
-- 
+- 5V, 5.5A Step-Down Voltage Regulator D36V50F5
 ---
 
 ## Code Overview <a name="code-overview"></a>
@@ -289,6 +289,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMzc0MjUwNTksLTE4MzQ2OTcxMywxMTQzOD
-I5MjU2LDE5NDIyNzQ0NjcsLTM3NjUzNjAzOV19
+eyJoaXN0b3J5IjpbNzU3NzcxNjE4LC0xODM0Njk3MTMsMTE0Mz
+gyOTI1NiwxOTQyMjc0NDY3LC0zNzY1MzYwMzldfQ==
 -->
