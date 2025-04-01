@@ -169,12 +169,12 @@ We built an Ackermann steering system to enable smoother and more efficient turn
 ## Power and Sense Management <a name="power-and-sense-management"></a>
 
 ### Battery
-- ZEEE 11.1 
-- 7.4V 2S LiPo, 450mAh
-- Mounted with 3D-printed clip-in bracket
+- ZEEE
+- 11.1V 3S LiPo, 2200mAh
+- Mounted with 3D-printed clip-in bracket and magnets
 
 ### Microcontroller
-- Arduino Nano ESP32 (chosen for Bluetooth, WiFi, and compact footprint)
+- Teenst 4.0 at 600 MHz clock
 
 ### IMU
 - [BMI088 / MPU6050 / Insert model]  
@@ -278,5 +278,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 > *Document maintained by Chabots | Last updated: April 2025*
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc3MzgzMTg5NiwtMzc2NTM2MDM5XX0=
+eyJoaXN0b3J5IjpbMTk0MjI3NDQ2NywtMzc2NTM2MDM5XX0=
 -->
