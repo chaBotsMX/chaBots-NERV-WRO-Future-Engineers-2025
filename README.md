@@ -122,7 +122,6 @@ The steel axeis wer to size manually and shapemade by our self using an steel ro
 - Add diferential gear
 - Make our self tires using cast polyiurethane for improved traction.
 
-- Use Ma
 
 ### Steering
 
@@ -137,65 +136,162 @@ We build an ackermann stering systedm to ensure smooth and better turns, we used
 
 ---
 
-## Power and Sense Management <a name="power-and-sense-management"></a>
+#### 1. Arduino Control System (C++)
+The main control loop runs on the Teensy 4.0, handling:
 
-### Battery
-- 7.4V 2S LiPo, 450mAh
-- Mounted with 3D-printed clip-in bracket
+**Core Features:**
+- Real-time motor control with PID feedback
+- State machine for autonomous navigation modes
+- Sensor data fusion from IMU and OTOS
+- UART communication protocol with vision systems
 
-### Microcontroller
-- Arduino Nano ESP32 (chosen for Bluetooth, WiFi, and compact footprint)
+#### 2. Pi Camera 2.1v
+Handles primary computer vision tasks:
 
-### IMU
-- [BMI088 / MPU6050 / Insert model]  
-- Used to calculate angular velocity and compensate drift for better trajectory
+**Features:**
+- Real-time color blob detection for red/green cubes
+- Line detection and tracking algorithms
+- Centroid calculation for object following
+- Adaptive thresholding for varying lighting conditions
 
-### Camera
-- OpenMV Cam H7 R2 with custom color filters
-- UART communication with Arduino
+#### 3. LIDAR Sector Analysis System (Python)
 
-**Camera uses:**
-- Line detection
-- Color-based cube detection
-- Parking wall identification
+Our LIDAR system provides 360° environmental awareness with sector-based analysis:
 
-### Voltage Regulation
-- L7805CV for 5V logic rail
-- 3.3V internal regulator for camera
+```python
+class LidarSectorAnalyzer:
+    def __init__(self):
+        self.target_angles = [0, 90, 180, 270]  # Cardinal directions
+        self.angle_tolerance = 5                 # ±5° sector width
+        self.sector_data = {angle: [] for angle in self.target_angles}
+```
 
----
+**Key Features:**
+- Real-time distance measurements at cardinal directions (0°, 90°, 180°, 270°)
+- Statistical analysis with moving averages for noise reduction
+- Quality filtering to exclude unreliable readings
+- Continuous monitoring with configurable reporting intervals
 
-## Code Overview <a name="code-overview"></a>
+**Applications:**
+- Wall detection for parallel parking
+- Obstacle distance verification
+- Navigation corridor analysis
+- Backup sensor for vision system failures
 
-Our codebase is structured in modular components:
+#### 4. OTOS Position Tracking (Python)
 
-| Component     | Language | Description                                |
-|---------------|----------|--------------------------------------------|
-| Arduino Logic | C++      | PID control, state machine, serial parsing |
-| OpenMV Script | Python   | Vision processing and blob tracking        |
+The Optical Tracking Odometry Sensor provides precise position and heading data:
 
-> Code snippets are available in the `/code` folder.
+```python
+def runExample():
+    myOtos = qwiic_otos.QwiicOTOS()
+    myOtos.begin()
+    myOtos.calibrateImu()
+    myOtos.resetTracking()
+
+    while True:
+        myPosition = myOtos.getPosition()
+        # Returns X, Y coordinates in inches and heading in degrees
+```
+
+**Capabilities:**
+- Sub-millimeter position accuracy
+- Real-time heading calculation
+- IMU calibration for drift compensation
+- Continuous tracking with 0.5s update rate
+
+#### 5. Enhanced Color Detection System (Python)
+
+Advanced color detection using PiCamera2 for improved reliability:
+
+**Features:**
+- HSV color space processing for better color separation
+- Morphological operations for noise reduction
+- Multi-threshold detection for red color (handles hue wraparound)
+- Real-time FPS monitoring and performance optimization
+- Automatic image capture for debugging
+
+**Color Ranges:**
+- **Blue cubes:** HSV(100-130, 80-255, 80-255)
+- **Red cubes:** HSV(0-10, 80-255, 80-255) + HSV(170-180, 80-255, 80-255)
+
+### Communication Protocols
+
+#### Data Flow Architecture
+
+1. **Sensor Acquisition Layer**
+   - LIDAR: 360° distance data at 10Hz
+   - OTOS: Position/heading at 2Hz
+   - Camera: Color blobs at 30Hz
+   - IMU: Orientation at 100Hz
+
+2. **Processing Layer**
+   - Sensor fusion algorithms
+   - Computer vision processing
+   - Statistical filtering
+   - State estimation
+
+3. **Control Layer**
+   - PID motor control
+   - Path planning algorithms
+   - Decision state machine
+   - Safety monitoring
+
+4. **Hardware Interface Layer**
+   - Motor driver commands
+   - Servo positioning
+   - LED indicators
+   - Emergency stop
+
+### Code Structure
+
+```
+/code/
+├── arduino/
+│   ├── main.cpp              # Main control loop
+├── vision/
+│   ├── main.py              # Main vision script
+├── raspberry_pi/
+│   ├── lidar_analyzer.py    # LIDAR sector analysis
+│   ├── otos_reader.py       # Position tracking
+```
+
+### Performance Characteristics
+
+- **Vision Processing:** 30 FPS color detection
+- **Control Loop:** 100 Hz motor control updates
+- **LIDAR Refresh:** 10 Hz environmental scanning
+- **Position Update:** 2 Hz absolute positioning
+- **Communication Latency:** <10ms between subsystems
+
+### Development Tools
+
+- **Debugging:** Real-time data logging and visualization
+- **Calibration:** Automated sensor calibration routines
+- **Testing:** Unit tests for critical algorithms
+- **Simulation:** Virtual environment for algorithm development
 
 ---
 
 ## Obstacle Management <a name="obstacle-management"></a>
 
-The robot detects and reacts to obstacles in real-time:
-- Cube detection via color blob recognition (green and red)
-- Dynamic turning decision system (via UART commands)
-- Follow-the-object mode with PID steering based on cube centroid
+The robot detects and reacts to obstacles in real-time using multiple sensor modalities:
 
-**States:**
-- FOLLOW_CUBE
-- AVOID_CUBE
-- TURN_AROUND
-- FIND_PARKING
+### Detection Methods
+- **Primary:** Enhanced color detection via PiCamera2 system
+- **Verification:** LIDAR distance measurements for obstacle confirmation and navigation
+- **Backup:** OTOS position tracking for navigation consistency
+
+### Response Algorithms
+- **Dynamic turning decision system** based on cube color and position
+- **Follow-the-object mode** with PID steering based on cube centroid
+- **Multi-sensor verification** to reduce false positives
+- **Adaptive speed control** based on obstacle proximity
 
 ---
 
 ## Construction Guide <a name="construction-guide"></a>
-
-> _This section will describe the assembly process, including STL files and diagrams._
+- in construcction
 
 **STL Files Folder:** `3d-models/`
 
@@ -207,22 +303,23 @@ The robot detects and reacts to obstacles in real-time:
 - Step 4: Wiring
 - Step 5: Upload firmware
 
----
 
 ## Cost Report <a name="cost-report"></a>
 
 | Item                         | Qty | Unit Cost (MXN) | Total (MXN) |
 |------------------------------|-----|------------------|-------------|
-| Arduino Nano ESP32          | 1   | 250              | 250         |
-| OpenMV Cam H7 R2            | 1   | 1500             | 1500        |
-| 450mAh LiPo 7.4V Battery    | 1   | 180              | 180         |
+| Teensy 4.0                   | 1   | 800              | 800         |
+| Raspberry pi camera v2       | 1   | 400             | 400        |
+| 2.2Ah LiPo 11.1V Battery    | 1   | 600              | 600         |
 | Gearmotor 50:1 Pololu       | 1   | 400              | 400         |
 | MG90S Micro Servo           | 1   | 90               | 90          |
-| BMI088 IMU Sensor           | 1   | 300              | 300         |
-| TB6612FNG Motor Driver      | 1   | 150              | 150         |
+| SparkFun OTOS            | 1   | 2400              | 2400         |
+| VNH5019      | 1   | 800                                | 800         |
 | PLA Filament (prototypes)   | -   | 1kg = 350        | 350         |
 | PLA-CF Filament (finals)    | -   | 200g = 150       | 150         |
-| **Total**                   |     |                  | **3370 MXN**|
+| Raspberry pi 5     | 1   | 2800                      | 2800         |
+| RPlidar C1   | 1   | 2500                            | 2500         |
+| **Total**                   |     |                  | **10290 MXN**|
 
 ---
 
@@ -245,7 +342,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 ---
 
-> *Document maintained by Chabots | Last updated: April 2025*
+> *Document maintained by Chabots | Last updated: June 2025*
 
 <!--stackedit_data:
 eyJoaXN0b3J5IjpbMTcyMzM3ODYxNCwtMzc2NTM2MDM5LDM1ND
