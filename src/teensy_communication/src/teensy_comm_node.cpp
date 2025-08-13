@@ -1,4 +1,4 @@
-_#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float32.hpp>
 
 #include <string>
@@ -21,7 +21,6 @@ public:
 
   bool open_port(const std::string &port, int baudrate) {
     close_port();
-
     fd_ = ::open(port.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
     if (fd_ < 0) {
       last_error_ = "open() failed: " + std::string(std::strerror(errno));
@@ -56,7 +55,7 @@ public:
     tio.c_cflag &= ~CSIZE;
     tio.c_cflag |= CS8;
 
-    // No esperamos caracteres, no timeout: lectura no bloqueante
+    // lectura no bloqueante
     tio.c_cc[VMIN]  = 0;
     tio.c_cc[VTIME] = 0;
 
@@ -70,13 +69,7 @@ public:
     return true;
   }
 
-  void close_port() {
-    if (fd_ >= 0) {
-      ::close(fd_);
-      fd_ = -1;
-    }
-  }
-
+  void close_port() { if (fd_ >= 0) { ::close(fd_); fd_ = -1; } }
   bool is_open() const { return fd_ >= 0; }
 
   bool write_bytes(const uint8_t* data, size_t len) {
@@ -85,13 +78,9 @@ public:
     while (total < len) {
       ssize_t n = ::write(fd_, data + total, len - total);
       if (n < 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
-          usleep(1000);
-          continue;
-        } else {
-          last_error_ = "write() failed: " + std::string(std::strerror(errno));
-          return false;
-        }
+        if (errno == EAGAIN || errno == EWOULDBLOCK) { usleep(1000); continue; }
+        last_error_ = "write() failed: " + std::string(std::strerror(errno));
+        return false;
       }
       total += static_cast<size_t>(n);
     }
@@ -154,11 +143,13 @@ private:
 
   void on_timer() {
     if (!serial_.is_open()) {
-      RCLCPP_THROTTLE(get_logger(), *get_clock(), 5000, "Serial not open, skipping write...");
+      // CORREGIDO: usar macro válida de “throttle”
+      RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 5000,
+                           "Serial not open, skipping write...");
       return;
     }
 
-    uint16_t value_to_send = 1; // default
+    uint16_t value_to_send = 1; // default: prueba
 
     if (send_mode_ == "angle") {
       float a = last_angle_deg_.load();
