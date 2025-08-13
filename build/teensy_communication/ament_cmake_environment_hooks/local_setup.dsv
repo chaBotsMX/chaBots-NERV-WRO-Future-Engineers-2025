@@ -1,0 +1,2 @@
+source;share/teensy_communication/environment/ament_prefix_path.sh
+source;share/teensy_communication/environment/path.sh

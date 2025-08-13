@@ -1,1 +1,0 @@
-ament_cmake_symlink_install_files("/home/chabots/ros2_ws/src/rplidar_ros" FILES "/home/chabots/ros2_ws/build/rplidar_ros/ament_cmake_index/share/ament_index/resource_index/packages/rplidar_ros" "DESTINATION" "share/ament_index/resource_index/packages")
