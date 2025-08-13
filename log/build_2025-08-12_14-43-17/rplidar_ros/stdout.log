@@ -1,0 +1,65 @@
+-- Found ament_cmake: 2.7.3 (/opt/ros/kilted/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found rclcpp: 29.5.2 (/opt/ros/kilted/share/rclcpp/cmake)
+-- Found rosidl_generator_c: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_c/cmake)
+-- Found rosidl_generator_cpp: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 7.8.2 (/opt/ros/kilted/share/rmw_implementation_cmake/cmake)
+-- Found rmw_fastrtps_cpp: 9.3.2 (/opt/ros/kilted/share/rmw_fastrtps_cpp/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found sensor_msgs: 5.5.0 (/opt/ros/kilted/share/sensor_msgs/cmake)
+-- Found std_srvs: 5.5.0 (/opt/ros/kilted/share/std_srvs/cmake)
+-- Configuring done (1.4s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/chabots/ros2_ws/build/rplidar_ros
+[ 47%] Built target rplidar_node
+[ 52%] Built target rplidar_client
+[100%] Built target rplidar_composition
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a1_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a2m12_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a2m7_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a2m8_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a3_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_c1_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s1_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s1_tcp_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s2_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s2e_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s3_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_t1_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a1_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a2m12_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a2m7_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a2m8_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a3_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_c1_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s1_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s1_tcp_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s2_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s2e_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s3_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_t1_launch.py
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/rviz/rplidar_ros.rviz
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/lib/rplidar_ros/rplidar_node
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/lib/rplidar_ros/rplidar_composition
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/lib/rplidar_ros/rplidar_client
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/ament_index/resource_index/package_run_dependencies/rplidar_ros
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/ament_index/resource_index/parent_prefix_path/rplidar_ros
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/environment/ament_prefix_path.sh
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/environment/ament_prefix_path.dsv
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/environment/path.sh
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/environment/path.dsv
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/local_setup.bash
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/local_setup.sh
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/local_setup.zsh
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/local_setup.dsv
+-- Symlinking: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/package.dsv
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/ament_index/resource_index/packages/rplidar_ros
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/cmake/ament_cmake_export_dependencies-extras.cmake
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/cmake/ament_cmake_export_include_directories-extras.cmake
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/cmake/rplidar_rosConfig.cmake
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/cmake/rplidar_rosConfig-version.cmake
+-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/package.xml

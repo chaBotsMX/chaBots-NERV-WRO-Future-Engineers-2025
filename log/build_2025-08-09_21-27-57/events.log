@@ -1,0 +1,58 @@
+[0.000000] (-) TimerEvent: {}
+[0.000497] (-) JobUnselected: {'identifier': 'rplidar_ros'}
+[0.002096] (wall_follower) JobQueued: {'identifier': 'wall_follower', 'dependencies': OrderedDict()}
+[0.002396] (wall_follower) JobStarted: {'identifier': 'wall_follower'}
+[0.099614] (-) TimerEvent: {}
+[0.199919] (-) TimerEvent: {}
+[0.300372] (-) TimerEvent: {}
+[0.401135] (-) TimerEvent: {}
+[0.501619] (-) TimerEvent: {}
+[0.601940] (-) TimerEvent: {}
+[0.702260] (-) TimerEvent: {}
+[0.802616] (-) TimerEvent: {}
+[0.905434] (-) TimerEvent: {}
+[1.007566] (-) TimerEvent: {}
+[1.110457] (-) TimerEvent: {}
+[1.211443] (-) TimerEvent: {}
+[1.311821] (-) TimerEvent: {}
+[1.412195] (-) TimerEvent: {}
+[1.512583] (-) TimerEvent: {}
+[1.612965] (-) TimerEvent: {}
+[1.713736] (-) TimerEvent: {}
+[1.814266] (-) TimerEvent: {}
+[1.858288] (wall_follower) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/wall_follower', 'build', '--build-base', '/home/chabots/ros2_ws/build/wall_follower/build', 'install', '--record', '/home/chabots/ros2_ws/build/wall_follower/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/chabots/ros2_ws/src/wall_follower', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'chabots', 'XDG_SESSION_TYPE': 'wayland', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/kilted/opt/zenoh_cpp_vendor/lib:/opt/ros/kilted/opt/gz_math_vendor/lib:/opt/ros/kilted/opt/gz_utils_vendor/lib:/opt/ros/kilted/opt/rviz_ogre_vendor/lib:/opt/ros/kilted/lib/aarch64-linux-gnu:/opt/ros/kilted/opt/gz_cmake_vendor/lib:/opt/ros/kilted/lib', 'HOME': '/home/chabots', 'OLDPWD': '/home/chabots', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '2406', 'GSM_SKIP_SSH_AGENT_WORKAROUND': 'true', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1002/bus', 'COLORTERM': 'truecolor', 'GNOME_KEYRING_CONTROL': '/run/user/1002/keyring', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/chabots/ros2_ws/install', 'ROS_DISTRO': 'kilted', 'LOGNAME': 'chabots', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'MEMORY_PRESSURE_WATCH': '/sys/fs/cgroup/user.slice/user-1002.slice/user@1002.service/session.slice/org.gnome.SettingsDaemon.MediaKeys.service/memory.pressure', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'chabots', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'PATH': '/opt/ros/kilted/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/chabots-desktop:@/tmp/.ICE-unix/2217,unix/chabots-desktop:/tmp/.ICE-unix/2217', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/e97b4cce_4751_4fde_9b38_7705b01dfbc1', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1002', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1002/.mutter-Xwaylandauth.JTJ892', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'GNOME_TERMINAL_SERVICE': ':1.109', 'SSH_AUTH_SOCK': '/run/user/1002/keyring/ssh', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/home/chabots/ros2_ws/install/wall_follower:/home/chabots/ros2_ws/install/rplidar_ros:/opt/ros/kilted', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/chabots/ros2_ws/build/wall_follower', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/chabots/ros2_ws/build/wall_follower/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages:/home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages:/opt/ros/kilted/lib/python3.12/site-packages', 'COLCON': '1', 'MEMORY_PRESSURE_WRITE': 'c29tZSAyMDAwMDAgMjAwMDAwMAA=', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/home/chabots/ros2_ws/install/rplidar_ros:/opt/ros/kilted/opt/gz_math_vendor:/opt/ros/kilted/opt/gz_utils_vendor:/opt/ros/kilted/opt/gz_cmake_vendor'}, 'shell': False}
+[1.914399] (-) TimerEvent: {}
+[2.014744] (-) TimerEvent: {}
+[2.115084] (-) TimerEvent: {}
+[2.215387] (-) TimerEvent: {}
+[2.315790] (-) TimerEvent: {}
+[2.355551] (wall_follower) StdoutLine: {'line': b'running egg_info\n'}
+[2.383311] (wall_follower) StdoutLine: {'line': b'writing ../../build/wall_follower/wall_follower.egg-info/PKG-INFO\n'}
+[2.383907] (wall_follower) StdoutLine: {'line': b'writing dependency_links to ../../build/wall_follower/wall_follower.egg-info/dependency_links.txt\n'}
+[2.389324] (wall_follower) StdoutLine: {'line': b'writing entry points to ../../build/wall_follower/wall_follower.egg-info/entry_points.txt\n'}
+[2.389529] (wall_follower) StdoutLine: {'line': b'writing requirements to ../../build/wall_follower/wall_follower.egg-info/requires.txt\n'}
+[2.389680] (wall_follower) StdoutLine: {'line': b'writing top-level names to ../../build/wall_follower/wall_follower.egg-info/top_level.txt\n'}
+[2.415897] (-) TimerEvent: {}
+[2.459651] (wall_follower) StdoutLine: {'line': b"reading manifest file '../../build/wall_follower/wall_follower.egg-info/SOURCES.txt'\n"}
+[2.460708] (wall_follower) StdoutLine: {'line': b"writing manifest file '../../build/wall_follower/wall_follower.egg-info/SOURCES.txt'\n"}
+[2.460897] (wall_follower) StdoutLine: {'line': b'running build\n'}
+[2.461013] (wall_follower) StdoutLine: {'line': b'running build_py\n'}
+[2.461223] (wall_follower) StdoutLine: {'line': b'copying wall_follower/wall_follower.py -> /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower\n'}
+[2.461620] (wall_follower) StdoutLine: {'line': b'running install\n'}
+[2.471124] (wall_follower) StdoutLine: {'line': b'running install_lib\n'}
+[2.499688] (wall_follower) StdoutLine: {'line': b'copying /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower/wall_follower.py -> /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower\n'}
+[2.500531] (wall_follower) StdoutLine: {'line': b'byte-compiling /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower/wall_follower.py to wall_follower.cpython-312.pyc\n'}
+[2.502920] (wall_follower) StdoutLine: {'line': b'running install_data\n'}
+[2.503151] (wall_follower) StdoutLine: {'line': b'running install_egg_info\n'}
+[2.515977] (-) TimerEvent: {}
+[2.542400] (wall_follower) StdoutLine: {'line': b"removing '/home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower-0.0.0-py3.12.egg-info' (and everything under it)\n"}
+[2.543542] (wall_follower) StdoutLine: {'line': b'Copying ../../build/wall_follower/wall_follower.egg-info to /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower-0.0.0-py3.12.egg-info\n'}
+[2.545840] (wall_follower) StdoutLine: {'line': b'running install_scripts\n'}
+[2.616076] (-) TimerEvent: {}
+[2.716372] (-) TimerEvent: {}
+[2.756498] (wall_follower) StdoutLine: {'line': b'Installing wall_follower script to /home/chabots/ros2_ws/install/wall_follower/lib/wall_follower\n'}
+[2.757063] (wall_follower) StdoutLine: {'line': b"writing list of installed files to '/home/chabots/ros2_ws/build/wall_follower/install.log'\n"}
+[2.816499] (-) TimerEvent: {}
+[2.872240] (wall_follower) CommandEnded: {'returncode': 0}
+[2.884637] (wall_follower) JobEnded: {'identifier': 'wall_follower', 'rc': 0}
+[2.885586] (-) EventReactorShutdown: {}

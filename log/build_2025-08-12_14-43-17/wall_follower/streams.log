@@ -1,0 +1,19 @@
+[2.009s] Invoking command in '/home/chabots/ros2_ws/build/wall_follower': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/wall_follower/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/chabots/ros2_ws/build/wall_follower/build --no-deps symlink_data --force
+[2.519s] running develop
+[2.808s] running egg_info
+[2.836s] writing wall_follower.egg-info/PKG-INFO
+[2.839s] writing dependency_links to wall_follower.egg-info/dependency_links.txt
+[2.840s] writing entry points to wall_follower.egg-info/entry_points.txt
+[2.840s] writing requirements to wall_follower.egg-info/requires.txt
+[2.841s] writing top-level names to wall_follower.egg-info/top_level.txt
+[2.894s] reading manifest file 'wall_follower.egg-info/SOURCES.txt'
+[2.896s] writing manifest file 'wall_follower.egg-info/SOURCES.txt'
+[2.927s] running build_ext
+[2.927s] Creating /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall-follower.egg-link (link to .)
+[2.928s] Installing wall_follower script to /home/chabots/ros2_ws/install/wall_follower/lib/wall_follower
+[2.928s] 
+[2.928s] Installed /home/chabots/ros2_ws/build/wall_follower
+[2.928s] running symlink_data
+[2.929s] symbolically linking /home/chabots/ros2_ws/build/wall_follower/resource/wall_follower -> /home/chabots/ros2_ws/install/wall_follower/share/ament_index/resource_index/packages
+[2.929s] symbolically linking /home/chabots/ros2_ws/build/wall_follower/package.xml -> /home/chabots/ros2_ws/install/wall_follower/share/wall_follower
+[3.054s] Invoked command in '/home/chabots/ros2_ws/build/wall_follower' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/wall_follower/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/chabots/ros2_ws/build/wall_follower/build --no-deps symlink_data --force

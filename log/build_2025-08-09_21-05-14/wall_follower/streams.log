@@ -1,0 +1,37 @@
+[2.712s] Invoking command in '/home/chabots/ros2_ws/src/wall_follower': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/wall_follower/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/wall_follower build --build-base /home/chabots/ros2_ws/build/wall_follower/build install --record /home/chabots/ros2_ws/build/wall_follower/install.log --single-version-externally-managed install_data
+[3.280s] running egg_info
+[3.280s] creating ../../build/wall_follower/wall_follower.egg-info
+[3.325s] writing ../../build/wall_follower/wall_follower.egg-info/PKG-INFO
+[3.326s] writing dependency_links to ../../build/wall_follower/wall_follower.egg-info/dependency_links.txt
+[3.326s] writing entry points to ../../build/wall_follower/wall_follower.egg-info/entry_points.txt
+[3.326s] writing requirements to ../../build/wall_follower/wall_follower.egg-info/requires.txt
+[3.327s] writing top-level names to ../../build/wall_follower/wall_follower.egg-info/top_level.txt
+[3.327s] writing manifest file '../../build/wall_follower/wall_follower.egg-info/SOURCES.txt'
+[3.396s] reading manifest file '../../build/wall_follower/wall_follower.egg-info/SOURCES.txt'
+[3.397s] writing manifest file '../../build/wall_follower/wall_follower.egg-info/SOURCES.txt'
+[3.397s] running build
+[3.397s] running build_py
+[3.397s] creating /home/chabots/ros2_ws/build/wall_follower/build
+[3.398s] creating /home/chabots/ros2_ws/build/wall_follower/build/lib
+[3.398s] creating /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower
+[3.399s] copying wall_follower/__init__.py -> /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower
+[3.403s] copying wall_follower/wall_follower.py -> /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower
+[3.403s] running install
+[3.421s] running install_lib
+[3.457s] creating /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower
+[3.458s] copying /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower/__init__.py -> /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower
+[3.458s] copying /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower/wall_follower.py -> /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower
+[3.460s] byte-compiling /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower/__init__.py to __init__.cpython-312.pyc
+[3.460s] byte-compiling /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower/wall_follower.py to wall_follower.cpython-312.pyc
+[3.463s] running install_data
+[3.463s] creating /home/chabots/ros2_ws/install/wall_follower/share/ament_index
+[3.464s] creating /home/chabots/ros2_ws/install/wall_follower/share/ament_index/resource_index
+[3.464s] creating /home/chabots/ros2_ws/install/wall_follower/share/ament_index/resource_index/packages
+[3.464s] copying resource/wall_follower -> /home/chabots/ros2_ws/install/wall_follower/share/ament_index/resource_index/packages
+[3.464s] copying package.xml -> /home/chabots/ros2_ws/install/wall_follower/share/wall_follower
+[3.464s] running install_egg_info
+[3.500s] Copying ../../build/wall_follower/wall_follower.egg-info to /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower-0.0.0-py3.12.egg-info
+[3.507s] running install_scripts
+[3.781s] Installing wall_follower script to /home/chabots/ros2_ws/install/wall_follower/lib/wall_follower
+[3.782s] writing list of installed files to '/home/chabots/ros2_ws/build/wall_follower/install.log'
+[3.954s] Invoked command in '/home/chabots/ros2_ws/src/wall_follower' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/wall_follower/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/wall_follower build --build-base /home/chabots/ros2_ws/build/wall_follower/build install --record /home/chabots/ros2_ws/build/wall_follower/install.log --single-version-externally-managed install_data

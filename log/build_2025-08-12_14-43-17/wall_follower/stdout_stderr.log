@@ -1,0 +1,17 @@
+running develop
+running egg_info
+writing wall_follower.egg-info/PKG-INFO
+writing dependency_links to wall_follower.egg-info/dependency_links.txt
+writing entry points to wall_follower.egg-info/entry_points.txt
+writing requirements to wall_follower.egg-info/requires.txt
+writing top-level names to wall_follower.egg-info/top_level.txt
+reading manifest file 'wall_follower.egg-info/SOURCES.txt'
+writing manifest file 'wall_follower.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall-follower.egg-link (link to .)
+Installing wall_follower script to /home/chabots/ros2_ws/install/wall_follower/lib/wall_follower
+
+Installed /home/chabots/ros2_ws/build/wall_follower
+running symlink_data
+symbolically linking /home/chabots/ros2_ws/build/wall_follower/resource/wall_follower -> /home/chabots/ros2_ws/install/wall_follower/share/ament_index/resource_index/packages
+symbolically linking /home/chabots/ros2_ws/build/wall_follower/package.xml -> /home/chabots/ros2_ws/install/wall_follower/share/wall_follower

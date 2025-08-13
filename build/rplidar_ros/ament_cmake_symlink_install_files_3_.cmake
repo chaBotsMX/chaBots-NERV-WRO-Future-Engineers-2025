@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_files("/home/chabots/ros2_ws/src/rplidar_ros" FILES "/home/chabots/ros2_ws/build/rplidar_ros/ament_cmake_environment_hooks/ament_prefix_path.dsv" "DESTINATION" "share/rplidar_ros/environment")

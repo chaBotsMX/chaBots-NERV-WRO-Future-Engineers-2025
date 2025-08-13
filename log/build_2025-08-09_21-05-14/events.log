@@ -1,0 +1,203 @@
+[0.000000] (-) TimerEvent: {}
+[0.000402] (rplidar_ros) JobQueued: {'identifier': 'rplidar_ros', 'dependencies': OrderedDict()}
+[0.000741] (wall_follower) JobQueued: {'identifier': 'wall_follower', 'dependencies': OrderedDict()}
+[0.002076] (rplidar_ros) JobStarted: {'identifier': 'rplidar_ros'}
+[0.021988] (wall_follower) JobStarted: {'identifier': 'wall_follower'}
+[0.042676] (rplidar_ros) JobProgress: {'identifier': 'rplidar_ros', 'progress': 'cmake'}
+[0.044133] (rplidar_ros) Command: {'cmd': ['/usr/bin/cmake', '/home/chabots/ros2_ws/src/rplidar_ros', '-DCMAKE_INSTALL_PREFIX=/home/chabots/ros2_ws/install/rplidar_ros'], 'cwd': '/home/chabots/ros2_ws/build/rplidar_ros', 'env': OrderedDict({'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'chabots', 'XDG_SESSION_TYPE': 'wayland', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/kilted/opt/zenoh_cpp_vendor/lib:/opt/ros/kilted/opt/gz_math_vendor/lib:/opt/ros/kilted/opt/gz_utils_vendor/lib:/opt/ros/kilted/opt/rviz_ogre_vendor/lib:/opt/ros/kilted/lib/aarch64-linux-gnu:/opt/ros/kilted/opt/gz_cmake_vendor/lib:/opt/ros/kilted/lib', 'HOME': '/home/chabots', 'OLDPWD': '/home/chabots/ros2_ws/src', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '2406', 'GSM_SKIP_SSH_AGENT_WORKAROUND': 'true', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1002/bus', 'COLORTERM': 'truecolor', 'GNOME_KEYRING_CONTROL': '/run/user/1002/keyring', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'kilted', 'LOGNAME': 'chabots', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'MEMORY_PRESSURE_WATCH': '/sys/fs/cgroup/user.slice/user-1002.slice/user@1002.service/session.slice/org.gnome.SettingsDaemon.MediaKeys.service/memory.pressure', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'chabots', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'PATH': '/opt/ros/kilted/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/chabots-desktop:@/tmp/.ICE-unix/2217,unix/chabots-desktop:/tmp/.ICE-unix/2217', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/e97b4cce_4751_4fde_9b38_7705b01dfbc1', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1002', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1002/.mutter-Xwaylandauth.JTJ892', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'GNOME_TERMINAL_SERVICE': ':1.109', 'SSH_AUTH_SOCK': '/run/user/1002/keyring/ssh', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/opt/ros/kilted', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/chabots/ros2_ws/build/rplidar_ros', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/opt/ros/kilted/lib/python3.12/site-packages', 'COLCON': '1', 'MEMORY_PRESSURE_WRITE': 'c29tZSAyMDAwMDAgMjAwMDAwMAA=', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/opt/ros/kilted/opt/gz_math_vendor:/opt/ros/kilted/opt/gz_utils_vendor:/opt/ros/kilted/opt/gz_cmake_vendor:/opt/ros/kilted'}), 'shell': False}
+[0.089378] (rplidar_ros) StdoutLine: {'line': b'-- Found ament_cmake: 2.7.3 (/opt/ros/kilted/share/ament_cmake/cmake)\n'}
+[0.099496] (-) TimerEvent: {}
+[0.202560] (-) TimerEvent: {}
+[0.303124] (-) TimerEvent: {}
+[0.403965] (-) TimerEvent: {}
+[0.506409] (-) TimerEvent: {}
+[0.606924] (-) TimerEvent: {}
+[0.707524] (-) TimerEvent: {}
+[0.737448] (rplidar_ros) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.765131] (rplidar_ros) StdoutLine: {'line': b'-- Found rclcpp: 29.5.2 (/opt/ros/kilted/share/rclcpp/cmake)\n'}
+[0.807714] (-) TimerEvent: {}
+[0.832826] (rplidar_ros) StdoutLine: {'line': b'-- Found rosidl_generator_c: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_c/cmake)\n'}
+[0.853815] (rplidar_ros) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_cpp/cmake)\n'}
+[0.876749] (rplidar_ros) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.902897] (rplidar_ros) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.907870] (-) TimerEvent: {}
+[1.008508] (-) TimerEvent: {}
+[1.040109] (rplidar_ros) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 7.8.2 (/opt/ros/kilted/share/rmw_implementation_cmake/cmake)\n'}
+[1.041813] (rplidar_ros) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 9.3.2 (/opt/ros/kilted/share/rmw_fastrtps_cpp/cmake)\n'}
+[1.109014] (-) TimerEvent: {}
+[1.128079] (rplidar_ros) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[1.209145] (-) TimerEvent: {}
+[1.243205] (rplidar_ros) StdoutLine: {'line': b'-- Found sensor_msgs: 5.5.0 (/opt/ros/kilted/share/sensor_msgs/cmake)\n'}
+[1.309373] (-) TimerEvent: {}
+[1.338814] (rplidar_ros) StdoutLine: {'line': b'-- Found std_srvs: 5.5.0 (/opt/ros/kilted/share/std_srvs/cmake)\n'}
+[1.366247] (rplidar_ros) StderrLine: {'line': b'\x1b[0mCMake Deprecation Warning at /opt/ros/kilted/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:87 (message):\n'}
+[1.366648] (rplidar_ros) StderrLine: {'line': b'  ament_target_dependencies() is deprecated.  Use target_link_libraries()\n'}
+[1.366760] (rplidar_ros) StderrLine: {'line': b'  with modern CMake targets instead.  Try replacing this call with:\n'}
+[1.366846] (rplidar_ros) StderrLine: {'line': b'\n'}
+[1.366922] (rplidar_ros) StderrLine: {'line': b'    target_link_libraries(rplidar_node PUBLIC\n'}
+[1.367002] (rplidar_ros) StderrLine: {'line': b'      ${sensor_msgs_TARGETS}\n'}
+[1.367076] (rplidar_ros) StderrLine: {'line': b'      ${std_srvs_TARGETS}\n'}
+[1.367171] (rplidar_ros) StderrLine: {'line': b'      rclcpp::rclcpp\n'}
+[1.367253] (rplidar_ros) StderrLine: {'line': b'      sensor_msgs::sensor_msgs_library\n'}
+[1.367359] (rplidar_ros) StderrLine: {'line': b'    )\n'}
+[1.367463] (rplidar_ros) StderrLine: {'line': b'\n'}
+[1.367554] (rplidar_ros) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[1.367635] (rplidar_ros) StderrLine: {'line': b'  CMakeLists.txt:61 (ament_target_dependencies)\n'}
+[1.367711] (rplidar_ros) StderrLine: {'line': b'\n'}
+[1.367789] (rplidar_ros) StderrLine: {'line': b'\x1b[0m\n'}
+[1.369060] (rplidar_ros) StderrLine: {'line': b'\x1b[0mCMake Deprecation Warning at /opt/ros/kilted/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:87 (message):\n'}
+[1.369255] (rplidar_ros) StderrLine: {'line': b'  ament_target_dependencies() is deprecated.  Use target_link_libraries()\n'}
+[1.369346] (rplidar_ros) StderrLine: {'line': b'  with modern CMake targets instead.  Try replacing this call with:\n'}
+[1.369451] (rplidar_ros) StderrLine: {'line': b'\n'}
+[1.369542] (rplidar_ros) StderrLine: {'line': b'    target_link_libraries(rplidar_composition PUBLIC\n'}
+[1.369622] (rplidar_ros) StderrLine: {'line': b'      ${sensor_msgs_TARGETS}\n'}
+[1.369696] (rplidar_ros) StderrLine: {'line': b'      ${std_srvs_TARGETS}\n'}
+[1.369769] (rplidar_ros) StderrLine: {'line': b'      rclcpp::rclcpp\n'}
+[1.369851] (rplidar_ros) StderrLine: {'line': b'      sensor_msgs::sensor_msgs_library\n'}
+[1.369926] (rplidar_ros) StderrLine: {'line': b'    )\n'}
+[1.369998] (rplidar_ros) StderrLine: {'line': b'\n'}
+[1.370073] (rplidar_ros) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[1.370149] (rplidar_ros) StderrLine: {'line': b'  CMakeLists.txt:68 (ament_target_dependencies)\n'}
+[1.370224] (rplidar_ros) StderrLine: {'line': b'\n'}
+[1.370305] (rplidar_ros) StderrLine: {'line': b'\x1b[0m\n'}
+[1.371636] (rplidar_ros) StderrLine: {'line': b'\x1b[0mCMake Deprecation Warning at /opt/ros/kilted/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:87 (message):\n'}
+[1.371853] (rplidar_ros) StderrLine: {'line': b'  ament_target_dependencies() is deprecated.  Use target_link_libraries()\n'}
+[1.371948] (rplidar_ros) StderrLine: {'line': b'  with modern CMake targets instead.  Try replacing this call with:\n'}
+[1.372028] (rplidar_ros) StderrLine: {'line': b'\n'}
+[1.372107] (rplidar_ros) StderrLine: {'line': b'    target_link_libraries(rplidar_client PUBLIC\n'}
+[1.372184] (rplidar_ros) StderrLine: {'line': b'      ${sensor_msgs_TARGETS}\n'}
+[1.372263] (rplidar_ros) StderrLine: {'line': b'      ${std_srvs_TARGETS}\n'}
+[1.372340] (rplidar_ros) StderrLine: {'line': b'      rclcpp::rclcpp\n'}
+[1.372428] (rplidar_ros) StderrLine: {'line': b'      sensor_msgs::sensor_msgs_library\n'}
+[1.372534] (rplidar_ros) StderrLine: {'line': b'    )\n'}
+[1.372777] (rplidar_ros) StderrLine: {'line': b'\n'}
+[1.373065] (rplidar_ros) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[1.373184] (rplidar_ros) StderrLine: {'line': b'  CMakeLists.txt:75 (ament_target_dependencies)\n'}
+[1.373281] (rplidar_ros) StderrLine: {'line': b'\n'}
+[1.373367] (rplidar_ros) StderrLine: {'line': b'\x1b[0m\n'}
+[1.409529] (-) TimerEvent: {}
+[1.509989] (-) TimerEvent: {}
+[1.610743] (-) TimerEvent: {}
+[1.662878] (rplidar_ros) StdoutLine: {'line': b'-- Configuring done (1.6s)\n'}
+[1.710874] (-) TimerEvent: {}
+[1.729033] (rplidar_ros) StdoutLine: {'line': b'-- Generating done (0.1s)\n'}
+[1.746621] (rplidar_ros) StdoutLine: {'line': b'-- Build files have been written to: /home/chabots/ros2_ws/build/rplidar_ros\n'}
+[1.769373] (rplidar_ros) CommandEnded: {'returncode': 0}
+[1.770549] (rplidar_ros) JobProgress: {'identifier': 'rplidar_ros', 'progress': 'build'}
+[1.773890] (rplidar_ros) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/chabots/ros2_ws/build/rplidar_ros', '--', '-j4', '-l4'], 'cwd': '/home/chabots/ros2_ws/build/rplidar_ros', 'env': OrderedDict({'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'chabots', 'XDG_SESSION_TYPE': 'wayland', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/kilted/opt/zenoh_cpp_vendor/lib:/opt/ros/kilted/opt/gz_math_vendor/lib:/opt/ros/kilted/opt/gz_utils_vendor/lib:/opt/ros/kilted/opt/rviz_ogre_vendor/lib:/opt/ros/kilted/lib/aarch64-linux-gnu:/opt/ros/kilted/opt/gz_cmake_vendor/lib:/opt/ros/kilted/lib', 'HOME': '/home/chabots', 'OLDPWD': '/home/chabots/ros2_ws/src', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '2406', 'GSM_SKIP_SSH_AGENT_WORKAROUND': 'true', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1002/bus', 'COLORTERM': 'truecolor', 'GNOME_KEYRING_CONTROL': '/run/user/1002/keyring', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'kilted', 'LOGNAME': 'chabots', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'MEMORY_PRESSURE_WATCH': '/sys/fs/cgroup/user.slice/user-1002.slice/user@1002.service/session.slice/org.gnome.SettingsDaemon.MediaKeys.service/memory.pressure', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'chabots', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'PATH': '/opt/ros/kilted/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/chabots-desktop:@/tmp/.ICE-unix/2217,unix/chabots-desktop:/tmp/.ICE-unix/2217', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/e97b4cce_4751_4fde_9b38_7705b01dfbc1', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1002', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1002/.mutter-Xwaylandauth.JTJ892', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'GNOME_TERMINAL_SERVICE': ':1.109', 'SSH_AUTH_SOCK': '/run/user/1002/keyring/ssh', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/opt/ros/kilted', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/chabots/ros2_ws/build/rplidar_ros', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/opt/ros/kilted/lib/python3.12/site-packages', 'COLCON': '1', 'MEMORY_PRESSURE_WRITE': 'c29tZSAyMDAwMDAgMjAwMDAwMAA=', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/opt/ros/kilted/opt/gz_math_vendor:/opt/ros/kilted/opt/gz_utils_vendor:/opt/ros/kilted/opt/gz_cmake_vendor:/opt/ros/kilted'}), 'shell': False}
+[1.812068] (-) TimerEvent: {}
+[1.914530] (-) TimerEvent: {}
+[1.984015] (rplidar_ros) StdoutLine: {'line': b'[  5%] Built target rplidar_client\n'}
+[1.985940] (rplidar_ros) StdoutLine: {'line': b'[ 52%] Built target rplidar_node\n'}
+[2.000523] (rplidar_ros) StdoutLine: {'line': b'[100%] Built target rplidar_composition\n'}
+[2.014682] (-) TimerEvent: {}
+[2.044082] (rplidar_ros) CommandEnded: {'returncode': 0}
+[2.045749] (rplidar_ros) JobProgress: {'identifier': 'rplidar_ros', 'progress': 'install'}
+[2.071545] (rplidar_ros) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/chabots/ros2_ws/build/rplidar_ros'], 'cwd': '/home/chabots/ros2_ws/build/rplidar_ros', 'env': OrderedDict({'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'chabots', 'XDG_SESSION_TYPE': 'wayland', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/kilted/opt/zenoh_cpp_vendor/lib:/opt/ros/kilted/opt/gz_math_vendor/lib:/opt/ros/kilted/opt/gz_utils_vendor/lib:/opt/ros/kilted/opt/rviz_ogre_vendor/lib:/opt/ros/kilted/lib/aarch64-linux-gnu:/opt/ros/kilted/opt/gz_cmake_vendor/lib:/opt/ros/kilted/lib', 'HOME': '/home/chabots', 'OLDPWD': '/home/chabots/ros2_ws/src', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '2406', 'GSM_SKIP_SSH_AGENT_WORKAROUND': 'true', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1002/bus', 'COLORTERM': 'truecolor', 'GNOME_KEYRING_CONTROL': '/run/user/1002/keyring', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'kilted', 'LOGNAME': 'chabots', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'MEMORY_PRESSURE_WATCH': '/sys/fs/cgroup/user.slice/user-1002.slice/user@1002.service/session.slice/org.gnome.SettingsDaemon.MediaKeys.service/memory.pressure', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'chabots', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'PATH': '/opt/ros/kilted/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/chabots-desktop:@/tmp/.ICE-unix/2217,unix/chabots-desktop:/tmp/.ICE-unix/2217', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/e97b4cce_4751_4fde_9b38_7705b01dfbc1', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1002', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1002/.mutter-Xwaylandauth.JTJ892', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'GNOME_TERMINAL_SERVICE': ':1.109', 'SSH_AUTH_SOCK': '/run/user/1002/keyring/ssh', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/opt/ros/kilted', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/chabots/ros2_ws/build/rplidar_ros', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/opt/ros/kilted/lib/python3.12/site-packages', 'COLCON': '1', 'MEMORY_PRESSURE_WRITE': 'c29tZSAyMDAwMDAgMjAwMDAwMAA=', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/opt/ros/kilted/opt/gz_math_vendor:/opt/ros/kilted/opt/gz_utils_vendor:/opt/ros/kilted/opt/gz_cmake_vendor:/opt/ros/kilted'}), 'shell': False}
+[2.095940] (rplidar_ros) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[2.096334] (rplidar_ros) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[2.096537] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a1_launch.py\n'}
+[2.096695] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a2m12_launch.py\n'}
+[2.096822] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a2m7_launch.py\n'}
+[2.096942] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a2m8_launch.py\n'}
+[2.097052] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_a3_launch.py\n'}
+[2.097159] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_c1_launch.py\n'}
+[2.097504] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s1_launch.py\n'}
+[2.097810] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s1_tcp_launch.py\n'}
+[2.098026] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s2_launch.py\n'}
+[2.098182] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s2e_launch.py\n'}
+[2.098312] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_s3_launch.py\n'}
+[2.098585] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/rplidar_t1_launch.py\n'}
+[2.098813] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a1_launch.py\n'}
+[2.099025] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a2m12_launch.py\n'}
+[2.099201] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a2m7_launch.py\n'}
+[2.099329] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a2m8_launch.py\n'}
+[2.099617] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_a3_launch.py\n'}
+[2.099859] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_c1_launch.py\n'}
+[2.100367] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s1_launch.py\n'}
+[2.100737] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s1_tcp_launch.py\n'}
+[2.100965] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s2_launch.py\n'}
+[2.101057] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s2e_launch.py\n'}
+[2.101139] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_s3_launch.py\n'}
+[2.101220] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/launch/view_rplidar_t1_launch.py\n'}
+[2.101444] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/rviz/rplidar_ros.rviz\n'}
+[2.102062] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/lib/rplidar_ros/rplidar_node\n'}
+[2.102286] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/lib/rplidar_ros/rplidar_composition\n'}
+[2.102507] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/lib/rplidar_ros/rplidar_client\n'}
+[2.103033] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/ament_index/resource_index/package_run_dependencies/rplidar_ros\n'}
+[2.103943] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/ament_index/resource_index/parent_prefix_path/rplidar_ros\n'}
+[2.104236] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/environment/ament_prefix_path.sh\n'}
+[2.104746] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/environment/ament_prefix_path.dsv\n'}
+[2.105263] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/environment/path.sh\n'}
+[2.105807] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/environment/path.dsv\n'}
+[2.106110] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/local_setup.bash\n'}
+[2.106381] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/local_setup.sh\n'}
+[2.106687] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/local_setup.zsh\n'}
+[2.106967] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/local_setup.dsv\n'}
+[2.107213] (rplidar_ros) StdoutLine: {'line': b'-- Symlinking: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/package.dsv\n'}
+[2.114799] (-) TimerEvent: {}
+[2.143707] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/ament_index/resource_index/packages/rplidar_ros\n'}
+[2.144123] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[2.144527] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[2.144944] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/cmake/rplidar_rosConfig.cmake\n'}
+[2.145171] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/cmake/rplidar_rosConfig-version.cmake\n'}
+[2.145442] (rplidar_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/chabots/ros2_ws/install/rplidar_ros/share/rplidar_ros/package.xml\n'}
+[2.149980] (rplidar_ros) CommandEnded: {'returncode': 0}
+[2.195618] (rplidar_ros) JobEnded: {'identifier': 'rplidar_ros', 'rc': 0}
+[2.215061] (-) TimerEvent: {}
+[2.315508] (-) TimerEvent: {}
+[2.415993] (-) TimerEvent: {}
+[2.516669] (-) TimerEvent: {}
+[2.617122] (-) TimerEvent: {}
+[2.717749] (-) TimerEvent: {}
+[2.732861] (wall_follower) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/wall_follower', 'build', '--build-base', '/home/chabots/ros2_ws/build/wall_follower/build', 'install', '--record', '/home/chabots/ros2_ws/build/wall_follower/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/chabots/ros2_ws/src/wall_follower', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'chabots', 'XDG_SESSION_TYPE': 'wayland', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/kilted/opt/zenoh_cpp_vendor/lib:/opt/ros/kilted/opt/gz_math_vendor/lib:/opt/ros/kilted/opt/gz_utils_vendor/lib:/opt/ros/kilted/opt/rviz_ogre_vendor/lib:/opt/ros/kilted/lib/aarch64-linux-gnu:/opt/ros/kilted/opt/gz_cmake_vendor/lib:/opt/ros/kilted/lib', 'HOME': '/home/chabots', 'OLDPWD': '/home/chabots/ros2_ws/src', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '2406', 'GSM_SKIP_SSH_AGENT_WORKAROUND': 'true', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1002/bus', 'COLORTERM': 'truecolor', 'GNOME_KEYRING_CONTROL': '/run/user/1002/keyring', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'kilted', 'LOGNAME': 'chabots', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'MEMORY_PRESSURE_WATCH': '/sys/fs/cgroup/user.slice/user-1002.slice/user@1002.service/session.slice/org.gnome.SettingsDaemon.MediaKeys.service/memory.pressure', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'chabots', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'PATH': '/opt/ros/kilted/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/chabots-desktop:@/tmp/.ICE-unix/2217,unix/chabots-desktop:/tmp/.ICE-unix/2217', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/e97b4cce_4751_4fde_9b38_7705b01dfbc1', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1002', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1002/.mutter-Xwaylandauth.JTJ892', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'GNOME_TERMINAL_SERVICE': ':1.109', 'SSH_AUTH_SOCK': '/run/user/1002/keyring/ssh', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/opt/ros/kilted', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/chabots/ros2_ws/build/wall_follower', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/chabots/ros2_ws/build/wall_follower/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages:/opt/ros/kilted/lib/python3.12/site-packages', 'COLCON': '1', 'MEMORY_PRESSURE_WRITE': 'c29tZSAyMDAwMDAgMjAwMDAwMAA=', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/opt/ros/kilted/opt/gz_math_vendor:/opt/ros/kilted/opt/gz_utils_vendor:/opt/ros/kilted/opt/gz_cmake_vendor'}, 'shell': False}
+[2.817883] (-) TimerEvent: {}
+[2.918329] (-) TimerEvent: {}
+[3.018796] (-) TimerEvent: {}
+[3.119462] (-) TimerEvent: {}
+[3.219891] (-) TimerEvent: {}
+[3.302862] (wall_follower) StdoutLine: {'line': b'running egg_info\n'}
+[3.303586] (wall_follower) StdoutLine: {'line': b'creating ../../build/wall_follower/wall_follower.egg-info\n'}
+[3.320010] (-) TimerEvent: {}
+[3.348313] (wall_follower) StdoutLine: {'line': b'writing ../../build/wall_follower/wall_follower.egg-info/PKG-INFO\n'}
+[3.349100] (wall_follower) StdoutLine: {'line': b'writing dependency_links to ../../build/wall_follower/wall_follower.egg-info/dependency_links.txt\n'}
+[3.349464] (wall_follower) StdoutLine: {'line': b'writing entry points to ../../build/wall_follower/wall_follower.egg-info/entry_points.txt\n'}
+[3.349683] (wall_follower) StdoutLine: {'line': b'writing requirements to ../../build/wall_follower/wall_follower.egg-info/requires.txt\n'}
+[3.349811] (wall_follower) StdoutLine: {'line': b'writing top-level names to ../../build/wall_follower/wall_follower.egg-info/top_level.txt\n'}
+[3.350017] (wall_follower) StdoutLine: {'line': b"writing manifest file '../../build/wall_follower/wall_follower.egg-info/SOURCES.txt'\n"}
+[3.418944] (wall_follower) StdoutLine: {'line': b"reading manifest file '../../build/wall_follower/wall_follower.egg-info/SOURCES.txt'\n"}
+[3.420016] (wall_follower) StdoutLine: {'line': b"writing manifest file '../../build/wall_follower/wall_follower.egg-info/SOURCES.txt'\n"}
+[3.420172] (-) TimerEvent: {}
+[3.420323] (wall_follower) StdoutLine: {'line': b'running build\n'}
+[3.420453] (wall_follower) StdoutLine: {'line': b'running build_py\n'}
+[3.420596] (wall_follower) StdoutLine: {'line': b'creating /home/chabots/ros2_ws/build/wall_follower/build\n'}
+[3.420719] (wall_follower) StdoutLine: {'line': b'creating /home/chabots/ros2_ws/build/wall_follower/build/lib\n'}
+[3.421029] (wall_follower) StdoutLine: {'line': b'creating /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower\n'}
+[3.421664] (wall_follower) StdoutLine: {'line': b'copying wall_follower/__init__.py -> /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower\n'}
+[3.424960] (wall_follower) StdoutLine: {'line': b'copying wall_follower/wall_follower.py -> /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower\n'}
+[3.426176] (wall_follower) StdoutLine: {'line': b'running install\n'}
+[3.444001] (wall_follower) StdoutLine: {'line': b'running install_lib\n'}
+[3.480049] (wall_follower) StdoutLine: {'line': b'creating /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower\n'}
+[3.480827] (wall_follower) StdoutLine: {'line': b'copying /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower/__init__.py -> /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower\n'}
+[3.481105] (wall_follower) StdoutLine: {'line': b'copying /home/chabots/ros2_ws/build/wall_follower/build/lib/wall_follower/wall_follower.py -> /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower\n'}
+[3.482595] (wall_follower) StdoutLine: {'line': b'byte-compiling /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower/__init__.py to __init__.cpython-312.pyc\n'}
+[3.483371] (wall_follower) StdoutLine: {'line': b'byte-compiling /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower/wall_follower.py to wall_follower.cpython-312.pyc\n'}
+[3.486136] (wall_follower) StdoutLine: {'line': b'running install_data\n'}
+[3.486314] (wall_follower) StdoutLine: {'line': b'creating /home/chabots/ros2_ws/install/wall_follower/share/ament_index\n'}
+[3.486557] (wall_follower) StdoutLine: {'line': b'creating /home/chabots/ros2_ws/install/wall_follower/share/ament_index/resource_index\n'}
+[3.486950] (wall_follower) StdoutLine: {'line': b'creating /home/chabots/ros2_ws/install/wall_follower/share/ament_index/resource_index/packages\n'}
+[3.487055] (wall_follower) StdoutLine: {'line': b'copying resource/wall_follower -> /home/chabots/ros2_ws/install/wall_follower/share/ament_index/resource_index/packages\n'}
+[3.487237] (wall_follower) StdoutLine: {'line': b'copying package.xml -> /home/chabots/ros2_ws/install/wall_follower/share/wall_follower\n'}
+[3.487406] (wall_follower) StdoutLine: {'line': b'running install_egg_info\n'}
+[3.520282] (-) TimerEvent: {}
+[3.521982] (wall_follower) StdoutLine: {'line': b'Copying ../../build/wall_follower/wall_follower.egg-info to /home/chabots/ros2_ws/install/wall_follower/lib/python3.12/site-packages/wall_follower-0.0.0-py3.12.egg-info\n'}
+[3.529241] (wall_follower) StdoutLine: {'line': b'running install_scripts\n'}
+[3.620435] (-) TimerEvent: {}
+[3.720740] (-) TimerEvent: {}
+[3.804441] (wall_follower) StdoutLine: {'line': b'Installing wall_follower script to /home/chabots/ros2_ws/install/wall_follower/lib/wall_follower\n'}
+[3.805235] (wall_follower) StdoutLine: {'line': b"writing list of installed files to '/home/chabots/ros2_ws/build/wall_follower/install.log'\n"}
+[3.820973] (-) TimerEvent: {}
+[3.921605] (-) TimerEvent: {}
+[3.976193] (wall_follower) CommandEnded: {'returncode': 0}
+[3.988402] (wall_follower) JobEnded: {'identifier': 'wall_follower', 'rc': 0}
+[3.991203] (-) EventReactorShutdown: {}
