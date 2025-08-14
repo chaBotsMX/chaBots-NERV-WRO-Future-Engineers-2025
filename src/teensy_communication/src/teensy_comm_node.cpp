@@ -1,6 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
+#include <geometry_msgs/msg/vector2.hpp>
 
 #include <string>
 #include <chrono>
@@ -87,13 +88,12 @@ private:
 class TeensyCommNode : public rclcpp::Node {
 public:
   TeensyCommNode() : Node("teensy_comm") {
-    // Parámetros
-    port_ = declare_parameter<std::string>("port", "/dev/ttyAMA0");
-    baud_ = declare_parameter<int>("baud", 115200);
-    rate_hz_ = declare_parameter<int>("rate_hz", 50);
-    send_mode_ = declare_parameter<std::string>("send_mode", "scan_vec_angle"); // 'constant_one'|'angle'|'scan_vec_angle'
-    angle_topic_ = declare_parameter<std::string>("angle_topic", "/desired_angle_deg");
-    scan_topic_ = declare_parameter<std::string>("scan_topic", "/scan");
+    // Parámetros constantes
+    port_        = "/dev/ttyAMA0";
+    baud_        = 115200;
+    rate_hz_     = 200;
+    send_mode_   = "scan_vec_angle"; // 'constant_one'|'angle'|'scan_vec_angle'
+    angle_topic_ = "/desired_angle_deg";
 
     // Serial
     RCLCPP_INFO(get_logger(), "Opening serial: %s @ %d", port_.c_str(), baud_);
@@ -103,14 +103,26 @@ public:
       RCLCPP_INFO(get_logger(), "Serial opened.");
     }
 
+    // Publisher: ángulo resultante (deg) para Foxglove
+    angle_pub_ = create_publisher<std_msgs::msg::Float32>("/scan_vec_angle_deg", 10);
+
     // Suscripciones
     angle_sub_ = create_subscription<std_msgs::msg::Float32>(
       angle_topic_, 10,
       [this](const std_msgs::msg::Float32::SharedPtr msg){ last_angle_deg_.store(msg->data); }
     );
 
+    // Un solo tópico para vel y kp: geometry_msgs/Vector2 (x=vel_mps, y=kp)
+    control_sub_ = create_subscription<geometry_msgs::msg::Vector2>(
+      "/control_params", 10,
+      [this](const geometry_msgs::msg::Vector2::SharedPtr msg){
+        last_vel_mps_.store(static_cast<float>(msg->x));
+        last_kp_.store(static_cast<float>(msg->y));
+      }
+    );
+
     scan_sub_ = create_subscription<sensor_msgs::msg::LaserScan>(
-      scan_topic_, rclcpp::SensorDataQoS(),
+      "/scan", rclcpp::SensorDataQoS(),
       std::bind(&TeensyCommNode::on_scan, this, std::placeholders::_1)
     );
 
@@ -121,12 +133,22 @@ public:
   }
 
 private:
-  // Empaquetado: [0xAA][HIGH][LOW][CHK], CHK = XOR(0xAA ^ HIGH ^ LOW)
-  static std::array<uint8_t, 4> make_frame_u16(uint16_t value) {
-    uint8_t hi = static_cast<uint8_t>((value >> 8) & 0xFF);
-    uint8_t lo = static_cast<uint8_t>(value & 0xFF);
-    uint8_t chk = static_cast<uint8_t>(0xAA ^ hi ^ lo);
-    return {0xAA, hi, lo, chk};
+  // Frame V2: [0xAB][ANG_H][ANG_L][VEL_H][VEL_L][KP_H][KP_L][CHK]
+  static std::array<uint8_t, 8> make_frame_v2(uint16_t ang_tenths, uint16_t vel_mmps, uint16_t kp_milli) {
+    std::array<uint8_t, 8> f{
+      0xAB,
+      static_cast<uint8_t>((ang_tenths >> 8) & 0xFF),
+      static_cast<uint8_t>(ang_tenths & 0xFF),
+      static_cast<uint8_t>((vel_mmps >> 8) & 0xFF),
+      static_cast<uint8_t>(vel_mmps & 0xFF),
+      static_cast<uint8_t>((kp_milli >> 8) & 0xFF),
+      static_cast<uint8_t>(kp_milli & 0xFF),
+      0x00  // CHK placeholder
+    };
+    uint8_t chk = 0x00;
+    for (size_t i = 0; i < 7; ++i) chk ^= f[i];
+    f[7] = chk;
+    return f;
   }
 
   static uint16_t clamp_u16(int v) {
@@ -136,7 +158,6 @@ private:
   }
 
   static float wrap_angle_rad(float a) {
-    // Devuelve a en [0, 2π)
     const float two_pi = 2.0f * static_cast<float>(M_PI);
     while (a >= two_pi) a -= two_pi;
     while (a < 0.0f) a += two_pi;
@@ -144,9 +165,9 @@ private:
   }
 
   void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
-    // Sumar vectores (r*cosθ, r*sinθ) para θ en [0°, 180°] = [0, π]
-    const float a_min = msg->angle_min;       // rad
-    const float a_inc = msg->angle_increment; // rad/step
+    // Suma vectorial de 0..180° (0..π rad)
+    const float a_min = msg->angle_min;
+    const float a_inc = msg->angle_increment;
     const float zero  = 0.0f;
     const float pi    = static_cast<float>(M_PI);
 
@@ -156,7 +177,7 @@ private:
 
     for (size_t i = 0; i < msg->ranges.size(); ++i) {
       float ang = a_min + a_inc * static_cast<float>(i);
-      if (ang < zero || ang > pi) continue; // solo 0..180°
+      if (ang < zero || ang > pi) continue;
 
       float r = msg->ranges[i];
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
@@ -166,26 +187,22 @@ private:
       ++used;
     }
 
-    // Resultado: ángulo del vector resultante
-    float angle_res_rad = 0.0f;
+    float angle_res_rad = std::numeric_limits<float>::quiet_NaN();
     if (used > 0) {
       angle_res_rad = static_cast<float>(std::atan2(sum_y, sum_x)); // [-π, π]
       angle_res_rad = wrap_angle_rad(angle_res_rad);                 // [0, 2π)
-    } else {
-      angle_res_rad = std::numeric_limits<float>::quiet_NaN();
     }
-
     float angle_res_deg = angle_res_rad * 180.0f / static_cast<float>(M_PI);
 
-    // Guarda para enviar por serie si se pide ese modo
-    last_vec_angle_deg_.store(angle_res_deg);
+    // Publica para Foxglove
+    if (std::isfinite(angle_res_deg)) {
+      std_msgs::msg::Float32 m;
+      m.data = angle_res_deg;
+      angle_pub_->publish(m);
+    }
 
-    // Log de depuración
-    RCLCPP_INFO_THROTTLE(
-      get_logger(), *get_clock(), 500,  // cada 500 ms
-      "VEC SUM 0..180° -> used=%zu  sum_x=%.3f  sum_y=%.3f  angle=%.3f rad (%.2f deg)",
-      used, sum_x, sum_y, angle_res_rad, angle_res_deg
-    );
+    // Guarda para UART
+    last_vec_angle_deg_.store(angle_res_deg);
   }
 
   void on_timer() {
@@ -194,31 +211,26 @@ private:
       return;
     }
 
-    uint16_t value_to_send = 1; // default
-
-    if (send_mode_ == "angle") {
-      float a = last_angle_deg_.load();
-      while (a >= 360.0f) a -= 360.0f;
-      while (a < 0.0f) a += 360.0f;
-      int tenths = static_cast<int>(a * 10.0f + 0.5f); // 0..3600
-      value_to_send = clamp_u16(tenths);
-
-    } else if (send_mode_ == "scan_vec_angle") {
-      float deg = last_vec_angle_deg_.load();           // puede ser NaN si no hay datos
-      if (!std::isfinite(deg)) {
-        value_to_send = 0; // o 65535 como inválido, si prefieres
-      } else {
-        while (deg >= 360.0f) deg -= 360.0f;
-        while (deg < 0.0f)    deg += 360.0f;
-        int tenths = static_cast<int>(deg * 10.0f + 0.5f); // décimas de grado
-        value_to_send = clamp_u16(tenths);
-      }
+    // Ángulo a enviar
+    float deg = (send_mode_ == "angle") ? last_angle_deg_.load() : last_vec_angle_deg_.load();
+    uint16_t ang_tenths = 0;
+    if (std::isfinite(deg)) {
+      while (deg >= 360.0f) deg -= 360.0f;
+      while (deg < 0.0f)    deg += 360.0f;
+      ang_tenths = clamp_u16(static_cast<int>(deg * 10.0f + 0.5f));
     } else {
-      // constant_one u otros -> 1
-      value_to_send = 1;
+      ang_tenths = 0; // o 65535 para inválido
     }
 
-    auto frame = make_frame_u16(value_to_send);
+    // Control (persisten último valor recibido)
+    float vel_mps = last_vel_mps_.load(); // default 0.0
+    float kp      = last_kp_.load();      // default 0.0
+
+    // Escalados UART
+    uint16_t vel_mmps = clamp_u16(static_cast<int>(vel_mps * 1000.0f + 0.5f));  // m/s -> mm/s
+    uint16_t kp_milli = clamp_u16(static_cast<int>(kp * 1000.0f + 0.5f));       // kp con 3 decimales
+
+    auto frame = make_frame_v2(ang_tenths, vel_mmps, kp_milli);
     if (!serial_.write_bytes(frame.data(), frame.size())) {
       RCLCPP_WARN(get_logger(), "Serial write failed: %s", serial_.last_error().c_str());
     }
@@ -230,19 +242,22 @@ private:
   int rate_hz_;
   std::string send_mode_;
   std::string angle_topic_;
-  std::string scan_topic_;
 
   // Serial
   SerialPort serial_;
 
   // ROS
   rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr angle_pub_;
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr angle_sub_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::Vector2>::SharedPtr control_sub_;
 
-  // Estado
-  std::atomic<float> last_angle_deg_{0.0f};
-  std::atomic<float> last_vec_angle_deg_{std::numeric_limits<float>::quiet_NaN()};
+  // Estado (persisten entre mensajes)
+  std::atomic<float> last_angle_deg_{0.0f};                               // modo "angle"
+  std::atomic<float> last_vec_angle_deg_{std::numeric_limits<float>::quiet_NaN()}; // ángulo LIDAR
+  std::atomic<float> last_vel_mps_{0.0f};                                 // velocidad m/s
+  std::atomic<float> last_kp_{0.0f};                                      // kp
 };
 
 int main(int argc, char** argv) {
