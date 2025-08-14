@@ -1,25 +1,25 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 package_name = 'otos_reader'
 
 setup(
     name=package_name,
-    version='0.0.0',
-    packages=find_packages(exclude=['test']),
+    version='0.0.1',
+    packages=[package_name],
     data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
+        ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='ribm205',
-    maintainer_email='ribm205@gmail.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    maintainer='Tu Nombre',
+    maintainer_email='tu_correo@example.com',
+    description='Nodo ROS 2 en Python para leer el SparkFun OTOS con bias y reconexión',
+    license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'otos_node = otos_reader.otos_node:main',
         ],
     },
 )
