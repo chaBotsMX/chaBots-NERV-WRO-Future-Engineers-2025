@@ -1,0 +1,2 @@
+Invoking command in '/home/chabots/ros2_ws/build/teensy_communication': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/build/teensy_communication -- -j4 -l4
+Invoked command in '/home/chabots/ros2_ws/build/teensy_communication' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/build/teensy_communication -- -j4 -l4

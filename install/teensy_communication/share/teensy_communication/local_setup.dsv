@@ -1,2 +1,1 @@
-source;share/teensy_communication/environment/ament_prefix_path.sh
-source;share/teensy_communication/environment/path.sh
+/home/chabots/ros2_ws/build/teensy_communication/ament_cmake_environment_hooks/local_setup.dsv

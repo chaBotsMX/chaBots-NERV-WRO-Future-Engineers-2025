@@ -9,10 +9,10 @@ def generate_launch_description():
             name='teensy_comm',
             output='screen',
             parameters=[{
-                'port': '/dev/ttyAMA0',        # UART PL011 en GPIO
+                'port': '/dev/ttyAMA0',
                 'baud': 115200,
                 'rate_hz': 50,
-                'send_mode': 'constant_one',   # 'constant_one' | 'angle'
+                'send_mode': 'constant_one',  # 'constant_one' | 'angle'
                 'angle_topic': '/desired_angle_deg'
             }]
         )

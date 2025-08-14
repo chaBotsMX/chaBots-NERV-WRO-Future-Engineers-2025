@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_files("/home/chabots/ros2_ws/src/teensy_communication" FILES "/home/chabots/ros2_ws/build/teensy_communication/ament_cmake_environment_hooks/local_setup.zsh" "DESTINATION" "share/teensy_communication")

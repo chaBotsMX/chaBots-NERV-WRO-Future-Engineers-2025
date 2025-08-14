@@ -1,0 +1,97 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-1635642eb1f55077d0aa.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "rplidar_ros",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "rplidar_client::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rplidar_client-00f7d71353742bef3604.json",
+					"name" : "rplidar_client",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rplidar_composition::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rplidar_composition-4b0263a3899e280e4f1b.json",
+					"name" : "rplidar_composition",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rplidar_node::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rplidar_node-587fa0a6309ee2462184.json",
+					"name" : "rplidar_node",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rplidar_ros_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rplidar_ros_uninstall-7ea306dfe94bdc47d82a.json",
+					"name" : "rplidar_ros_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-42b66969c11a512e89eb.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/chabots/ros2_ws/build/rplidar_ros",
+		"source" : "/home/chabots/ros2_ws/src/rplidar_ros"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
