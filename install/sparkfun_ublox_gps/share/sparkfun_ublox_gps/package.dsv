@@ -1,0 +1,3 @@
+source;share/sparkfun_ublox_gps/hook/pythonpath.ps1
+source;share/sparkfun_ublox_gps/hook/pythonpath.dsv
+source;share/sparkfun_ublox_gps/hook/pythonpath.sh

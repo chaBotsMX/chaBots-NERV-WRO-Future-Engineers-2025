@@ -1,0 +1,2 @@
+[console_scripts]
+otos_node = otos_reader.otos_node:main

@@ -1,0 +1,25 @@
+[4.466s] Invoking command in '/home/chabots/ros2_ws/otos_env/lib/python3.12/site-packages/qwiic/drivers_linux_only/top_phat_button': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/sparkfun_top_phat_button/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/sparkfun_top_phat_button/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../../../../../build/sparkfun_top_phat_button build --build-base /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build install --record /home/chabots/ros2_ws/build/sparkfun_top_phat_button/install.log --single-version-externally-managed
+[5.909s] running egg_info
+[5.910s] creating ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info
+[6.033s] writing ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/PKG-INFO
+[6.041s] writing dependency_links to ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/dependency_links.txt
+[6.041s] writing requirements to ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/requires.txt
+[6.042s] writing top-level names to ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/top_level.txt
+[6.042s] writing manifest file '../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/SOURCES.txt'
+[6.159s] reading manifest file '../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/SOURCES.txt'
+[6.161s] adding license file 'LICENSE'
+[6.164s] writing manifest file '../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/SOURCES.txt'
+[6.165s] running build
+[6.166s] running build_py
+[6.167s] creating /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build
+[6.169s] creating /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build/lib
+[6.169s] copying top_phat_button.py -> /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build/lib
+[6.178s] running install
+[6.212s] running install_lib
+[6.320s] copying /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build/lib/top_phat_button.py -> /home/chabots/ros2_ws/install/sparkfun_top_phat_button/lib/python3.12/site-packages
+[6.325s] byte-compiling /home/chabots/ros2_ws/install/sparkfun_top_phat_button/lib/python3.12/site-packages/top_phat_button.py to top_phat_button.cpython-312.pyc
+[6.335s] running install_egg_info
+[6.484s] Copying ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info to /home/chabots/ros2_ws/install/sparkfun_top_phat_button/lib/python3.12/site-packages/sparkfun_top_phat_button-0.0.2-py3.12.egg-info
+[6.489s] running install_scripts
+[7.391s] writing list of installed files to '/home/chabots/ros2_ws/build/sparkfun_top_phat_button/install.log'
+[7.825s] Invoked command in '/home/chabots/ros2_ws/otos_env/lib/python3.12/site-packages/qwiic/drivers_linux_only/top_phat_button' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/sparkfun_top_phat_button/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/sparkfun_top_phat_button/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../../../../../build/sparkfun_top_phat_button build --build-base /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build install --record /home/chabots/ros2_ws/build/sparkfun_top_phat_button/install.log --single-version-externally-managed

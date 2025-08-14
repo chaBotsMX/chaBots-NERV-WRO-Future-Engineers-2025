@@ -1,0 +1,23 @@
+running egg_info
+creating ../../../../../../../build/sparkfun_qwiic_pir/sparkfun_qwiic_pir.egg-info
+writing ../../../../../../../build/sparkfun_qwiic_pir/sparkfun_qwiic_pir.egg-info/PKG-INFO
+writing dependency_links to ../../../../../../../build/sparkfun_qwiic_pir/sparkfun_qwiic_pir.egg-info/dependency_links.txt
+writing requirements to ../../../../../../../build/sparkfun_qwiic_pir/sparkfun_qwiic_pir.egg-info/requires.txt
+writing top-level names to ../../../../../../../build/sparkfun_qwiic_pir/sparkfun_qwiic_pir.egg-info/top_level.txt
+writing manifest file '../../../../../../../build/sparkfun_qwiic_pir/sparkfun_qwiic_pir.egg-info/SOURCES.txt'
+reading manifest file '../../../../../../../build/sparkfun_qwiic_pir/sparkfun_qwiic_pir.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file '../../../../../../../build/sparkfun_qwiic_pir/sparkfun_qwiic_pir.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/chabots/ros2_ws/build/sparkfun_qwiic_pir/build
+creating /home/chabots/ros2_ws/build/sparkfun_qwiic_pir/build/lib
+copying qwiic_pir.py -> /home/chabots/ros2_ws/build/sparkfun_qwiic_pir/build/lib
+running install
+running install_lib
+copying /home/chabots/ros2_ws/build/sparkfun_qwiic_pir/build/lib/qwiic_pir.py -> /home/chabots/ros2_ws/install/sparkfun_qwiic_pir/lib/python3.12/site-packages
+byte-compiling /home/chabots/ros2_ws/install/sparkfun_qwiic_pir/lib/python3.12/site-packages/qwiic_pir.py to qwiic_pir.cpython-312.pyc
+running install_egg_info
+Copying ../../../../../../../build/sparkfun_qwiic_pir/sparkfun_qwiic_pir.egg-info to /home/chabots/ros2_ws/install/sparkfun_qwiic_pir/lib/python3.12/site-packages/sparkfun_qwiic_pir-0.0.4-py3.12.egg-info
+running install_scripts
+writing list of installed files to '/home/chabots/ros2_ws/build/sparkfun_qwiic_pir/install.log'

@@ -1,1 +1,0 @@
-/home/chabots/ros2_ws/build/teensy_communication/ament_cmake_environment_hooks/local_setup.zsh

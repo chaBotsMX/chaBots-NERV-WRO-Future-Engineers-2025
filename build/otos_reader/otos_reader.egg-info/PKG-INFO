@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: otos-reader
+Version: 0.0.1
+Summary: Nodo ROS 2 en Python para leer el SparkFun OTOS con bias y reconexión
+Maintainer: Tu Nombre
+Maintainer-email: tu_correo@example.com
+License: MIT

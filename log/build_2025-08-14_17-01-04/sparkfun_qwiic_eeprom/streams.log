@@ -1,0 +1,25 @@
+[2.602s] Invoking command in '/home/chabots/ros2_ws/otos_env/lib/python3.12/site-packages/qwiic/drivers_linux_only/qwiic_eeprom': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/sparkfun_qwiic_eeprom/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../../../../../build/sparkfun_qwiic_eeprom build --build-base /home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/build install --record /home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/install.log --single-version-externally-managed
+[3.764s] running egg_info
+[3.772s] creating ../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info
+[3.907s] writing ../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/PKG-INFO
+[3.908s] writing dependency_links to ../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/dependency_links.txt
+[3.918s] writing requirements to ../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/requires.txt
+[3.918s] writing top-level names to ../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/top_level.txt
+[3.918s] writing manifest file '../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/SOURCES.txt'
+[4.022s] reading manifest file '../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/SOURCES.txt'
+[4.023s] adding license file 'LICENSE'
+[4.025s] writing manifest file '../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/SOURCES.txt'
+[4.026s] running build
+[4.027s] running build_py
+[4.027s] creating /home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/build
+[4.028s] creating /home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/build/lib
+[4.028s] copying qwiic_eeprom.py -> /home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/build/lib
+[4.036s] running install
+[4.079s] running install_lib
+[4.226s] copying /home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/build/lib/qwiic_eeprom.py -> /home/chabots/ros2_ws/install/sparkfun_qwiic_eeprom/lib/python3.12/site-packages
+[4.226s] byte-compiling /home/chabots/ros2_ws/install/sparkfun_qwiic_eeprom/lib/python3.12/site-packages/qwiic_eeprom.py to qwiic_eeprom.cpython-312.pyc
+[4.238s] running install_egg_info
+[4.376s] Copying ../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info to /home/chabots/ros2_ws/install/sparkfun_qwiic_eeprom/lib/python3.12/site-packages/sparkfun_qwiic_eeprom-0.0.1-py3.12.egg-info
+[4.378s] running install_scripts
+[4.890s] writing list of installed files to '/home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/install.log'
+[5.477s] Invoked command in '/home/chabots/ros2_ws/otos_env/lib/python3.12/site-packages/qwiic/drivers_linux_only/qwiic_eeprom' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/sparkfun_qwiic_eeprom/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../../../../../build/sparkfun_qwiic_eeprom build --build-base /home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/build install --record /home/chabots/ros2_ws/build/sparkfun_qwiic_eeprom/install.log --single-version-externally-managed

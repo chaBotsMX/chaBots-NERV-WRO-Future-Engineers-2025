@@ -1,0 +1,3 @@
+source;share/sparkfun_qwiic_as6212/hook/pythonpath.ps1
+source;share/sparkfun_qwiic_as6212/hook/pythonpath.dsv
+source;share/sparkfun_qwiic_as6212/hook/pythonpath.sh

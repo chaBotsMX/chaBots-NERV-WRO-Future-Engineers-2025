@@ -1,1 +1,0 @@
-ament_cmake_symlink_install_files("/home/chabots/ros2_ws/src/teensy_communication" FILES "/home/chabots/ros2_ws/build/teensy_communication/ament_cmake_index/share/ament_index/resource_index/packages/teensy_communication" "DESTINATION" "share/ament_index/resource_index/packages")

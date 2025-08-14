@@ -1,0 +1,10 @@
+LICENSE
+README.md
+qwiic_adxl313.py
+setup.cfg
+setup.py
+../../../../../../../build/sparkfun_qwiic_adxl313/sparkfun_qwiic_adxl313.egg-info/PKG-INFO
+../../../../../../../build/sparkfun_qwiic_adxl313/sparkfun_qwiic_adxl313.egg-info/SOURCES.txt
+../../../../../../../build/sparkfun_qwiic_adxl313/sparkfun_qwiic_adxl313.egg-info/dependency_links.txt
+../../../../../../../build/sparkfun_qwiic_adxl313/sparkfun_qwiic_adxl313.egg-info/requires.txt
+../../../../../../../build/sparkfun_qwiic_adxl313/sparkfun_qwiic_adxl313.egg-info/top_level.txt

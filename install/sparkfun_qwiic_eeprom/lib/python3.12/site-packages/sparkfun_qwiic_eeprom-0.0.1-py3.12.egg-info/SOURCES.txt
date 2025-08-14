@@ -1,0 +1,10 @@
+LICENSE
+README.md
+qwiic_eeprom.py
+setup.cfg
+setup.py
+../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/PKG-INFO
+../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/SOURCES.txt
+../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/dependency_links.txt
+../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/requires.txt
+../../../../../../../build/sparkfun_qwiic_eeprom/sparkfun_qwiic_eeprom.egg-info/top_level.txt

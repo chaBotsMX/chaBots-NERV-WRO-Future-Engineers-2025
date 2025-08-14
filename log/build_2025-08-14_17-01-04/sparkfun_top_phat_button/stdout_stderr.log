@@ -1,0 +1,23 @@
+running egg_info
+creating ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info
+writing ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/PKG-INFO
+writing dependency_links to ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/dependency_links.txt
+writing requirements to ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/requires.txt
+writing top-level names to ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/top_level.txt
+writing manifest file '../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/SOURCES.txt'
+reading manifest file '../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file '../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build
+creating /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build/lib
+copying top_phat_button.py -> /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build/lib
+running install
+running install_lib
+copying /home/chabots/ros2_ws/build/sparkfun_top_phat_button/build/lib/top_phat_button.py -> /home/chabots/ros2_ws/install/sparkfun_top_phat_button/lib/python3.12/site-packages
+byte-compiling /home/chabots/ros2_ws/install/sparkfun_top_phat_button/lib/python3.12/site-packages/top_phat_button.py to top_phat_button.cpython-312.pyc
+running install_egg_info
+Copying ../../../../../../../build/sparkfun_top_phat_button/sparkfun_top_phat_button.egg-info to /home/chabots/ros2_ws/install/sparkfun_top_phat_button/lib/python3.12/site-packages/sparkfun_top_phat_button-0.0.2-py3.12.egg-info
+running install_scripts
+writing list of installed files to '/home/chabots/ros2_ws/build/sparkfun_top_phat_button/install.log'

@@ -1,0 +1,10 @@
+LICENSE
+README.md
+qwiic_dual_encoder_reader.py
+setup.cfg
+setup.py
+../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/PKG-INFO
+../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/SOURCES.txt
+../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/dependency_links.txt
+../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/requires.txt
+../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/top_level.txt

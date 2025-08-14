@@ -1,0 +1,25 @@
+[1.897s] Invoking command in '/home/chabots/ros2_ws/otos_env/lib/python3.12/site-packages/qwiic/drivers_linux_only/qwiic_dual_encoder_reader': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/sparkfun_qwiic_dual_encoder_reader/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../../../../../build/sparkfun_qwiic_dual_encoder_reader build --build-base /home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/build install --record /home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/install.log --single-version-externally-managed
+[2.532s] running egg_info
+[2.533s] creating ../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info
+[2.613s] writing ../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/PKG-INFO
+[2.613s] writing dependency_links to ../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/dependency_links.txt
+[2.614s] writing requirements to ../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/requires.txt
+[2.614s] writing top-level names to ../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/top_level.txt
+[2.614s] writing manifest file '../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/SOURCES.txt'
+[2.668s] reading manifest file '../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/SOURCES.txt'
+[2.669s] adding license file 'LICENSE'
+[2.670s] writing manifest file '../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info/SOURCES.txt'
+[2.670s] running build
+[2.672s] running build_py
+[2.672s] creating /home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/build
+[2.672s] creating /home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/build/lib
+[2.672s] copying qwiic_dual_encoder_reader.py -> /home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/build/lib
+[2.674s] running install
+[2.712s] running install_lib
+[2.861s] copying /home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/build/lib/qwiic_dual_encoder_reader.py -> /home/chabots/ros2_ws/install/sparkfun_qwiic_dual_encoder_reader/lib/python3.12/site-packages
+[2.866s] byte-compiling /home/chabots/ros2_ws/install/sparkfun_qwiic_dual_encoder_reader/lib/python3.12/site-packages/qwiic_dual_encoder_reader.py to qwiic_dual_encoder_reader.cpython-312.pyc
+[2.883s] running install_egg_info
+[2.980s] Copying ../../../../../../../build/sparkfun_qwiic_dual_encoder_reader/sparkfun_qwiic_dual_encoder_reader.egg-info to /home/chabots/ros2_ws/install/sparkfun_qwiic_dual_encoder_reader/lib/python3.12/site-packages/sparkfun_qwiic_dual_encoder_reader-0.0.2-py3.12.egg-info
+[2.984s] running install_scripts
+[3.689s] writing list of installed files to '/home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/install.log'
+[4.230s] Invoked command in '/home/chabots/ros2_ws/otos_env/lib/python3.12/site-packages/qwiic/drivers_linux_only/qwiic_dual_encoder_reader' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/sparkfun_qwiic_dual_encoder_reader/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../../../../../build/sparkfun_qwiic_dual_encoder_reader build --build-base /home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/build install --record /home/chabots/ros2_ws/build/sparkfun_qwiic_dual_encoder_reader/install.log --single-version-externally-managed

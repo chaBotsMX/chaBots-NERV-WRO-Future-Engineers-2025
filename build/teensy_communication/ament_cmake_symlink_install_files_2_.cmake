@@ -1,1 +1,0 @@
-ament_cmake_symlink_install_files("/home/chabots/ros2_ws/src/teensy_communication" FILES "/opt/ros/kilted/share/ament_cmake_core/cmake/environment_hooks/environment/ament_prefix_path.sh" "DESTINATION" "share/teensy_communication/environment")

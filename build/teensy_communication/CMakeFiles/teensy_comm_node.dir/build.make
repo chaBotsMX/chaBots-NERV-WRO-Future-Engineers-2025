@@ -98,6 +98,11 @@ teensy_comm_node: /opt/ros/kilted/lib/libsensor_msgs__rosidl_typesupport_fastrtp
 teensy_comm_node: /opt/ros/kilted/lib/libsensor_msgs__rosidl_typesupport_introspection_c.so
 teensy_comm_node: /opt/ros/kilted/lib/libsensor_msgs__rosidl_typesupport_introspection_cpp.so
 teensy_comm_node: /opt/ros/kilted/lib/libsensor_msgs__rosidl_generator_py.so
+teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_typesupport_fastrtps_c.so
+teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_typesupport_introspection_c.so
+teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_typesupport_fastrtps_cpp.so
+teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_typesupport_introspection_cpp.so
+teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_generator_py.so
 teensy_comm_node: /opt/ros/kilted/lib/liblibstatistics_collector.so
 teensy_comm_node: /opt/ros/kilted/lib/librcl.so
 teensy_comm_node: /opt/ros/kilted/lib/librmw_implementation.so
@@ -137,14 +142,6 @@ teensy_comm_node: /opt/ros/kilted/lib/libstatistics_msgs__rosidl_generator_c.so
 teensy_comm_node: /opt/ros/kilted/lib/libtracetools.so
 teensy_comm_node: /opt/ros/kilted/lib/librcl_logging_interface.so
 teensy_comm_node: /opt/ros/kilted/lib/libsensor_msgs__rosidl_typesupport_c.so
-teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_typesupport_fastrtps_c.so
-teensy_comm_node: /opt/ros/kilted/lib/libservice_msgs__rosidl_typesupport_fastrtps_c.so
-teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_typesupport_fastrtps_cpp.so
-teensy_comm_node: /opt/ros/kilted/lib/libservice_msgs__rosidl_typesupport_fastrtps_cpp.so
-teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_typesupport_introspection_c.so
-teensy_comm_node: /opt/ros/kilted/lib/libservice_msgs__rosidl_typesupport_introspection_c.so
-teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_typesupport_introspection_cpp.so
-teensy_comm_node: /opt/ros/kilted/lib/libservice_msgs__rosidl_typesupport_introspection_cpp.so
 teensy_comm_node: /opt/ros/kilted/lib/libstd_msgs__rosidl_typesupport_fastrtps_c.so
 teensy_comm_node: /opt/ros/kilted/lib/libstd_msgs__rosidl_typesupport_fastrtps_cpp.so
 teensy_comm_node: /opt/ros/kilted/lib/libstd_msgs__rosidl_typesupport_introspection_c.so
@@ -152,6 +149,10 @@ teensy_comm_node: /opt/ros/kilted/lib/libstd_msgs__rosidl_typesupport_introspect
 teensy_comm_node: /opt/ros/kilted/lib/libstd_msgs__rosidl_generator_py.so
 teensy_comm_node: /opt/ros/kilted/lib/libgeometry_msgs__rosidl_typesupport_c.so
 teensy_comm_node: /opt/ros/kilted/lib/libstd_msgs__rosidl_typesupport_c.so
+teensy_comm_node: /opt/ros/kilted/lib/libservice_msgs__rosidl_typesupport_fastrtps_c.so
+teensy_comm_node: /opt/ros/kilted/lib/libservice_msgs__rosidl_typesupport_fastrtps_cpp.so
+teensy_comm_node: /opt/ros/kilted/lib/libservice_msgs__rosidl_typesupport_introspection_c.so
+teensy_comm_node: /opt/ros/kilted/lib/libservice_msgs__rosidl_typesupport_introspection_cpp.so
 teensy_comm_node: /opt/ros/kilted/lib/libbuiltin_interfaces__rosidl_typesupport_fastrtps_c.so
 teensy_comm_node: /opt/ros/kilted/lib/librosidl_typesupport_fastrtps_c.so
 teensy_comm_node: /opt/ros/kilted/lib/libbuiltin_interfaces__rosidl_typesupport_introspection_c.so
