@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
-#include <geometry_msgs/msg/vector2.hpp>
+#include <geometry_msgs/msg/vector3.hpp>
 
 #include <string>
 #include <chrono>
@@ -112,10 +112,10 @@ public:
       [this](const std_msgs::msg::Float32::SharedPtr msg){ last_angle_deg_.store(msg->data); }
     );
 
-    // Un solo tópico para vel y kp: geometry_msgs/Vector2 (x=vel_mps, y=kp)
-    control_sub_ = create_subscription<geometry_msgs::msg::Vector2>(
+    // Un solo tópico para vel y kp: geometry_msgs/Vector3 (x=vel_mps, y=kp)
+    control_sub_ = create_subscription<geometry_msgs::msg::Vector3>(
       "/control_params", 10,
-      [this](const geometry_msgs::msg::Vector2::SharedPtr msg){
+      [this](const geometry_msgs::msg::Vector3::SharedPtr msg){
         last_vel_mps_.store(static_cast<float>(msg->x));
         last_kp_.store(static_cast<float>(msg->y));
       }
@@ -251,7 +251,7 @@ private:
   rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr angle_pub_;
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr angle_sub_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
-  rclcpp::Subscription<geometry_msgs::msg::Vector2>::SharedPtr control_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr control_sub_;
 
   // Estado (persisten entre mensajes)
   std::atomic<float> last_angle_deg_{0.0f};                               // modo "angle"
