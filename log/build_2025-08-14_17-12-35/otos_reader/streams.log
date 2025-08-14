@@ -1,0 +1,39 @@
+[1.708s] Invoking command in '/home/chabots/ros2_ws/src/otos_reader': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/otos_reader/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/otos_reader build --build-base /home/chabots/ros2_ws/build/otos_reader/build install --record /home/chabots/ros2_ws/build/otos_reader/install.log --single-version-externally-managed install_data
+[2.156s] running egg_info
+[2.157s] creating ../../build/otos_reader/otos_reader.egg-info
+[2.185s] writing ../../build/otos_reader/otos_reader.egg-info/PKG-INFO
+[2.186s] writing dependency_links to ../../build/otos_reader/otos_reader.egg-info/dependency_links.txt
+[2.186s] writing entry points to ../../build/otos_reader/otos_reader.egg-info/entry_points.txt
+[2.186s] writing requirements to ../../build/otos_reader/otos_reader.egg-info/requires.txt
+[2.187s] writing top-level names to ../../build/otos_reader/otos_reader.egg-info/top_level.txt
+[2.187s] writing manifest file '../../build/otos_reader/otos_reader.egg-info/SOURCES.txt'
+[2.250s] reading manifest file '../../build/otos_reader/otos_reader.egg-info/SOURCES.txt'
+[2.251s] writing manifest file '../../build/otos_reader/otos_reader.egg-info/SOURCES.txt'
+[2.252s] running build
+[2.252s] running build_py
+[2.252s] creating /home/chabots/ros2_ws/build/otos_reader/build
+[2.252s] creating /home/chabots/ros2_ws/build/otos_reader/build/lib
+[2.252s] creating /home/chabots/ros2_ws/build/otos_reader/build/lib/otos_reader
+[2.252s] copying otos_reader/__init__.py -> /home/chabots/ros2_ws/build/otos_reader/build/lib/otos_reader
+[2.252s] copying otos_reader/otos_node.py -> /home/chabots/ros2_ws/build/otos_reader/build/lib/otos_reader
+[2.253s] running install
+[2.263s] running install_lib
+[2.291s] creating /home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages/otos_reader
+[2.292s] copying /home/chabots/ros2_ws/build/otos_reader/build/lib/otos_reader/__init__.py -> /home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages/otos_reader
+[2.292s] copying /home/chabots/ros2_ws/build/otos_reader/build/lib/otos_reader/otos_node.py -> /home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages/otos_reader
+[2.293s] byte-compiling /home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages/otos_reader/__init__.py to __init__.cpython-312.pyc
+[2.293s] byte-compiling /home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages/otos_reader/otos_node.py to otos_node.cpython-312.pyc
+[2.299s] running install_data
+[2.299s] creating /home/chabots/ros2_ws/install/otos_reader/share/ament_index
+[2.299s] creating /home/chabots/ros2_ws/install/otos_reader/share/ament_index/resource_index
+[2.299s] creating /home/chabots/ros2_ws/install/otos_reader/share/ament_index/resource_index/packages
+[2.299s] copying resource/otos_reader -> /home/chabots/ros2_ws/install/otos_reader/share/ament_index/resource_index/packages
+[2.300s] copying package.xml -> /home/chabots/ros2_ws/install/otos_reader/share/otos_reader
+[2.300s] creating /home/chabots/ros2_ws/install/otos_reader/share/otos_reader/launch
+[2.300s] copying launch/otos_reader.launch.py -> /home/chabots/ros2_ws/install/otos_reader/share/otos_reader/launch
+[2.300s] running install_egg_info
+[2.338s] Copying ../../build/otos_reader/otos_reader.egg-info to /home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages/otos_reader-0.0.1-py3.12.egg-info
+[2.340s] running install_scripts
+[2.581s] Installing otos_node script to /home/chabots/ros2_ws/install/otos_reader/lib/otos_reader
+[2.582s] writing list of installed files to '/home/chabots/ros2_ws/build/otos_reader/install.log'
+[2.714s] Invoked command in '/home/chabots/ros2_ws/src/otos_reader' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/otos_reader/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/otos_reader build --build-base /home/chabots/ros2_ws/build/otos_reader/build install --record /home/chabots/ros2_ws/build/otos_reader/install.log --single-version-externally-managed install_data
