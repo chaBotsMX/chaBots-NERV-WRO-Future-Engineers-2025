@@ -7,10 +7,12 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import LogInfo
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration , PathJoinSubstitution
 from launch_ros.actions import Node
 from launch.actions import ExecuteProcess
 from launch.substitutions import Command
+from shutil import which
+
 
 
 def generate_launch_description():
@@ -27,17 +29,18 @@ def generate_launch_description():
     urdf_path = os.path.join(teensy_comm_dir, 'urdf', 'robot.urdf.xacro')
 
     otos_reader_dir = get_package_share_directory('otos_reader')
+    # Definir la ruta al archivo XACRO
+    urdf_path = "/home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/urdf/robot.urdf"
+    with open(urdf_path, "r") as f:
+        robot_desc = f.read()
 
     return LaunchDescription([
         # Publicar el modelo URDF y los TF estáticos usando método recomendado
         Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{
-                'robot_description': Command(['xacro ', urdf_path])
-            }],
+            package="robot_state_publisher",
+            executable="robot_state_publisher",
+            parameters=[{"robot_description": robot_desc}],
+            output="screen",
         ),
         # Lanzar el nodo otos_reader
         Node(
@@ -45,6 +48,7 @@ def generate_launch_description():
             executable='otos_node',
             name='otos_reader',
             output='screen',
+            prefix=['/home/chabots/ros2_ws/otos_env/bin/python', ' -u '],
         ),
         DeclareLaunchArgument(
             'channel_type',

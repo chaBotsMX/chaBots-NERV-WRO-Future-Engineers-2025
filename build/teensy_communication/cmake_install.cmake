@@ -63,7 +63,10 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/teensy_communication/" TYPE DIRECTORY FILES "/home/chabots/ros2_ws/src/teensy_communication/launch")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/teensy_communication/" TYPE DIRECTORY FILES
+    "/home/chabots/ros2_ws/src/teensy_communication/launch"
+    "/home/chabots/ros2_ws/src/teensy_communication/urdf"
+    )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)

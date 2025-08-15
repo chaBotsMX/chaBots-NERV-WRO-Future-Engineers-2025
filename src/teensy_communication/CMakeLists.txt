@@ -19,7 +19,7 @@ install(TARGETS teensy_comm_node
   RUNTIME DESTINATION lib/${PROJECT_NAME})
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/launch")
-  install(DIRECTORY launch
+  install(DIRECTORY launch urdf
     DESTINATION share/${PROJECT_NAME}/)
 endif()
 

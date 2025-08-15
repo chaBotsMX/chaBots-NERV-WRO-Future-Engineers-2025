@@ -247,7 +247,8 @@
 			"destination" : "share/teensy_communication/",
 			"paths" : 
 			[
-				"launch"
+				"launch",
+				"urdf"
 			],
 			"type" : "directory"
 		},
