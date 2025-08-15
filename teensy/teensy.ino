@@ -7,67 +7,87 @@ int gradosRaspberry = 0;
 int target = 90;
 int pos = 60;    
 Bounce boton = Bounce(2, 10);
+int pwm = 50;
 
-int calKp(){
-
-  int error = gradosRaspberry * 0.5;
+int calKp(float newK, int input){
+  
+  int error = (input - 90) * newK;
+  Serial.println(error);
   return error;
 }
 
 void updateServo(int k){
-  myservo.write(constrain(target+k,40,135));
+  myservo.write(constrain(target+k,40,140));
   Serial.println(target+k);
-  }
+  
 }
 
 int serial1Update() {
-  // Máquina de estados y buffers persistentes entre llamadas
-  enum { WAIT_HDR, GET_HI, GET_LO, GET_CK };
-  static uint8_t st = WAIT_HDR;
-  static uint8_t hi = 0, lo = 0;
+  // Formato NUEVO:
+  // [0xAB][ANG_H][ANG_L][VEL_H][VEL_L][KP_H][KP_L][CHK]
+  // CHK = XOR de bytes 0..6 (incluye 0xAB)
+  enum State : uint8_t { WAIT_HDR, ANG_H, ANG_L, VEL_H, VEL_L, KP_H, KP_L, GET_CK };
+  static State st = WAIT_HDR;
+
+  static uint8_t ang_hi = 0, ang_lo = 0;
+  static uint8_t vel_hi = 0, vel_lo = 0;
+  static uint8_t kp_hi  = 0, kp_lo  = 0;
+  static uint8_t xor_acc = 0;
 
   while (Serial1.available()) {
-    uint8_t b = (uint8_t)Serial1.read();
+    const uint8_t b = (uint8_t)Serial1.read();
 
     switch (st) {
       case WAIT_HDR:
-        if (b == 0xAA) st = GET_HI;
+        if (b == 0xAB) { xor_acc = b; st = ANG_H; }
         break;
 
-      case GET_HI:
-        hi = b;
-        st = GET_LO;
-        break;
+      case ANG_H:
+        ang_hi = b; xor_acc ^= b; st = ANG_L; break;
 
-      case GET_LO:
-        lo = b;
-        st = GET_CK;
-        break;
+      case ANG_L:
+        ang_lo = b; xor_acc ^= b; st = VEL_H; break;
+
+      case VEL_H:
+        vel_hi = b; xor_acc ^= b; st = VEL_L; break;
+
+      case VEL_L:
+        vel_lo = b; xor_acc ^= b; st = KP_H;  break;
+
+      case KP_H:
+        kp_hi = b;  xor_acc ^= b; st = KP_L;  break;
+
+      case KP_L:
+        kp_lo = b;  xor_acc ^= b; st = GET_CK; break;
 
       case GET_CK: {
-        uint8_t chk = (uint8_t)(0xAA ^ hi ^ lo);
-        st = WAIT_HDR;  // reset para buscar siguiente frame
+        const bool ok = (b == xor_acc);
+        st = WAIT_HDR;  // listo para el siguiente frame
 
-        if (b == chk) {
-          // Valor en décimas de grado (0..3600 esperado)
-          uint16_t raw = (uint16_t(hi) << 8) | lo;
+        if (ok) {
+          // Ángulo en décimas (0..3600 esperado)
+          uint16_t ang_tenths = (uint16_t(ang_hi) << 8) | ang_lo;
+          if (ang_tenths > 3600) ang_tenths = 3600;
 
-          // Asegurar límites: si llega algo fuera, se satura
-          if (raw > 3600) raw = 3600;
+          // (Opcional) si quieres guardar vel/kp, declara globales y descomenta:
+          // extern volatile uint16_t g_vel_mmps, g_kp_milli;
+           // pwm = (uint16_t(vel_hi) << 8) | vel_lo;
+          // g_kp_milli = (uint16_t(kp_hi)  << 8) | kp_lo;
 
-          // Redondeo a grado entero y clamp final 0..360
-          int deg = (int)((raw + 5) / 10); // 0..360
-          if (deg < 0) deg = 0;
+          // Devuelve grados enteros 0..360
+          int deg = (int)((ang_tenths + 5) / 10);
+          if (deg < 0)   deg = 0;
           if (deg > 360) deg = 360;
-
-          return deg;  // ÉXITO: devolvemos el ángulo
+          return deg;
+        } else {
+          // Re-sincroniza rápido si el byte de checksum parece un nuevo header
+          if (b == 0xAB) { xor_acc = b; st = ANG_H; }
         }
-        // Si el checksum no coincide, se descarta y seguimos leyendo
       } break;
     }
   }
 
-  // No se completó ningún frame válido en esta llamada
+  // No se completó un frame válido en esta llamada
   return -1;
 }
 
@@ -94,12 +114,12 @@ void setup()
  
  
 void loop() 
-{ 
-  /*analogWrite(6,100);
-  if(Serial.available()){
-    pos = Serial.read();
-    Serial.println(pos);
-    Serial.clear();
-  }
-  myservo.write(pos);*/
+{
+  gradosRaspberry = serial1Update();
+  analogWrite(6,pwm);
+ // updateServo(calKp(gradosRaspberry));
+ if(gradosRaspberry != -1){
+ // Serial.println(gradosRaspberry);
+ // Serial1.println(calKp(0.5,gradosRaspberry));
+  updateServo(calKp(3,gradosRaspberry));}
 } 
