@@ -7,7 +7,7 @@ int gradosRaspberry = 0;
 int target = 90;
 int pos = 60;    
 Bounce boton = Bounce(2, 10);
-int pwm = 50;
+int pwm = 70;
 
 int calKp(float newK, int input){
   
@@ -17,7 +17,7 @@ int calKp(float newK, int input){
 }
 
 void updateServo(int k){
-  myservo.write(constrain(target+k,40,140));
+  myservo.write(constrain(target+k,50,120));
   Serial.println(target+k);
   
 }
