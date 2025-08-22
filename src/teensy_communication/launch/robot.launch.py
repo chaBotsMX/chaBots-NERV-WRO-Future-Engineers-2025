@@ -50,6 +50,13 @@ def generate_launch_description():
             output='screen',
             prefix=['/home/chabots/ros2_ws/otos_env/bin/python', ' -u '],
         ),
+        # Lanzar el nodo foxglove_bridge usando Node()
+        Node(
+            package='foxglove_bridge',
+            executable='foxglove_bridge',
+            name='foxglove_bridge',
+            output='screen',
+        ),
         DeclareLaunchArgument(
             'channel_type',
             default_value=channel_type,
