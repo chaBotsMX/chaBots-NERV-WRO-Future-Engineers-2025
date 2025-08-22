@@ -114,7 +114,7 @@ public:
     );
 
     scan_sub_ = create_subscription<sensor_msgs::msg::LaserScan>(
-      "/scan", rclcpp::SensorDataQoS(),
+      "/scan_filtered", rclcpp::SensorDataQoS(),
       std::bind(&TeensyCommNode::on_scan, this, std::placeholders::_1)
     );
 

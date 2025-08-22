@@ -27,6 +27,11 @@ def generate_launch_description():
     # Paths
     teensy_comm_dir = get_package_share_directory('teensy_communication')
     urdf_path = os.path.join(teensy_comm_dir, 'urdf', 'robot.urdf.xacro')
+    config = os.path.join(
+        get_package_share_directory('teensy_communication'),
+        'config',
+        'filtros.yaml'
+    )
 
     otos_reader_dir = get_package_share_directory('otos_reader')
     # Definir la ruta al archivo XACRO
@@ -57,6 +62,18 @@ def generate_launch_description():
             name='foxglove_bridge',
             output='screen',
         ),
+        Node(
+            package='laser_filters',
+            executable='scan_to_scan_filter_chain',
+            name='scan_filters',
+            output='screen',
+            parameters=[config],  # Aquí solo el archivo
+            remappings=[
+                ('scan', 'scan'),                 # entrada
+                ('scan_filtered', 'scan_filtered')# salida
+            ]
+        ),
+    
         DeclareLaunchArgument(
             'channel_type',
             default_value=channel_type,
