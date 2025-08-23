@@ -56,10 +56,10 @@ I am a self-taught robotics enthusiast with experience in embedded systems, soft
 
 ---
 
-### Coach: Diego Vitales Medellín
+### Diego Vitales Medellín
 **Age:** 22
 **Location:** San Luis Potosí, México
-**Role:** Mentor / Support / Coordination
+**Role:** Coach
 
 I've been involved in robotics for 14+ years being a programmer for most of the projects I've taken part in. I've had may regional, national and international experiences. Now I'm working in sharing my knowledge with more people to push further their level and potential as well as helping them achieve their goals and find their passion.
 
