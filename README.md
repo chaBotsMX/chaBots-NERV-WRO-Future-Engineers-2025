@@ -28,24 +28,21 @@ This repository contains the documentation for **Chabots** participation in the 
 ## The Team <a name="the-team"></a>
 
 ### Hiram Jalil Castillo Gutierrez 
-**Age:** 22
-**Location:** San Luis Potosí, México
+**Age:** 22\
 **Role:** Software Development
 
 [Short bio of the teammate – use placeholder text if teammate is unknown]
 
 
 ### Leonardo Villegas Lopez
-**Age:** 20
-**Location:** San Luis Potosí, México
+**Age:** 20\
 **Role:** Mechanical Design
 
 [Short bio of the teammate – use placeholder text if teammate is unknown]
 
 
 ### Roy Iván Barrón Martínez
-**Age:** 20
-**Location:** San Luis Potosí, México
+**Age:** 20\
 **Role:** Captain, Electronics & Software Design  
 
 I am a self-taught robotics enthusiast with experience in embedded systems, software, and mechanical integration. my team ChaBots Ocelot won Mexico Robocup soccer Open second place and achieved multiple national awards in programming and robotics.
@@ -57,8 +54,7 @@ I am a self-taught robotics enthusiast with experience in embedded systems, soft
 ---
 
 ### Diego Vitales Medellín
-**Age:** 22
-**Location:** San Luis Potosí, México
+**Age:** 22\
 **Role:** Coach
 
 I've been involved in robotics for 14+ years being a programmer for most of the projects I've taken part in. I've had may regional, national and international experiences. Now I'm working in sharing my knowledge with more people to push further their level and potential as well as helping them achieve their goals and find their passion.
