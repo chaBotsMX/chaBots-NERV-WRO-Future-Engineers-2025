@@ -114,8 +114,14 @@ public:
     );
 
     scan_sub_ = create_subscription<sensor_msgs::msg::LaserScan>(
-      "/scan_filtered", rclcpp::SensorDataQoS(),
+      "/scan", rclcpp::SensorDataQoS(),
       std::bind(&TeensyCommNode::on_scan, this, std::placeholders::_1)
+    );
+
+    // Suscripción al tópico de odometría
+    odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
+      "odom", 10,
+      std::bind(&TeensyCommNode::on_odom, this, std::placeholders::_1)
     );
 
     timer_ = create_wall_timer(10ms, std::bind(&TeensyCommNode::on_timer, this));
@@ -290,7 +296,7 @@ private:
     }
     */
     // (C) Publicar MarkerArray para Foxglove: una línea por clúster
-    publish_markers(*msg);
+  /*  publish_markers(*msg);
     // (D) Publicar ángulo global para Foxglove
     if (std::isfinite(angle_deg)) {
       std_msgs::msg::Float32 msg_out;
@@ -350,7 +356,7 @@ private:
 
     cluster_pub_->publish(arr);
   }
-
+*/
   void on_timer() {
     float deg = angle_deg_.load();
     uint16_t ang_tenths = 0;
@@ -389,7 +395,24 @@ private:
   std::atomic<float> angle_deg_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> pwm_{70.0f};
   std::atomic<float> kp_{2.0f};
+  std::atomic<float> heading{std::numeric_limits<float>::quiet_NaN()};
   std::vector<ClusterProps> clusters_;
+
+  // Subscripción odometría
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+
+  // Callback para la odometría
+  void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
+  // Extraer yaw (heading) del quaternion de la odometría
+  const auto& q = msg->pose.pose.orientation;
+  // yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z))
+  float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
+  float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+  float yaw = std::atan2(siny_cosp, cosy_cosp); // radianes
+  float yaw_deg = yaw * 180.0f / static_cast<float>(M_PI);
+  RCLCPP_INFO(rclcpp::get_logger("TeensyCommNode"), "Heading: %.2f", yaw_deg);
+  heading.store(yaw_deg);
+  }
 };
 
 int main(int argc, char** argv) {

@@ -11,10 +11,12 @@ find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 
+find_package(nav_msgs REQUIRED)
 add_executable(teensy_comm_node src/teensy_comm_node.cpp)
 
 # Usa SOLO ament_target_dependencies para evitar el conflicto
 ament_target_dependencies(teensy_comm_node rclcpp std_msgs sensor_msgs geometry_msgs visualization_msgs)
+ament_target_dependencies(teensy_comm_node nav_msgs)
 
 install(TARGETS teensy_comm_node
   RUNTIME DESTINATION lib/${PROJECT_NAME})
