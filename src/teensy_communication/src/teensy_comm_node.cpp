@@ -170,7 +170,9 @@ private:
     // (A) Ángulo global (vectorial) para publicar como Float32
     double sum_x = 0.0, sum_y = 0.0;
     size_t used = 0;
-    for (size_t i = 0; i < msg->ranges.size(); ++i) {
+
+    //vector con mas espacio absoluto
+    /*for (size_t i = 0; i < msg->ranges.size(); ++i) {
       const float ang = angle_min + angle_inc * static_cast<float>(i);
       if (ang < 0.0f || ang > pi) continue; // 0..180°
       const float r = msg->ranges[i];
@@ -187,9 +189,55 @@ private:
       angle_deg = angle * 180.0f / static_cast<float>(M_PI);
     }
     angle_deg_.store(angle_deg);
+            */
+
+    // Calcular ángulo promedio entre pares consecutivos de puntos válidos del lado izquierdo
+    float sum_angles = 0.0f;
+    int count_angles = 0;
+    float prev_ang = 0.0f, prev_r = 0.0f;
+    bool prev_valid = false;
+    for (size_t i = 0; i < msg->ranges.size(); ++i) {
+      const float ang = angle_min + angle_inc * static_cast<float>(i);
+      if (ang <= 0.0f || ang >= 0.7853f) continue; // Solo lado izquierdo
+      const float r = msg->ranges[i];
+      if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max || r >= 1.0f) {
+        prev_valid = false;
+        continue;
+      }
+      if (prev_valid) {
+        // Calcular distancia euclidiana y ángulo entre prev y actual
+        float dx = pointAngX(ang, r) - pointAngX(prev_ang, prev_r);
+        float dy = pointAngY(ang, r) - pointAngY(prev_ang, prev_r);
+        float dist = std::hypot(dx, dy);
+        if (dist > 0.0f) {
+          float angle = std::atan2(dy, dx);
+          sum_angles += angle;
+          ++count_angles;
+        }
+      }
+      prev_ang = ang;
+      prev_r = r;
+      prev_valid = true;
+    }
+
+    float angle_deg = std::numeric_limits<float>::quiet_NaN();
+    if (count_angles > 0) {
+      float avg_angle = sum_angles / static_cast<float>(count_angles);
+      avg_angle = angulo_positivo(avg_angle);
+      angle_deg = avg_angle * 180.0f / static_cast<float>(M_PI);
+    }
+    angle_deg_.store(angle_deg);
+
+    float angle_deg = std::numeric_limits<float>::quiet_NaN();
+    if (used > 0) {
+      float angle = static_cast<float>(std::atan2(sum_y, sum_x));
+      angle = angulo_positivo(angle);
+      angle_deg = angle * 180.0f / static_cast<float>(M_PI);
+    }
+    angle_deg_.store(angle_deg);
 
     // (B) Detección súper simple de clústers (segmento recto)
-    clusters_.clear();
+  /*  clusters_.clear();
     for (int j = 0; j + 1 < static_cast<int>(msg->ranges.size()); ++j) {
       const float r0 = msg->ranges[j];
       const float r1 = msg->ranges[j+1];
@@ -240,7 +288,7 @@ private:
         j += clusterSize - 2; // salta para no recontar
       }
     }
-
+    */
     // (C) Publicar MarkerArray para Foxglove: una línea por clúster
     publish_markers(*msg);
     // (D) Publicar ángulo global para Foxglove
