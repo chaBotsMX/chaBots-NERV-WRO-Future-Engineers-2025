@@ -1,0 +1,171 @@
+[0.415s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--packages-select', 'teensy_communication']
+[0.415s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=4, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=['teensy_communication'], packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0xffff8d5959a0>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffff8d742390>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffff8d742390>>, mixin_verb=('build',))
+[0.522s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.523s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.523s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.523s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.523s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.523s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.523s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/chabots/ros2_ws/src'
+[0.523s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.523s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.523s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.523s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.523s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.523s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.524s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.524s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.524s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.579s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.579s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.579s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.579s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.579s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.579s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.579s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.579s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(otos_reader) by extensions ['ignore', 'ignore_ament_install']
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(otos_reader) by extension 'ignore'
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(otos_reader) by extension 'ignore_ament_install'
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(otos_reader) by extensions ['colcon_pkg']
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(otos_reader) by extension 'colcon_pkg'
+[0.580s] Level 1:colcon.colcon_core.package_identification:_identify(otos_reader) by extensions ['colcon_meta']
+[0.581s] Level 1:colcon.colcon_core.package_identification:_identify(otos_reader) by extension 'colcon_meta'
+[0.581s] Level 1:colcon.colcon_core.package_identification:_identify(otos_reader) by extensions ['ros']
+[0.581s] Level 1:colcon.colcon_core.package_identification:_identify(otos_reader) by extension 'ros'
+[0.586s] DEBUG:colcon.colcon_core.package_identification:Package 'otos_reader' with type 'ros.ament_python' and name 'otos_reader'
+[0.586s] Level 1:colcon.colcon_core.package_identification:_identify(rplidar_ros) by extensions ['ignore', 'ignore_ament_install']
+[0.586s] Level 1:colcon.colcon_core.package_identification:_identify(rplidar_ros) by extension 'ignore'
+[0.586s] Level 1:colcon.colcon_core.package_identification:_identify(rplidar_ros) by extension 'ignore_ament_install'
+[0.586s] Level 1:colcon.colcon_core.package_identification:_identify(rplidar_ros) by extensions ['colcon_pkg']
+[0.586s] Level 1:colcon.colcon_core.package_identification:_identify(rplidar_ros) by extension 'colcon_pkg'
+[0.586s] Level 1:colcon.colcon_core.package_identification:_identify(rplidar_ros) by extensions ['colcon_meta']
+[0.586s] Level 1:colcon.colcon_core.package_identification:_identify(rplidar_ros) by extension 'colcon_meta'
+[0.586s] Level 1:colcon.colcon_core.package_identification:_identify(rplidar_ros) by extensions ['ros']
+[0.587s] Level 1:colcon.colcon_core.package_identification:_identify(rplidar_ros) by extension 'ros'
+[0.587s] DEBUG:colcon.colcon_core.package_identification:Package 'rplidar_ros' with type 'ros.ament_cmake' and name 'rplidar_ros'
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(teensy_communication) by extensions ['ignore', 'ignore_ament_install']
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(teensy_communication) by extension 'ignore'
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(teensy_communication) by extension 'ignore_ament_install'
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(teensy_communication) by extensions ['colcon_pkg']
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(teensy_communication) by extension 'colcon_pkg'
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(teensy_communication) by extensions ['colcon_meta']
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(teensy_communication) by extension 'colcon_meta'
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(teensy_communication) by extensions ['ros']
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(teensy_communication) by extension 'ros'
+[0.589s] DEBUG:colcon.colcon_core.package_identification:Package 'teensy_communication' with type 'ros.ament_cmake' and name 'teensy_communication'
+[0.589s] Level 1:colcon.colcon_core.package_identification:_identify(vision_node) by extensions ['ignore', 'ignore_ament_install']
+[0.589s] Level 1:colcon.colcon_core.package_identification:_identify(vision_node) by extension 'ignore'
+[0.589s] Level 1:colcon.colcon_core.package_identification:_identify(vision_node) by extension 'ignore_ament_install'
+[0.589s] Level 1:colcon.colcon_core.package_identification:_identify(vision_node) by extensions ['colcon_pkg']
+[0.589s] Level 1:colcon.colcon_core.package_identification:_identify(vision_node) by extension 'colcon_pkg'
+[0.589s] Level 1:colcon.colcon_core.package_identification:_identify(vision_node) by extensions ['colcon_meta']
+[0.589s] Level 1:colcon.colcon_core.package_identification:_identify(vision_node) by extension 'colcon_meta'
+[0.590s] Level 1:colcon.colcon_core.package_identification:_identify(vision_node) by extensions ['ros']
+[0.590s] Level 1:colcon.colcon_core.package_identification:_identify(vision_node) by extension 'ros'
+[0.591s] DEBUG:colcon.colcon_core.package_identification:Package 'vision_node' with type 'ros.ament_python' and name 'vision_node'
+[0.591s] Level 1:colcon.colcon_core.package_identification:_identify(wall_follower) by extensions ['ignore', 'ignore_ament_install']
+[0.591s] Level 1:colcon.colcon_core.package_identification:_identify(wall_follower) by extension 'ignore'
+[0.591s] Level 1:colcon.colcon_core.package_identification:_identify(wall_follower) by extension 'ignore_ament_install'
+[0.591s] Level 1:colcon.colcon_core.package_identification:_identify(wall_follower) by extensions ['colcon_pkg']
+[0.591s] Level 1:colcon.colcon_core.package_identification:_identify(wall_follower) by extension 'colcon_pkg'
+[0.591s] Level 1:colcon.colcon_core.package_identification:_identify(wall_follower) by extensions ['colcon_meta']
+[0.591s] Level 1:colcon.colcon_core.package_identification:_identify(wall_follower) by extension 'colcon_meta'
+[0.591s] Level 1:colcon.colcon_core.package_identification:_identify(wall_follower) by extensions ['ros']
+[0.591s] Level 1:colcon.colcon_core.package_identification:_identify(wall_follower) by extension 'ros'
+[0.592s] DEBUG:colcon.colcon_core.package_identification:Package 'wall_follower' with type 'ros.ament_python' and name 'wall_follower'
+[0.592s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.592s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.592s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.592s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.592s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.631s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'otos_reader' in 'otos_reader'
+[0.631s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'rplidar_ros' in 'rplidar_ros'
+[0.631s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'vision_node' in 'vision_node'
+[0.631s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'wall_follower' in 'wall_follower'
+[0.632s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.632s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.637s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 4 installed packages in /home/chabots/ros2_ws/install
+[0.639s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 296 installed packages in /opt/ros/kilted
+[0.642s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.707s] Level 5:colcon.colcon_core.verb:set package 'teensy_communication' build argument 'cmake_args' from command line to 'None'
+[0.707s] Level 5:colcon.colcon_core.verb:set package 'teensy_communication' build argument 'cmake_target' from command line to 'None'
+[0.707s] Level 5:colcon.colcon_core.verb:set package 'teensy_communication' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.707s] Level 5:colcon.colcon_core.verb:set package 'teensy_communication' build argument 'cmake_clean_cache' from command line to 'False'
+[0.707s] Level 5:colcon.colcon_core.verb:set package 'teensy_communication' build argument 'cmake_clean_first' from command line to 'False'
+[0.707s] Level 5:colcon.colcon_core.verb:set package 'teensy_communication' build argument 'cmake_force_configure' from command line to 'False'
+[0.707s] Level 5:colcon.colcon_core.verb:set package 'teensy_communication' build argument 'ament_cmake_args' from command line to 'None'
+[0.707s] Level 5:colcon.colcon_core.verb:set package 'teensy_communication' build argument 'catkin_cmake_args' from command line to 'None'
+[0.707s] Level 5:colcon.colcon_core.verb:set package 'teensy_communication' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.707s] DEBUG:colcon.colcon_core.verb:Building package 'teensy_communication' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/chabots/ros2_ws/src/build/teensy_communication', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/chabots/ros2_ws/src/install/teensy_communication', 'merge_install': False, 'path': '/home/chabots/ros2_ws/src/teensy_communication', 'symlink_install': False, 'test_result_base': None}
+[0.708s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.709s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.709s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/chabots/ros2_ws/src/teensy_communication' with build type 'ament_cmake'
+[0.710s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/chabots/ros2_ws/src/teensy_communication'
+[0.718s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.719s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.719s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.734s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/chabots/ros2_ws/src/build/teensy_communication': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/vision_node:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/src/build/teensy_communication -- -j4 -l4
+[24.857s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/chabots/ros2_ws/src/build/teensy_communication' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/vision_node:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/src/build/teensy_communication -- -j4 -l4
+[24.878s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/chabots/ros2_ws/src/build/teensy_communication': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/vision_node:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/chabots/ros2_ws/src/build/teensy_communication
+[24.975s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(teensy_communication)
+[24.975s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/chabots/ros2_ws/src/build/teensy_communication' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/vision_node:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/chabots/ros2_ws/src/build/teensy_communication
+[24.984s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication' for CMake module files
+[24.985s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication' for CMake config files
+[24.985s] Level 1:colcon.colcon_core.shell:create_environment_hook('teensy_communication', 'cmake_prefix_path')
+[24.985s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/hook/cmake_prefix_path.ps1'
+[24.987s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/hook/cmake_prefix_path.dsv'
+[24.988s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/hook/cmake_prefix_path.sh'
+[24.989s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/lib'
+[24.990s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/bin'
+[24.990s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/lib/pkgconfig/teensy_communication.pc'
+[24.990s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/lib/python3.12/site-packages'
+[24.990s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/bin'
+[24.991s] INFO:colcon.colcon_core.shell:Creating package script '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.ps1'
+[24.992s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.dsv'
+[24.993s] INFO:colcon.colcon_core.shell:Creating package script '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.sh'
+[24.995s] INFO:colcon.colcon_core.shell:Creating package script '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.bash'
+[24.996s] INFO:colcon.colcon_core.shell:Creating package script '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.zsh'
+[24.998s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/chabots/ros2_ws/src/install/teensy_communication/share/colcon-core/packages/teensy_communication)
+[24.999s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(teensy_communication)
+[24.999s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication' for CMake module files
+[25.000s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication' for CMake config files
+[25.000s] Level 1:colcon.colcon_core.shell:create_environment_hook('teensy_communication', 'cmake_prefix_path')
+[25.000s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/hook/cmake_prefix_path.ps1'
+[25.001s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/hook/cmake_prefix_path.dsv'
+[25.001s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/hook/cmake_prefix_path.sh'
+[25.002s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/lib'
+[25.002s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/bin'
+[25.002s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/lib/pkgconfig/teensy_communication.pc'
+[25.003s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/lib/python3.12/site-packages'
+[25.003s] Level 1:colcon.colcon_core.environment:checking '/home/chabots/ros2_ws/src/install/teensy_communication/bin'
+[25.003s] INFO:colcon.colcon_core.shell:Creating package script '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.ps1'
+[25.004s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.dsv'
+[25.005s] INFO:colcon.colcon_core.shell:Creating package script '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.sh'
+[25.005s] INFO:colcon.colcon_core.shell:Creating package script '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.bash'
+[25.006s] INFO:colcon.colcon_core.shell:Creating package script '/home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.zsh'
+[25.006s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/chabots/ros2_ws/src/install/teensy_communication/share/colcon-core/packages/teensy_communication)
+[25.007s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[25.007s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[25.008s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[25.008s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[25.020s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[25.020s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[25.020s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[25.119s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[25.119s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/chabots/ros2_ws/src/install/local_setup.ps1'
+[25.122s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/chabots/ros2_ws/src/install/_local_setup_util_ps1.py'
+[25.125s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/chabots/ros2_ws/src/install/setup.ps1'
+[25.128s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/chabots/ros2_ws/src/install/local_setup.sh'
+[25.133s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/chabots/ros2_ws/src/install/_local_setup_util_sh.py'
+[25.135s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/chabots/ros2_ws/src/install/setup.sh'
+[25.139s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/chabots/ros2_ws/src/install/local_setup.bash'
+[25.141s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/chabots/ros2_ws/src/install/setup.bash'
+[25.144s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/chabots/ros2_ws/src/install/local_setup.zsh'
+[25.145s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/chabots/ros2_ws/src/install/setup.zsh'

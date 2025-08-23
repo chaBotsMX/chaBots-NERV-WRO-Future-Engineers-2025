@@ -1,0 +1,27 @@
+[ 50%] [32mBuilding CXX object CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o[0m
+[100%] [32m[1mLinking CXX executable teensy_comm_node[0m
+[100%] Built target teensy_comm_node
+-- Install configuration: ""
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/lib/teensy_communication/teensy_comm_node
+-- Set non-toolchain portion of runtime path of "/home/chabots/ros2_ws/src/install/teensy_communication/lib/teensy_communication/teensy_comm_node" to ""
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication//launch
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication//launch/robot.launch.py
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication//launch/teensy_communication.launch.py
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication//urdf
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication//urdf/robot.urdf
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication//urdf/robot.urdf.xacro
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/ament_index/resource_index/package_run_dependencies/teensy_communication
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/ament_index/resource_index/parent_prefix_path/teensy_communication
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/environment/ament_prefix_path.sh
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/environment/ament_prefix_path.dsv
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/environment/path.sh
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/environment/path.dsv
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/local_setup.bash
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/local_setup.sh
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/local_setup.zsh
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/local_setup.dsv
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.dsv
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/ament_index/resource_index/packages/teensy_communication
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/cmake/teensy_communicationConfig.cmake
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/cmake/teensy_communicationConfig-version.cmake
+-- Installing: /home/chabots/ros2_ws/src/install/teensy_communication/share/teensy_communication/package.xml

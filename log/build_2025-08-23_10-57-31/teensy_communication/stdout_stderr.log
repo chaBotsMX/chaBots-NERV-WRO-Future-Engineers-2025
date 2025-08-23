@@ -1,0 +1,43 @@
+-- Found ament_cmake: 2.7.3 (/opt/ros/kilted/share/ament_cmake/cmake)
+-- Found rclcpp: 29.5.2 (/opt/ros/kilted/share/rclcpp/cmake)
+-- Found rosidl_generator_c: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_c/cmake)
+-- Found rosidl_generator_cpp: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 7.8.2 (/opt/ros/kilted/share/rmw_implementation_cmake/cmake)
+-- Found rmw_fastrtps_cpp: 9.3.2 (/opt/ros/kilted/share/rmw_fastrtps_cpp/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found std_msgs: 5.5.0 (/opt/ros/kilted/share/std_msgs/cmake)
+-- Found sensor_msgs: 5.5.0 (/opt/ros/kilted/share/sensor_msgs/cmake)
+-- Found visualization_msgs: 5.5.0 (/opt/ros/kilted/share/visualization_msgs/cmake)
+[0mCMake Deprecation Warning at /opt/ros/kilted/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:87 (message):
+  ament_target_dependencies() is deprecated.  Use target_link_libraries()
+  with modern CMake targets instead.  Try replacing this call with:
+
+    target_link_libraries(teensy_comm_node PUBLIC
+      ${geometry_msgs_TARGETS}
+      ${sensor_msgs_TARGETS}
+      ${std_msgs_TARGETS}
+      ${visualization_msgs_TARGETS}
+      rclcpp::rclcpp
+      sensor_msgs::sensor_msgs_library
+    )
+
+Call Stack (most recent call first):
+  CMakeLists.txt:17 (ament_target_dependencies)
+
+[0m
+-- Configuring done (1.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/chabots/ros2_ws/build/teensy_communication
+[ 50%] [32mBuilding CXX object CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o[0m
+[01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:[m[K In member function ‘[01m[Kvoid TeensyCommNode::[01;32m[Kon_scan[m[K(sensor_msgs::msg::LaserScan_<std::allocator<void> >::SharedPtr)[m[K’:
+[01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:231:11:[m[K [01;31m[Kerror: [m[Kredeclaration of ‘[01m[Kfloat angle_deg[m[K’
+  231 |     float [01;31m[Kangle_deg[m[K = std::numeric_limits<float>::quiet_NaN();
+      |           [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:223:11:[m[K [01;36m[Knote: [m[K‘[01m[Kfloat angle_deg[m[K’ previously declared here
+  223 |     float [01;36m[Kangle_deg[m[K = std::numeric_limits<float>::quiet_NaN();
+      |           [01;36m[K^~~~~~~~~[m[K
+gmake[2]: *** [CMakeFiles/teensy_comm_node.dir/build.make:76: CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/teensy_comm_node.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

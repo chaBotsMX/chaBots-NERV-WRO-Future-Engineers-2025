@@ -1,0 +1,45 @@
+[0.026s] Invoking command in '/home/chabots/ros2_ws/build/teensy_communication': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/build/teensy_communication -- -j4 -l4
+[0.237s] -- Found ament_cmake: 2.7.3 (/opt/ros/kilted/share/ament_cmake/cmake)
+[0.612s] -- Found rclcpp: 29.5.2 (/opt/ros/kilted/share/rclcpp/cmake)
+[0.670s] -- Found rosidl_generator_c: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_c/cmake)
+[0.687s] -- Found rosidl_generator_cpp: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_cpp/cmake)
+[0.713s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.740s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.856s] -- Found rmw_implementation_cmake: 7.8.2 (/opt/ros/kilted/share/rmw_implementation_cmake/cmake)
+[0.860s] -- Found rmw_fastrtps_cpp: 9.3.2 (/opt/ros/kilted/share/rmw_fastrtps_cpp/cmake)
+[0.949s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.063s] -- Found std_msgs: 5.5.0 (/opt/ros/kilted/share/std_msgs/cmake)
+[1.087s] -- Found sensor_msgs: 5.5.0 (/opt/ros/kilted/share/sensor_msgs/cmake)
+[1.158s] -- Found visualization_msgs: 5.5.0 (/opt/ros/kilted/share/visualization_msgs/cmake)
+[1.201s] [0mCMake Deprecation Warning at /opt/ros/kilted/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:87 (message):
+[1.201s]   ament_target_dependencies() is deprecated.  Use target_link_libraries()
+[1.201s]   with modern CMake targets instead.  Try replacing this call with:
+[1.202s] 
+[1.202s]     target_link_libraries(teensy_comm_node PUBLIC
+[1.202s]       ${geometry_msgs_TARGETS}
+[1.202s]       ${sensor_msgs_TARGETS}
+[1.202s]       ${std_msgs_TARGETS}
+[1.202s]       ${visualization_msgs_TARGETS}
+[1.202s]       rclcpp::rclcpp
+[1.202s]       sensor_msgs::sensor_msgs_library
+[1.202s]     )
+[1.202s] 
+[1.203s] Call Stack (most recent call first):
+[1.203s]   CMakeLists.txt:17 (ament_target_dependencies)
+[1.203s] 
+[1.203s] [0m
+[1.366s] -- Configuring done (1.2s)
+[1.408s] -- Generating done (0.0s)
+[1.417s] -- Build files have been written to: /home/chabots/ros2_ws/build/teensy_communication
+[1.549s] [ 50%] [32mBuilding CXX object CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o[0m
+[5.903s] [01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:[m[K In member function ‘[01m[Kvoid TeensyCommNode::[01;32m[Kon_scan[m[K(sensor_msgs::msg::LaserScan_<std::allocator<void> >::SharedPtr)[m[K’:
+[5.903s] [01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:231:11:[m[K [01;31m[Kerror: [m[Kredeclaration of ‘[01m[Kfloat angle_deg[m[K’
+[5.903s]   231 |     float [01;31m[Kangle_deg[m[K = std::numeric_limits<float>::quiet_NaN();
+[5.904s]       |           [01;31m[K^~~~~~~~~[m[K
+[5.904s] [01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:223:11:[m[K [01;36m[Knote: [m[K‘[01m[Kfloat angle_deg[m[K’ previously declared here
+[5.904s]   223 |     float [01;36m[Kangle_deg[m[K = std::numeric_limits<float>::quiet_NaN();
+[5.904s]       |           [01;36m[K^~~~~~~~~[m[K
+[10.745s] gmake[2]: *** [CMakeFiles/teensy_comm_node.dir/build.make:76: CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o] Error 1
+[10.745s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/teensy_comm_node.dir/all] Error 2
+[10.745s] gmake: *** [Makefile:146: all] Error 2
+[10.750s] Invoked command in '/home/chabots/ros2_ws/build/teensy_communication' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/build/teensy_communication -- -j4 -l4

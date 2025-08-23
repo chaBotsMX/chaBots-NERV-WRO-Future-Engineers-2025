@@ -1,0 +1,24 @@
+[1.364s] Invoking command in '/home/chabots/ros2_ws/src/vision_node': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/vision_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/vision_node build --build-base /home/chabots/ros2_ws/build/vision_node/build install --record /home/chabots/ros2_ws/build/vision_node/install.log --single-version-externally-managed install_data
+[1.830s] running egg_info
+[1.865s] writing ../../build/vision_node/vision_node.egg-info/PKG-INFO
+[1.866s] writing dependency_links to ../../build/vision_node/vision_node.egg-info/dependency_links.txt
+[1.866s] writing entry points to ../../build/vision_node/vision_node.egg-info/entry_points.txt
+[1.867s] writing requirements to ../../build/vision_node/vision_node.egg-info/requires.txt
+[1.867s] writing top-level names to ../../build/vision_node/vision_node.egg-info/top_level.txt
+[1.937s] reading manifest file '../../build/vision_node/vision_node.egg-info/SOURCES.txt'
+[1.937s] writing manifest file '../../build/vision_node/vision_node.egg-info/SOURCES.txt'
+[1.938s] running build
+[1.938s] running build_py
+[1.939s] copying vision_node/color_detection_node.py -> /home/chabots/ros2_ws/build/vision_node/build/lib/vision_node
+[1.939s] running install
+[1.951s] running install_lib
+[1.986s] copying /home/chabots/ros2_ws/build/vision_node/build/lib/vision_node/color_detection_node.py -> /home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages/vision_node
+[1.986s] byte-compiling /home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages/vision_node/color_detection_node.py to color_detection_node.cpython-312.pyc
+[1.992s] running install_data
+[1.992s] running install_egg_info
+[2.030s] removing '/home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages/vision_node-0.0.0-py3.12.egg-info' (and everything under it)
+[2.031s] Copying ../../build/vision_node/vision_node.egg-info to /home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages/vision_node-0.0.0-py3.12.egg-info
+[2.032s] running install_scripts
+[2.270s] Installing color_detection_node script to /home/chabots/ros2_ws/install/vision_node/lib/vision_node
+[2.270s] writing list of installed files to '/home/chabots/ros2_ws/build/vision_node/install.log'
+[2.431s] Invoked command in '/home/chabots/ros2_ws/src/vision_node' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/vision_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/vision_node build --build-base /home/chabots/ros2_ws/build/vision_node/build install --record /home/chabots/ros2_ws/build/vision_node/install.log --single-version-externally-managed install_data

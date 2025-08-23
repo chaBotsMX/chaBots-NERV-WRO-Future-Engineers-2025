@@ -1,0 +1,14 @@
+[0.018s] Invoking command in '/home/chabots/ros2_ws/build/teensy_communication': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/build/teensy_communication -- -j4 -l4
+[0.143s] [ 50%] [32mBuilding CXX object CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o[0m
+[3.861s] In file included from [01m[K/opt/ros/kilted/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+[3.861s]                  from [01m[K/opt/ros/kilted/include/rclcpp/rclcpp/copy_all_parameter_values.hpp:27[m[K,
+[3.861s]                  from [01m[K/opt/ros/kilted/include/rclcpp/rclcpp/rclcpp.hpp:171[m[K,
+[3.862s]                  from [01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:1[m[K:
+[3.862s] [01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:[m[K In member function ‘[01m[Kvoid TeensyCommNode::[01;32m[Kon_scan[m[K(sensor_msgs::msg::LaserScan_<std::allocator<void> >::SharedPtr)[m[K’:
+[3.862s] [01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:179:39:[m[K [01;31m[Kerror: [m[Kunable to find string literal operator ‘[01m[Koperator""ang[m[K’ with ‘[01m[Kconst char [14][m[K’, ‘[01m[Klong unsigned int[m[K’ arguments
+[3.862s]   179 |       RCLCPP_INFO(this->get_logger(), [01;31m[K" magnitud: %f"ang[m[K);
+[3.862s]       |                                       [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+[8.801s] gmake[2]: *** [CMakeFiles/teensy_comm_node.dir/build.make:76: CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o] Error 1
+[8.801s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/teensy_comm_node.dir/all] Error 2
+[8.801s] gmake: *** [Makefile:146: all] Error 2
+[8.805s] Invoked command in '/home/chabots/ros2_ws/build/teensy_communication' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/build/teensy_communication -- -j4 -l4

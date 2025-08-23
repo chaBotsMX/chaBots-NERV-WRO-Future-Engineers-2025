@@ -1,0 +1,39 @@
+[0mCMake Deprecation Warning at /opt/ros/kilted/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:87 (message):
+  ament_target_dependencies() is deprecated.  Use target_link_libraries()
+  with modern CMake targets instead.  Try replacing this call with:
+
+    target_link_libraries(teensy_comm_node PUBLIC
+      ${geometry_msgs_TARGETS}
+      ${sensor_msgs_TARGETS}
+      ${std_msgs_TARGETS}
+      ${visualization_msgs_TARGETS}
+      rclcpp::rclcpp
+      sensor_msgs::sensor_msgs_library
+    )
+
+Call Stack (most recent call first):
+  CMakeLists.txt:18 (ament_target_dependencies)
+
+[0m
+[0mCMake Deprecation Warning at /opt/ros/kilted/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:87 (message):
+  ament_target_dependencies() is deprecated.  Use target_link_libraries()
+  with modern CMake targets instead.  Try replacing this call with:
+
+    target_link_libraries(teensy_comm_node PUBLIC
+      ${nav_msgs_TARGETS}
+    )
+
+Call Stack (most recent call first):
+  CMakeLists.txt:19 (ament_target_dependencies)
+
+[0m
+[01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:[m[K In member function ‘[01m[Kvoid TeensyCommNode::[01;32m[Kon_scan[m[K(sensor_msgs::msg::LaserScan_<std::allocator<void> >::SharedPtr)[m[K’:
+[01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:238:11:[m[K [01;31m[Kerror: [m[Kredeclaration of ‘[01m[Kfloat angle_deg[m[K’
+  238 |     float [01;31m[Kangle_deg[m[K = std::numeric_limits<float>::quiet_NaN();
+      |           [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/chabots/ros2_ws/src/teensy_communication/src/teensy_comm_node.cpp:230:11:[m[K [01;36m[Knote: [m[K‘[01m[Kfloat angle_deg[m[K’ previously declared here
+  230 |     float [01;36m[Kangle_deg[m[K = std::numeric_limits<float>::quiet_NaN();
+      |           [01;36m[K^~~~~~~~~[m[K
+gmake[2]: *** [CMakeFiles/teensy_comm_node.dir/build.make:76: CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/teensy_comm_node.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

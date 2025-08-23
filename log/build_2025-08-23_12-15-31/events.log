@@ -1,0 +1,292 @@
+[0.000000] (-) TimerEvent: {}
+[0.000365] (-) JobUnselected: {'identifier': 'otos_reader'}
+[0.000411] (-) JobUnselected: {'identifier': 'rplidar_ros'}
+[0.000433] (-) JobUnselected: {'identifier': 'sparkfun_qwiic_adxl313'}
+[0.000452] (-) JobUnselected: {'identifier': 'sparkfun_qwiic_as6212'}
+[0.000470] (-) JobUnselected: {'identifier': 'sparkfun_qwiic_ccs811'}
+[0.000488] (-) JobUnselected: {'identifier': 'sparkfun_qwiic_dual_encoder_reader'}
+[0.000504] (-) JobUnselected: {'identifier': 'sparkfun_qwiic_eeprom'}
+[0.000521] (-) JobUnselected: {'identifier': 'sparkfun_qwiic_pir'}
+[0.000537] (-) JobUnselected: {'identifier': 'sparkfun_qwiic_proximity'}
+[0.000553] (-) JobUnselected: {'identifier': 'sparkfun_top_phat_button'}
+[0.000569] (-) JobUnselected: {'identifier': 'sparkfun_ublox_gps'}
+[0.000586] (-) JobUnselected: {'identifier': 'vision_node'}
+[0.000602] (-) JobUnselected: {'identifier': 'wall_follower'}
+[0.000622] (teensy_communication) JobQueued: {'identifier': 'teensy_communication', 'dependencies': OrderedDict()}
+[0.000957] (teensy_communication) JobStarted: {'identifier': 'teensy_communication'}
+[0.016544] (teensy_communication) JobProgress: {'identifier': 'teensy_communication', 'progress': 'cmake'}
+[0.022681] (teensy_communication) JobProgress: {'identifier': 'teensy_communication', 'progress': 'build'}
+[0.023855] (teensy_communication) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/chabots/ros2_ws/build/teensy_communication', '--', '-j4', '-l4'], 'cwd': '/home/chabots/ros2_ws/build/teensy_communication', 'env': OrderedDict({'LESSOPEN': '| /usr/bin/lesspipe %s', 'LANGUAGE': 'en', 'USER': 'chabots', 'XDG_SEAT': 'seat0', 'XDG_SESSION_TYPE': 'x11', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/kilted/opt/zenoh_cpp_vendor/lib:/opt/ros/kilted/opt/gz_math_vendor/lib:/opt/ros/kilted/opt/gz_utils_vendor/lib:/opt/ros/kilted/opt/rviz_ogre_vendor/lib:/opt/ros/kilted/lib/aarch64-linux-gnu:/opt/ros/kilted/opt/gz_cmake_vendor/lib:/opt/ros/kilted/lib', 'HOME': '/home/chabots', 'OLDPWD': '/home/chabots/ros2_ws/src', 'DESKTOP_SESSION': 'xubuntu', 'ROS_PYTHON_VERSION': '3', 'GTK_MODULES': 'gail:atk-bridge', 'XDG_SEAT_PATH': '/org/freedesktop/DisplayManager/Seat0', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1002/bus', 'COLORTERM': 'truecolor', 'GNOME_KEYRING_CONTROL': '/run/user/1002/keyring', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'QT_QPA_PLATFORMTHEME': 'gtk2', 'COLCON_PREFIX_PATH': '/home/chabots/ros2_ws/install', 'ROS_DISTRO': 'kilted', 'GTK_IM_MODULE': 'ibus', 'LOGNAME': 'chabots', 'WINDOWID': '83886083', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'CLUTTER_BACKEND': 'x11', 'TERM': 'xterm-256color', 'GTK_OVERLAY_SCROLLING': '0', 'XDG_SESSION_ID': 'c2', 'PATH': '/opt/ros/kilted/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'SESSION_MANAGER': 'local/chabots-desktop:@/tmp/.ICE-unix/1719,unix/chabots-desktop:/tmp/.ICE-unix/1719', 'GDM_LANG': 'en', 'XDG_SESSION_PATH': '/org/freedesktop/DisplayManager/Session0', 'XDG_MENU_PREFIX': 'xfce-', 'XDG_RUNTIME_DIR': '/run/user/1002', 'DISPLAY': ':0.0', 'LANG': 'C.UTF-8', 'XDG_CURRENT_DESKTOP': 'XFCE', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'xubuntu', 'XAUTHORITY': '/home/chabots/.Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'SSH_AUTH_SOCK': '/run/user/1002/keyring/ssh', 'ROS_DOMAIN_ID': '0', 'XDG_GREETER_DATA_DIR': '/var/lib/lightdm-data/chabots', 'AMENT_PREFIX_PATH': '/home/chabots/ros2_ws/install/teensy_communication:/home/chabots/ros2_ws/install/rplidar_ros:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'xubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'GPG_AGENT_INFO': '/run/user/1002/gnupg/S.gpg-agent:0:1', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'XDG_VTNR': '7', 'PWD': '/home/chabots/ros2_ws/build/teensy_communication', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-xubuntu:/etc/xdg', 'CLUTTER_IM_MODULE': 'ibus', 'XDG_DATA_DIRS': '/usr/share/xfce4:/usr/share/xubuntu:/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop:/usr/share', 'PYTHONPATH': '/home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages:/opt/ros/kilted/lib/python3.12/site-packages', 'COLCON': '1', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/home/chabots/ros2_ws/install/teensy_communication:/home/chabots/ros2_ws/install/rplidar_ros:/opt/ros/kilted/opt/gz_math_vendor:/opt/ros/kilted/opt/gz_utils_vendor:/opt/ros/kilted/opt/gz_cmake_vendor:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted'}), 'shell': False}
+[0.099704] (-) TimerEvent: {}
+[0.165742] (teensy_communication) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o\x1b[0m\n'}
+[0.199815] (-) TimerEvent: {}
+[0.300181] (-) TimerEvent: {}
+[0.400532] (-) TimerEvent: {}
+[0.500912] (-) TimerEvent: {}
+[0.601294] (-) TimerEvent: {}
+[0.701769] (-) TimerEvent: {}
+[0.802129] (-) TimerEvent: {}
+[0.902487] (-) TimerEvent: {}
+[1.002856] (-) TimerEvent: {}
+[1.103207] (-) TimerEvent: {}
+[1.203568] (-) TimerEvent: {}
+[1.303967] (-) TimerEvent: {}
+[1.404314] (-) TimerEvent: {}
+[1.504684] (-) TimerEvent: {}
+[1.605024] (-) TimerEvent: {}
+[1.705369] (-) TimerEvent: {}
+[1.805725] (-) TimerEvent: {}
+[1.906070] (-) TimerEvent: {}
+[2.006427] (-) TimerEvent: {}
+[2.106765] (-) TimerEvent: {}
+[2.207114] (-) TimerEvent: {}
+[2.307467] (-) TimerEvent: {}
+[2.407848] (-) TimerEvent: {}
+[2.508200] (-) TimerEvent: {}
+[2.608584] (-) TimerEvent: {}
+[2.708963] (-) TimerEvent: {}
+[2.809299] (-) TimerEvent: {}
+[2.909645] (-) TimerEvent: {}
+[3.010001] (-) TimerEvent: {}
+[3.110368] (-) TimerEvent: {}
+[3.210729] (-) TimerEvent: {}
+[3.311071] (-) TimerEvent: {}
+[3.411432] (-) TimerEvent: {}
+[3.511864] (-) TimerEvent: {}
+[3.612234] (-) TimerEvent: {}
+[3.712596] (-) TimerEvent: {}
+[3.812942] (-) TimerEvent: {}
+[3.913280] (-) TimerEvent: {}
+[4.013615] (-) TimerEvent: {}
+[4.113976] (-) TimerEvent: {}
+[4.214315] (-) TimerEvent: {}
+[4.314650] (-) TimerEvent: {}
+[4.415012] (-) TimerEvent: {}
+[4.515365] (-) TimerEvent: {}
+[4.615720] (-) TimerEvent: {}
+[4.716080] (-) TimerEvent: {}
+[4.816418] (-) TimerEvent: {}
+[4.916776] (-) TimerEvent: {}
+[5.017130] (-) TimerEvent: {}
+[5.117479] (-) TimerEvent: {}
+[5.217835] (-) TimerEvent: {}
+[5.318160] (-) TimerEvent: {}
+[5.418496] (-) TimerEvent: {}
+[5.518871] (-) TimerEvent: {}
+[5.619215] (-) TimerEvent: {}
+[5.719541] (-) TimerEvent: {}
+[5.819933] (-) TimerEvent: {}
+[5.920281] (-) TimerEvent: {}
+[6.020639] (-) TimerEvent: {}
+[6.121013] (-) TimerEvent: {}
+[6.221355] (-) TimerEvent: {}
+[6.321720] (-) TimerEvent: {}
+[6.422059] (-) TimerEvent: {}
+[6.522407] (-) TimerEvent: {}
+[6.622762] (-) TimerEvent: {}
+[6.723097] (-) TimerEvent: {}
+[6.823431] (-) TimerEvent: {}
+[6.923770] (-) TimerEvent: {}
+[7.024113] (-) TimerEvent: {}
+[7.124461] (-) TimerEvent: {}
+[7.224816] (-) TimerEvent: {}
+[7.325177] (-) TimerEvent: {}
+[7.425538] (-) TimerEvent: {}
+[7.525922] (-) TimerEvent: {}
+[7.626266] (-) TimerEvent: {}
+[7.726619] (-) TimerEvent: {}
+[7.826973] (-) TimerEvent: {}
+[7.927322] (-) TimerEvent: {}
+[8.027673] (-) TimerEvent: {}
+[8.128009] (-) TimerEvent: {}
+[8.228337] (-) TimerEvent: {}
+[8.328700] (-) TimerEvent: {}
+[8.429048] (-) TimerEvent: {}
+[8.529390] (-) TimerEvent: {}
+[8.629724] (-) TimerEvent: {}
+[8.730055] (-) TimerEvent: {}
+[8.830382] (-) TimerEvent: {}
+[8.930751] (-) TimerEvent: {}
+[9.031129] (-) TimerEvent: {}
+[9.131496] (-) TimerEvent: {}
+[9.231923] (-) TimerEvent: {}
+[9.332303] (-) TimerEvent: {}
+[9.432703] (-) TimerEvent: {}
+[9.533089] (-) TimerEvent: {}
+[9.633426] (-) TimerEvent: {}
+[9.733765] (-) TimerEvent: {}
+[9.834095] (-) TimerEvent: {}
+[9.934438] (-) TimerEvent: {}
+[10.034785] (-) TimerEvent: {}
+[10.135117] (-) TimerEvent: {}
+[10.235465] (-) TimerEvent: {}
+[10.335832] (-) TimerEvent: {}
+[10.436183] (-) TimerEvent: {}
+[10.536535] (-) TimerEvent: {}
+[10.636924] (-) TimerEvent: {}
+[10.737290] (-) TimerEvent: {}
+[10.837683] (-) TimerEvent: {}
+[10.938064] (-) TimerEvent: {}
+[11.038433] (-) TimerEvent: {}
+[11.138820] (-) TimerEvent: {}
+[11.239178] (-) TimerEvent: {}
+[11.339520] (-) TimerEvent: {}
+[11.439872] (-) TimerEvent: {}
+[11.540206] (-) TimerEvent: {}
+[11.640632] (-) TimerEvent: {}
+[11.741174] (-) TimerEvent: {}
+[11.841524] (-) TimerEvent: {}
+[11.941882] (-) TimerEvent: {}
+[12.042207] (-) TimerEvent: {}
+[12.142531] (-) TimerEvent: {}
+[12.242884] (-) TimerEvent: {}
+[12.343214] (-) TimerEvent: {}
+[12.443542] (-) TimerEvent: {}
+[12.543874] (-) TimerEvent: {}
+[12.644215] (-) TimerEvent: {}
+[12.744542] (-) TimerEvent: {}
+[12.844874] (-) TimerEvent: {}
+[12.945201] (-) TimerEvent: {}
+[13.045523] (-) TimerEvent: {}
+[13.145861] (-) TimerEvent: {}
+[13.246181] (-) TimerEvent: {}
+[13.346501] (-) TimerEvent: {}
+[13.446840] (-) TimerEvent: {}
+[13.547161] (-) TimerEvent: {}
+[13.647501] (-) TimerEvent: {}
+[13.747846] (-) TimerEvent: {}
+[13.848168] (-) TimerEvent: {}
+[13.948487] (-) TimerEvent: {}
+[14.048825] (-) TimerEvent: {}
+[14.149153] (-) TimerEvent: {}
+[14.249480] (-) TimerEvent: {}
+[14.349840] (-) TimerEvent: {}
+[14.451337] (-) TimerEvent: {}
+[14.551848] (-) TimerEvent: {}
+[14.652270] (-) TimerEvent: {}
+[14.752901] (-) TimerEvent: {}
+[14.853232] (-) TimerEvent: {}
+[14.953570] (-) TimerEvent: {}
+[15.053977] (-) TimerEvent: {}
+[15.154576] (-) TimerEvent: {}
+[15.255292] (-) TimerEvent: {}
+[15.355823] (-) TimerEvent: {}
+[15.456453] (-) TimerEvent: {}
+[15.556933] (-) TimerEvent: {}
+[15.657277] (-) TimerEvent: {}
+[15.757606] (-) TimerEvent: {}
+[15.857969] (-) TimerEvent: {}
+[15.958295] (-) TimerEvent: {}
+[16.058626] (-) TimerEvent: {}
+[16.158964] (-) TimerEvent: {}
+[16.259904] (-) TimerEvent: {}
+[16.361810] (-) TimerEvent: {}
+[16.462311] (-) TimerEvent: {}
+[16.562683] (-) TimerEvent: {}
+[16.663163] (-) TimerEvent: {}
+[16.763638] (-) TimerEvent: {}
+[16.864151] (-) TimerEvent: {}
+[16.964718] (-) TimerEvent: {}
+[17.065305] (-) TimerEvent: {}
+[17.165891] (-) TimerEvent: {}
+[17.266515] (-) TimerEvent: {}
+[17.367171] (-) TimerEvent: {}
+[17.467722] (-) TimerEvent: {}
+[17.568190] (-) TimerEvent: {}
+[17.668688] (-) TimerEvent: {}
+[17.769092] (-) TimerEvent: {}
+[17.869419] (-) TimerEvent: {}
+[17.969761] (-) TimerEvent: {}
+[18.070089] (-) TimerEvent: {}
+[18.170424] (-) TimerEvent: {}
+[18.270753] (-) TimerEvent: {}
+[18.371088] (-) TimerEvent: {}
+[18.471414] (-) TimerEvent: {}
+[18.571740] (-) TimerEvent: {}
+[18.672056] (-) TimerEvent: {}
+[18.772384] (-) TimerEvent: {}
+[18.872724] (-) TimerEvent: {}
+[18.973064] (-) TimerEvent: {}
+[19.073383] (-) TimerEvent: {}
+[19.173726] (-) TimerEvent: {}
+[19.274077] (-) TimerEvent: {}
+[19.374507] (-) TimerEvent: {}
+[19.474930] (-) TimerEvent: {}
+[19.575302] (-) TimerEvent: {}
+[19.675690] (-) TimerEvent: {}
+[19.776033] (-) TimerEvent: {}
+[19.876412] (-) TimerEvent: {}
+[19.976805] (-) TimerEvent: {}
+[20.091504] (-) TimerEvent: {}
+[20.191924] (-) TimerEvent: {}
+[20.292315] (-) TimerEvent: {}
+[20.392732] (-) TimerEvent: {}
+[20.493116] (-) TimerEvent: {}
+[20.593481] (-) TimerEvent: {}
+[20.693889] (-) TimerEvent: {}
+[20.794272] (-) TimerEvent: {}
+[20.894654] (-) TimerEvent: {}
+[20.995089] (-) TimerEvent: {}
+[21.095479] (-) TimerEvent: {}
+[21.195867] (-) TimerEvent: {}
+[21.296311] (-) TimerEvent: {}
+[21.397124] (-) TimerEvent: {}
+[21.497999] (-) TimerEvent: {}
+[21.598554] (-) TimerEvent: {}
+[21.699202] (-) TimerEvent: {}
+[21.799816] (-) TimerEvent: {}
+[21.900576] (-) TimerEvent: {}
+[22.001152] (-) TimerEvent: {}
+[22.101691] (-) TimerEvent: {}
+[22.202278] (-) TimerEvent: {}
+[22.302652] (-) TimerEvent: {}
+[22.349964] (teensy_communication) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable teensy_comm_node\x1b[0m\n'}
+[22.402881] (-) TimerEvent: {}
+[22.503602] (-) TimerEvent: {}
+[22.604073] (-) TimerEvent: {}
+[22.704651] (-) TimerEvent: {}
+[22.805558] (-) TimerEvent: {}
+[22.906450] (-) TimerEvent: {}
+[23.007276] (-) TimerEvent: {}
+[23.108051] (-) TimerEvent: {}
+[23.208909] (-) TimerEvent: {}
+[23.309812] (-) TimerEvent: {}
+[23.410568] (-) TimerEvent: {}
+[23.511064] (-) TimerEvent: {}
+[23.611468] (-) TimerEvent: {}
+[23.712039] (-) TimerEvent: {}
+[23.812531] (-) TimerEvent: {}
+[23.912868] (-) TimerEvent: {}
+[24.013230] (-) TimerEvent: {}
+[24.021939] (teensy_communication) StdoutLine: {'line': b'[100%] Built target teensy_comm_node\n'}
+[24.046764] (teensy_communication) CommandEnded: {'returncode': 0}
+[24.048829] (teensy_communication) JobProgress: {'identifier': 'teensy_communication', 'progress': 'install'}
+[24.066204] (teensy_communication) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/chabots/ros2_ws/build/teensy_communication'], 'cwd': '/home/chabots/ros2_ws/build/teensy_communication', 'env': OrderedDict({'LESSOPEN': '| /usr/bin/lesspipe %s', 'LANGUAGE': 'en', 'USER': 'chabots', 'XDG_SEAT': 'seat0', 'XDG_SESSION_TYPE': 'x11', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/kilted/opt/zenoh_cpp_vendor/lib:/opt/ros/kilted/opt/gz_math_vendor/lib:/opt/ros/kilted/opt/gz_utils_vendor/lib:/opt/ros/kilted/opt/rviz_ogre_vendor/lib:/opt/ros/kilted/lib/aarch64-linux-gnu:/opt/ros/kilted/opt/gz_cmake_vendor/lib:/opt/ros/kilted/lib', 'HOME': '/home/chabots', 'OLDPWD': '/home/chabots/ros2_ws/src', 'DESKTOP_SESSION': 'xubuntu', 'ROS_PYTHON_VERSION': '3', 'GTK_MODULES': 'gail:atk-bridge', 'XDG_SEAT_PATH': '/org/freedesktop/DisplayManager/Seat0', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1002/bus', 'COLORTERM': 'truecolor', 'GNOME_KEYRING_CONTROL': '/run/user/1002/keyring', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'QT_QPA_PLATFORMTHEME': 'gtk2', 'COLCON_PREFIX_PATH': '/home/chabots/ros2_ws/install', 'ROS_DISTRO': 'kilted', 'GTK_IM_MODULE': 'ibus', 'LOGNAME': 'chabots', 'WINDOWID': '83886083', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'CLUTTER_BACKEND': 'x11', 'TERM': 'xterm-256color', 'GTK_OVERLAY_SCROLLING': '0', 'XDG_SESSION_ID': 'c2', 'PATH': '/opt/ros/kilted/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'SESSION_MANAGER': 'local/chabots-desktop:@/tmp/.ICE-unix/1719,unix/chabots-desktop:/tmp/.ICE-unix/1719', 'GDM_LANG': 'en', 'XDG_SESSION_PATH': '/org/freedesktop/DisplayManager/Session0', 'XDG_MENU_PREFIX': 'xfce-', 'XDG_RUNTIME_DIR': '/run/user/1002', 'DISPLAY': ':0.0', 'LANG': 'C.UTF-8', 'XDG_CURRENT_DESKTOP': 'XFCE', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'xubuntu', 'XAUTHORITY': '/home/chabots/.Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'SSH_AUTH_SOCK': '/run/user/1002/keyring/ssh', 'ROS_DOMAIN_ID': '0', 'XDG_GREETER_DATA_DIR': '/var/lib/lightdm-data/chabots', 'AMENT_PREFIX_PATH': '/home/chabots/ros2_ws/install/teensy_communication:/home/chabots/ros2_ws/install/rplidar_ros:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'xubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'GPG_AGENT_INFO': '/run/user/1002/gnupg/S.gpg-agent:0:1', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'XDG_VTNR': '7', 'PWD': '/home/chabots/ros2_ws/build/teensy_communication', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-xubuntu:/etc/xdg', 'CLUTTER_IM_MODULE': 'ibus', 'XDG_DATA_DIRS': '/usr/share/xfce4:/usr/share/xubuntu:/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop:/usr/share', 'PYTHONPATH': '/home/chabots/ros2_ws/install/otos_reader/lib/python3.12/site-packages:/opt/ros/kilted/lib/python3.12/site-packages', 'COLCON': '1', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/home/chabots/ros2_ws/install/teensy_communication:/home/chabots/ros2_ws/install/rplidar_ros:/opt/ros/kilted/opt/gz_math_vendor:/opt/ros/kilted/opt/gz_utils_vendor:/opt/ros/kilted/opt/gz_cmake_vendor:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted'}), 'shell': False}
+[24.082436] (teensy_communication) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[24.084511] (teensy_communication) StdoutLine: {'line': b'-- Installing: /home/chabots/ros2_ws/install/teensy_communication/lib/teensy_communication/teensy_comm_node\n'}
+[24.104940] (teensy_communication) StdoutLine: {'line': b'-- Set non-toolchain portion of runtime path of "/home/chabots/ros2_ws/install/teensy_communication/lib/teensy_communication/teensy_comm_node" to ""\n'}
+[24.105212] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//launch\n'}
+[24.105674] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//launch/robot.launch.py\n'}
+[24.105799] (teensy_communication) StdoutLine: {'line': b'-- Installing: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//launch/teensy_communication.launch.py\n'}
+[24.106168] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//urdf\n'}
+[24.106412] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//urdf/robot.urdf\n'}
+[24.106530] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//urdf/robot.urdf.xacro\n'}
+[24.106610] (teensy_communication) StdoutLine: {'line': b'-- Installing: /home/chabots/ros2_ws/install/teensy_communication/share/ament_index/resource_index/package_run_dependencies/teensy_communication\n'}
+[24.107249] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/ament_index/resource_index/parent_prefix_path/teensy_communication\n'}
+[24.107349] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/environment/ament_prefix_path.sh\n'}
+[24.107442] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/environment/ament_prefix_path.dsv\n'}
+[24.107558] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/environment/path.sh\n'}
+[24.107641] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/environment/path.dsv\n'}
+[24.107777] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/local_setup.bash\n'}
+[24.107857] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/local_setup.sh\n'}
+[24.107931] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/local_setup.zsh\n'}
+[24.108002] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/local_setup.dsv\n'}
+[24.108073] (teensy_communication) StdoutLine: {'line': b'-- Installing: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/package.dsv\n'}
+[24.108399] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/ament_index/resource_index/packages/teensy_communication\n'}
+[24.108645] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/cmake/teensy_communicationConfig.cmake\n'}
+[24.108758] (teensy_communication) StdoutLine: {'line': b'-- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/cmake/teensy_communicationConfig-version.cmake\n'}
+[24.108867] (teensy_communication) StdoutLine: {'line': b'-- Installing: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/package.xml\n'}
+[24.111711] (teensy_communication) CommandEnded: {'returncode': 0}
+[24.113337] (-) TimerEvent: {}
+[24.138818] (teensy_communication) JobEnded: {'identifier': 'teensy_communication', 'rc': 0}
+[24.139961] (-) EventReactorShutdown: {}

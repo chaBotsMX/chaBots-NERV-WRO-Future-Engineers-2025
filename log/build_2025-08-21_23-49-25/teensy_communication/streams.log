@@ -1,0 +1,63 @@
+[0.019s] Invoking command in '/home/chabots/ros2_ws/build/teensy_communication': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/build/teensy_communication -- -j4 -l4
+[0.068s] -- Found ament_cmake: 2.7.3 (/opt/ros/kilted/share/ament_cmake/cmake)
+[0.425s] -- Found rclcpp: 29.5.2 (/opt/ros/kilted/share/rclcpp/cmake)
+[0.460s] -- Found rosidl_generator_c: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_c/cmake)
+[0.473s] -- Found rosidl_generator_cpp: 4.9.5 (/opt/ros/kilted/share/rosidl_generator_cpp/cmake)
+[0.489s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.509s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.589s] -- Found rmw_implementation_cmake: 7.8.2 (/opt/ros/kilted/share/rmw_implementation_cmake/cmake)
+[0.591s] -- Found rmw_fastrtps_cpp: 9.3.2 (/opt/ros/kilted/share/rmw_fastrtps_cpp/cmake)
+[0.649s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.731s] -- Found std_msgs: 5.5.0 (/opt/ros/kilted/share/std_msgs/cmake)
+[0.747s] -- Found sensor_msgs: 5.5.0 (/opt/ros/kilted/share/sensor_msgs/cmake)
+[0.797s] -- Found visualization_msgs: 5.5.0 (/opt/ros/kilted/share/visualization_msgs/cmake)
+[0.833s] [0mCMake Deprecation Warning at /opt/ros/kilted/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:87 (message):
+[0.833s]   ament_target_dependencies() is deprecated.  Use target_link_libraries()
+[0.834s]   with modern CMake targets instead.  Try replacing this call with:
+[0.834s] 
+[0.834s]     target_link_libraries(teensy_comm_node PUBLIC
+[0.834s]       ${geometry_msgs_TARGETS}
+[0.834s]       ${sensor_msgs_TARGETS}
+[0.834s]       ${std_msgs_TARGETS}
+[0.834s]       ${visualization_msgs_TARGETS}
+[0.834s]       rclcpp::rclcpp
+[0.834s]       sensor_msgs::sensor_msgs_library
+[0.834s]     )
+[0.834s] 
+[0.834s] Call Stack (most recent call first):
+[0.835s]   CMakeLists.txt:17 (ament_target_dependencies)
+[0.835s] 
+[0.835s] [0m
+[0.992s] -- Configuring done (0.9s)
+[1.016s] -- Generating done (0.0s)
+[1.022s] -- Build files have been written to: /home/chabots/ros2_ws/build/teensy_communication
+[1.105s] [ 50%] [32mBuilding CXX object CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.o[0m
+[19.066s] [100%] [32m[1mLinking CXX executable teensy_comm_node[0m
+[20.400s] [100%] Built target teensy_comm_node
+[20.423s] Invoked command in '/home/chabots/ros2_ws/build/teensy_communication' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/chabots/ros2_ws/build/teensy_communication -- -j4 -l4
+[20.440s] Invoking command in '/home/chabots/ros2_ws/build/teensy_communication': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/chabots/ros2_ws/build/teensy_communication
+[20.454s] -- Install configuration: ""
+[20.454s] -- Installing: /home/chabots/ros2_ws/install/teensy_communication/lib/teensy_communication/teensy_comm_node
+[20.476s] -- Set non-toolchain portion of runtime path of "/home/chabots/ros2_ws/install/teensy_communication/lib/teensy_communication/teensy_comm_node" to ""
+[20.477s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//launch
+[20.477s] -- Installing: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//launch/robot.launch.py
+[20.477s] -- Installing: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//launch/teensy_communication.launch.py
+[20.477s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//urdf
+[20.477s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//urdf/robot.urdf
+[20.477s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication//urdf/robot.urdf.xacro
+[20.477s] -- Installing: /home/chabots/ros2_ws/install/teensy_communication/share/ament_index/resource_index/package_run_dependencies/teensy_communication
+[20.478s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/ament_index/resource_index/parent_prefix_path/teensy_communication
+[20.478s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/environment/ament_prefix_path.sh
+[20.478s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/environment/ament_prefix_path.dsv
+[20.478s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/environment/path.sh
+[20.478s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/environment/path.dsv
+[20.479s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/local_setup.bash
+[20.479s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/local_setup.sh
+[20.479s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/local_setup.zsh
+[20.479s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/local_setup.dsv
+[20.479s] -- Installing: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/package.dsv
+[20.479s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/ament_index/resource_index/packages/teensy_communication
+[20.479s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/cmake/teensy_communicationConfig.cmake
+[20.480s] -- Up-to-date: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/cmake/teensy_communicationConfig-version.cmake
+[20.480s] -- Installing: /home/chabots/ros2_ws/install/teensy_communication/share/teensy_communication/package.xml
+[20.483s] Invoked command in '/home/chabots/ros2_ws/build/teensy_communication' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chabots/ros2_ws/install/otos_reader:/opt/ros/kilted DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/chabots/ros2_ws/build/teensy_communication
