@@ -27,29 +27,43 @@ This repository contains the documentation for **Chabots** participation in the 
 
 ## The Team <a name="the-team"></a>
 
-### Roy Iván Barrón Martínez
-**Age:** 19  
-**Location:** San Luis Potosí, México  
-**Role:** Team Lead, Electronics & Software Design  
+### Hiram Jalil Castillo Gutierrez 
+**Age:** 22
+**Location:** San Luis Potosí, México
+**Role:** Software Development
 
-I am  a self-taught robotics enthusiast with experience in embedded systems, software, and mechanical integration. my team ChaBots Ocelot win Mexico Robocup soccer Open second place  and achieved multiple national awards in programming and robotics.
+[Short bio of the teammate – use placeholder text if teammate is unknown]
+
+
+### Leonardo Villegas Lopez
+**Age:** 20
+**Location:** San Luis Potosí, México
+**Role:** Mechanical Design
+
+[Short bio of the teammate – use placeholder text if teammate is unknown]
+
+
+### Roy Iván Barrón Martínez
+**Age:** 20
+**Location:** San Luis Potosí, México
+**Role:** Captain, Electronics & Software Design  
+
+I am a self-taught robotics enthusiast with experience in embedded systems, software, and mechanical integration. my team ChaBots Ocelot won Mexico Robocup soccer Open second place and achieved multiple national awards in programming and robotics.
 
 > "I enjoy setting nearly impossible goals to push myself while learning. I believe that learning should always lead to building something real."
-
-
-### [Add Teammate Name]
-**Age:** [Age]  
-**Location:** [City, State]  
-**Role:** [Mechanical design / AI programming / Team logistics / etc.]  
 
 [Short bio of the teammate – use placeholder text if teammate is unknown]
 
 ---
 
-### Coach: [Coach Name]  
-**Role:** Mentor / Support / Coordination  
+### Coach: Diego Vitales Medellín
+**Age:** 22
+**Location:** San Luis Potosí, México
+**Role:** Mentor / Support / Coordination
 
-[Insert coach description or leave placeholder if undecided]
+I've been involved in robotics for 14+ years being a programmer for most of the projects I've taken part in. I've had may regional, national and international experiences. Now I'm working in sharing my knowledge with more people to push further their level and potential as well as helping them achieve their goals and find their passion.
+
+> "I like to face challenges and even more so when it's with more people. Learning and creating something is better when shared."
 
 ---
 
