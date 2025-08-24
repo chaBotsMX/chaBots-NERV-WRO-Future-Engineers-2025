@@ -204,7 +204,7 @@ private:
     float head = heading.load();
     int vel = 50;
     if (std::fabs(head) > 1020){
-      vel = 1
+      vel = 1;
     }
     //RCLCPP_INFO(this->get_logger(), "angulo mandado: %f", deg);
     auto frame = empaquetar(static_cast<uint16_t>(deg), vel, 10,this->get_logger());

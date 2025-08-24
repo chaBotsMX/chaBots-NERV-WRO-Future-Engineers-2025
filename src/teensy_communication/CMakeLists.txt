@@ -12,13 +12,16 @@ find_package(geometry_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 
 find_package(nav_msgs REQUIRED)
+
+# Ejecutable teensy_comm_node
 add_executable(teensy_comm_node src/teensy_comm_node.cpp)
+ament_target_dependencies(teensy_comm_node rclcpp std_msgs sensor_msgs geometry_msgs visualization_msgs nav_msgs)
 
-# Usa SOLO ament_target_dependencies para evitar el conflicto
-ament_target_dependencies(teensy_comm_node rclcpp std_msgs sensor_msgs geometry_msgs visualization_msgs)
-ament_target_dependencies(teensy_comm_node nav_msgs)
+# Ejecutable teensy_obs_node
+add_executable(teensy_obs_node src/teensy_obs_node.cpp)
+ament_target_dependencies(teensy_obs_node rclcpp std_msgs sensor_msgs nav_msgs)
 
-install(TARGETS teensy_comm_node
+install(TARGETS teensy_comm_node teensy_obs_node
   RUNTIME DESTINATION lib/${PROJECT_NAME})
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/launch")
