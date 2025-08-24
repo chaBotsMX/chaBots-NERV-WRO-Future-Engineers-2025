@@ -18,13 +18,14 @@ class ObjectTracker(Node):
         # Publicadores
         self.pub_distance = self.create_publisher(Float32, "/object/distance", 10)
         self.pub_angle = self.create_publisher(Float32, "/object/angle", 10)
-        self.pub_color = self.create_publisher(String, "/object/color", 10)
+        self.pub_color = self.create_publisher(Float32, "/object/color", 10)
+        self.pub_status = self.create_publisher(Float32, "/object/status", 10)
 
         self.bridge = CvBridge()
 
         # Parámetros HSV (ajusta según tu máscara)
-        self.lower_green = np.array([49, 63, 28])
-        self.upper_green = np.array([70, 157, 45])
+        self.lower_green = np.array([37, 143, 0])
+        self.upper_green = np.array([68, 255, 181])
 
         # Parámetros de la cámara (ajusta según tu setup real)
         self.FOCAL_LENGTH = 600   # píxeles
@@ -41,7 +42,7 @@ class ObjectTracker(Node):
         mask = cv2.inRange(hsv, self.lower_green, self.upper_green)
 
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+        find = float(0)
         for cnt in contours:
             area = cv2.contourArea(cnt)
             if area > 500:
@@ -58,7 +59,8 @@ class ObjectTracker(Node):
                 # Publicar
                 self.pub_distance.publish(Float32(data=float(distance)))
                 self.pub_angle.publish(Float32(data=float(angle)))
-                self.pub_color.publish(String(data="verde"))
+                self.pub_color.publish(Float32(data=float(0)))
+                find = float(1)
 
                 # Dibujar en la ventana
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -66,10 +68,12 @@ class ObjectTracker(Node):
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
                 cv2.putText(frame, f"Ang: {angle:.1f} deg", (x, y - 40),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+        
+        self.pub_status.publish(Float32(data=find))
 
         # Mostrar ventanas (para debug)
-        cv2.imshow("Frame", frame)
-        cv2.imshow("Mask", mask)
+        #cv2.imshow("Frame", frame)
+        #cv2.imshow("Mask", mask)
         cv2.waitKey(1)
 
 def main(args=None):

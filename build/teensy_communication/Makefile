@@ -210,6 +210,19 @@ teensy_comm_node/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/teensy_comm_node.dir/build.make CMakeFiles/teensy_comm_node.dir/build
 .PHONY : teensy_comm_node/fast
 
+#=============================================================================
+# Target rules for targets named teensy_obs_node
+
+# Build rule for target.
+teensy_obs_node: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 teensy_obs_node
+.PHONY : teensy_obs_node
+
+# fast build rule for target.
+teensy_obs_node/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/teensy_obs_node.dir/build.make CMakeFiles/teensy_obs_node.dir/build
+.PHONY : teensy_obs_node/fast
+
 src/teensy_comm_node.o: src/teensy_comm_node.cpp.o
 .PHONY : src/teensy_comm_node.o
 
@@ -234,6 +247,30 @@ src/teensy_comm_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/teensy_comm_node.dir/build.make CMakeFiles/teensy_comm_node.dir/src/teensy_comm_node.cpp.s
 .PHONY : src/teensy_comm_node.cpp.s
 
+src/teensy_obs_node.o: src/teensy_obs_node.cpp.o
+.PHONY : src/teensy_obs_node.o
+
+# target to build an object file
+src/teensy_obs_node.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/teensy_obs_node.dir/build.make CMakeFiles/teensy_obs_node.dir/src/teensy_obs_node.cpp.o
+.PHONY : src/teensy_obs_node.cpp.o
+
+src/teensy_obs_node.i: src/teensy_obs_node.cpp.i
+.PHONY : src/teensy_obs_node.i
+
+# target to preprocess a source file
+src/teensy_obs_node.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/teensy_obs_node.dir/build.make CMakeFiles/teensy_obs_node.dir/src/teensy_obs_node.cpp.i
+.PHONY : src/teensy_obs_node.cpp.i
+
+src/teensy_obs_node.s: src/teensy_obs_node.cpp.s
+.PHONY : src/teensy_obs_node.s
+
+# target to generate assembly for a file
+src/teensy_obs_node.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/teensy_obs_node.dir/build.make CMakeFiles/teensy_obs_node.dir/src/teensy_obs_node.cpp.s
+.PHONY : src/teensy_obs_node.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -250,9 +287,13 @@ help:
 	@echo "... teensy_communication_uninstall"
 	@echo "... uninstall"
 	@echo "... teensy_comm_node"
+	@echo "... teensy_obs_node"
 	@echo "... src/teensy_comm_node.o"
 	@echo "... src/teensy_comm_node.i"
 	@echo "... src/teensy_comm_node.s"
+	@echo "... src/teensy_obs_node.o"
+	@echo "... src/teensy_obs_node.i"
+	@echo "... src/teensy_obs_node.s"
 .PHONY : help
 
 

@@ -122,48 +122,7 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # ===== CÁMARA (libcamera PiSP) =====
-        DeclareLaunchArgument('camera',          default_value=cam_device),
-        DeclareLaunchArgument('format',          default_value=cam_format),
-        DeclareLaunchArgument('width',           default_value=cam_width),
-        DeclareLaunchArgument('height',          default_value=cam_height),
-        DeclareLaunchArgument('camera_info_url', default_value=cam_info_url),
 
-        Node(
-            package='camera_ros',
-            executable='camera_node',
-            name='camera',
-            output='screen',
-            parameters=[{
-            'format': 'RGB888',
-            'width': 640,
-            'height': 480,
-            'camera': '/base/axi/pcie@120000/rp1/i2c@80000/ov5647@36',
-            'controls': {
-                'FrameDurationLimits': [33333, 33333],  # 30 fps
-                'AeEnable': True,                       # deja que AE ajuste exposición/ganancia
-                'AwbEnable': True,       
-                'AwbMode': 'indoor', 
-                'HorizontalFlip': True,   # <-- añade
-                'VerticalFlip': True,                 # muy importante para color correcto
-                # No fijes ColourGains si AwbEnable=True
-                'Saturation': 1.10,                     # leve empuje al color (1.0?1.15 máx)
-                'Contrast': 1.05,                       # pequeño contraste
-                'Sharpness': 1.05                       # un poco de nitidez; evita valores altos
-            }
-            }],
-    
-            env={
-                **os.environ,
-                'HOME': '/home/chabots',
-                'ROS_HOME': '/home/chabots/.ros',
-                'ROS_LOG_DIR': '/home/chabots/.ros/log',
-                'LD_LIBRARY_PATH': f"/usr/local/lib/aarch64-linux-gnu:{os.environ.get('LD_LIBRARY_PATH','')}",
-                'LIBCAMERA_IPA_MODULE_PATH': '/usr/local/lib/aarch64-linux-gnu/libcamera/ipa',
-                'LIBCAMERA_LOG_LEVELS': '*:INFO',
-                # descomenta si quieres desactivar el backend de archivo
-                # 'RCL_LOGGING_IMPLEMENTATION': 'rcl_logging_noop',
-            }
-        ),
+
 
     ])

@@ -148,46 +148,51 @@ private:
 
   // ---- control periódico ----
 void on_timer() {
-  constexpr float EVADE_OFFSET_DEG = 30.0f;  // evadir por la derecha (CW)
-  constexpr float MAX_MAG = 90.0f;           // magnitud máxima que mapearemos alrededor de 90
+  constexpr float EVADE_OFFSET_DEG = 30.0f;   // evadir por la derecha (CW)
+  constexpr float MAX_MAG          = 90.0f;   // magnitud máx alrededor de 90
+  constexpr float LARGE_ERR_DEG    = 5.0f;   // umbral de "mucho error"
 
-  const bool has_object = (object_status_.load() == 1.0f);
-  const float d = dist_front_.load();
-  const bool blocked = (!has_object) && std::isfinite(d) && (d < 1.0f);
+  const bool  has_object = (object_status_.load() == 1.0f);
+  const float d          = dist_front_.load();
+  const bool  blocked    = (!has_object) && std::isfinite(d) && (d < 1.0f);
 
-  // flanco de subida del bloqueo para avanzar el ciclo (solo si NO hay objeto)
-  const bool last_blk = last_blocked_.load();
-  if (!has_object && blocked && !last_blk) {
-    int idx = cycle_idx_.load();
-    idx = (idx + 1) & 3;          // 0->1->2->3->0
-    cycle_idx_.store(idx);
-  }
-  last_blocked_.store(blocked);
-
-  // objetivo absoluto (0..360)
+  // --- objetivo absoluto (0..360) ---
   float target_abs_deg;
   if (has_object) {
-    // evadir por la derecha: objetivo = heading actual - offset (CW)
+    // Evadir por derecha: objetivo = heading - offset (CW)
     float h = heading360_.load();
     target_abs_deg = h - EVADE_OFFSET_DEG;
     if (target_abs_deg < 0.0f) target_abs_deg += 360.0f;
   } else {
     switch (cycle_idx_.load()) {
       case 0: target_abs_deg = 0.0f;   break;
-      case 1: target_abs_deg = 270.0f; break;
+      case 1: target_abs_deg = 90.0f;  break;
       case 2: target_abs_deg = 180.0f; break;
-      default: target_abs_deg = 90.0f; break;
+      default: target_abs_deg = 270.0f; break;
     }
   }
 
-  // delta firmado en [-180,180)
+  // --- delta firmado en [-180,180) respecto al heading actual ---
   const float heading = heading360_.load();
   float delta = target_abs_deg - heading;
   delta = std::fmod(delta + 180.0f, 360.0f);
   if (delta < 0.0f) delta += 360.0f;
   delta -= 180.0f;
 
-  // mapear delta a lo que espera la Teensy: 0..180 con centro en 90
+  // === SOLO UN IF ===
+  // Si NO hay objeto y el error al objetivo es grande, ignorar la distancia media.
+  const bool consider_block = (!has_object) && (std::fabs(delta) <= LARGE_ERR_DEG);
+
+  // flanco de subida del "bloqueo considerado" para avanzar ciclo
+  const bool last_blk = last_blocked_.load();
+  if (consider_block && blocked && !last_blk) {
+    int idx = cycle_idx_.load();
+    idx = (idx + 1) & 3;          // 0->1->2->3->0
+    cycle_idx_.store(idx);
+  }
+  last_blocked_.store(consider_block && blocked);
+
+  // --- mapear delta a 0..180 con centro en 90 (lo que espera la Teensy) ---
   float mag = std::fabs(delta);
   if (mag > MAX_MAG) mag = MAX_MAG;
   float input_deg = 90.0f + ((delta >= 0.0f) ? +mag : -mag);  // 90±|delta|
@@ -201,6 +206,7 @@ void on_timer() {
   auto frame = pack(send_deg, pwm, kp);
   (void)serial_.write_bytes(frame.data(), frame.size());
 }
+
 
   // ---- miembros ----
   SerialPort serial_;
