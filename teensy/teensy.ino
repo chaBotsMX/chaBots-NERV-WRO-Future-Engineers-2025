@@ -7,31 +7,26 @@ int gradosRaspberry = 0;
 int target = 90;
 int pos = 60;    
 Bounce boton = Bounce(2, 10);
-int pwm = 70;
-
-int calKp(float newK, int input){
+int pwm = 0;
+int lastError = 0;
+int calKp(float newD,float newK, int input){
   
-  int error = (input - 90) * newK;
-  Serial.println(error);
-  return error;
+  float error = ((input - 90) * newK) + ((input - 90) - lastError * newD);
+  lastError = input - 90;
+  //Serial.println(error);           
+  return int(error);
 }
 
 void updateServo(int k){
   myservo.write(constrain(target+k,50,120));
-  Serial.println(target+k);
+  //Serial.println(target+k);
   
 }
-
 int serial1Update() {
-  // Formato NUEVO:
-  // [0xAB][ANG_H][ANG_L][VEL_H][VEL_L][KP_H][KP_L][CHK]
-  // CHK = XOR de bytes 0..6 (incluye 0xAB)
-  enum State : uint8_t { WAIT_HDR, ANG_H, ANG_L, VEL_H, VEL_L, KP_H, KP_L, GET_CK };
-  static State st = WAIT_HDR;
-
+  enum State : uint8_t { WAIT_HDR, ANG_H, ANG_L, PWM_B, KP_B, GET_CK };
+  static State   st = WAIT_HDR;
   static uint8_t ang_hi = 0, ang_lo = 0;
-  static uint8_t vel_hi = 0, vel_lo = 0;
-  static uint8_t kp_hi  = 0, kp_lo  = 0;
+  static uint8_t pwm = 0, kp = 0;
   static uint8_t xor_acc = 0;
 
   while (Serial1.available()) {
@@ -43,52 +38,49 @@ int serial1Update() {
         break;
 
       case ANG_H:
-        ang_hi = b; xor_acc ^= b; st = ANG_L; break;
+        ang_hi = b; xor_acc ^= b; st = ANG_L; 
+        break;
 
       case ANG_L:
-        ang_lo = b; xor_acc ^= b; st = VEL_H; break;
+        ang_lo = b; xor_acc ^= b; st = PWM_B; 
+        break;
 
-      case VEL_H:
-        vel_hi = b; xor_acc ^= b; st = VEL_L; break;
+      case PWM_B:
+        pwm = b;    xor_acc ^= b; st = KP_B;  
+        break;
 
-      case VEL_L:
-        vel_lo = b; xor_acc ^= b; st = KP_H;  break;
-
-      case KP_H:
-        kp_hi = b;  xor_acc ^= b; st = KP_L;  break;
-
-      case KP_L:
-        kp_lo = b;  xor_acc ^= b; st = GET_CK; break;
+      case KP_B:
+        kp  = b;    xor_acc ^= b; st = GET_CK; 
+        break;
 
       case GET_CK: {
         const bool ok = (b == xor_acc);
-        st = WAIT_HDR;  // listo para el siguiente frame
+        // siempre resetea para el siguiente frame
+        st = WAIT_HDR;
 
         if (ok) {
-          // Ángulo en décimas (0..3600 esperado)
           uint16_t ang_tenths = (uint16_t(ang_hi) << 8) | ang_lo;
           if (ang_tenths > 3600) ang_tenths = 3600;
 
-          // (Opcional) si quieres guardar vel/kp, declara globales y descomenta:
-          // extern volatile uint16_t g_vel_mmps, g_kp_milli;
-           // pwm = (uint16_t(vel_hi) << 8) | vel_lo;
-          // g_kp_milli = (uint16_t(kp_hi)  << 8) | kp_lo;
+          // DEBUG opcional: imprime el frame decodificado
+          // Serial.print("ANG_0.1deg="); Serial.print(ang_tenths);
+          // Serial.print("  PWM="); Serial.print(pwm);
+          // Serial.print("  KP=");  Serial.println(kp);
 
-          // Devuelve grados enteros 0..360
-          int deg = (int)((ang_tenths + 5) / 10);
-          if (deg < 0)   deg = 0;
-          if (deg > 360) deg = 360;
+          int deg = ang_tenths;  // redondeo a grados
+      
+          // aquí puedes guardar pwm/kp globalmente si los necesitas
+          // g_pwm_byte = pwm; g_kp_byte = kp;
           return deg;
         } else {
-          // Re-sincroniza rápido si el byte de checksum parece un nuevo header
-          if (b == 0xAB) { xor_acc = b; st = ANG_H; }
+          // checksum inválido: simplemente espera al próximo header (WAIT_HDR)
+          // No autosync inmediato en medio del frame.
         }
       } break;
     }
   }
 
-  // No se completó un frame válido en esta llamada
-  return -1;
+  return -1; // no completó un frame válido
 }
 
 
@@ -98,7 +90,7 @@ void setup()
   pinMode(6,OUTPUT);
   pinMode(7,OUTPUT);
   Serial.begin(115200);
-  Serial1.begin(115200);  // UART1 a la Raspberry Pi
+  Serial1.begin(2000000);  // UART1 a la Raspberry Pi
   myservo.attach(8);  // attaches the servo on pin 20 
   while(!boton.update()){
   delay(100);
@@ -115,11 +107,14 @@ void setup()
  
 void loop() 
 {
+
   gradosRaspberry = serial1Update();
   analogWrite(6,pwm);
- // updateServo(calKp(gradosRaspberry));
+  //updateServo(calKp(gradosRaspberry));
  if(gradosRaspberry != -1){
- // Serial.println(gradosRaspberry);
- // Serial1.println(calKp(0.5,gradosRaspberry));
-  updateServo(calKp(3,gradosRaspberry));}
+  Serial.println(pwm);
+  //Serial.println(gradosRaspberry);
+  //serial1.println(calKp(0.5,gradosRaspberry));
+  updateServo(calKp(0.75,1,gradosRaspberry));
+  }
 } 
