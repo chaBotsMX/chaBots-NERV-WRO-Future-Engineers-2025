@@ -1,2 +1,0 @@
-[console_scripts]
-color_detection_node = vision_node.color_detection_node:main

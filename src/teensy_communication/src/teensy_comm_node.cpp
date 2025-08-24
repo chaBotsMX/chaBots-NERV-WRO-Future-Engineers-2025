@@ -155,7 +155,7 @@ private:
 
   // ---------- Empaquetado (6 bytes) ----------
   // [0xAB][ANG_H][ANG_L][PWM][KP][CHK]
-  static std::array<uint8_t, 6> empaquetar(uint16_t ang_tenths, uint8_t pwm_byte, uint8_t kp_byte) {
+  static std::array<uint8_t, 6> empaquetar(uint16_t ang_tenths, uint8_t pwm_byte, uint8_t kp_byte, rclcpp::Logger logger) {
     std::array<uint8_t, 6> f{};
     f[0] = 0xAB;
     f[1] = static_cast<uint8_t>((ang_tenths >> 8) & 0xFF);
@@ -163,6 +163,7 @@ private:
     f[3] = pwm_byte;
     f[4] = kp_byte;
     uint8_t chk = 0x00;
+  //  RCLCPP_INFO(logger, "angulo mandado: %ld", ang_tenths);
     for (size_t i = 0; i < 5; ++i) chk ^= f[i];
     f[5] = chk;
     return f;
@@ -196,93 +197,13 @@ private:
       angle_deg = angle * 180.0f / static_cast<float>(M_PI);
     }
     angle_deg_.store(angle_deg);
-            
-
-   
-/*
-    float angle_deg = std::numeric_limits<float>::quiet_NaN();
-
-    // (D) Publicar ángulo global para Foxglove
-    if (std::isfinite(angle_deg)) {
-      std_msgs::msg::Float32 msg_out;
-      msg_out.data = angle_deg;
-      angle_pub_->publish(msg_out);
-    }
-  }
-
-  void publish_markers(const sensor_msgs::msg::LaserScan& scan) {
-    using visualization_msgs::msg::Marker;
-    using visualization_msgs::msg::MarkerArray;
-    using geometry_msgs::msg::Point;
-
-    MarkerArray arr;
-
-    // Limpia todo lo anterior
-    {
-      Marker m;
-      m.header = scan.header;
-      m.action = Marker::DELETEALL;
-      arr.markers.push_back(m);
-    }
-
-    for (std::size_t i = 0; i < clusters_.size(); ++i) {
-      const auto& c = clusters_[i];
-
-      const int j      = c.initPoint;
-      const int endIdx = j + static_cast<int>(c.size) - 1;
-      if (j < 0 || endIdx < 0 || endIdx >= static_cast<int>(scan.ranges.size())) continue;
-
-      const float r0 = scan.ranges[j];
-      const float r1 = scan.ranges[endIdx];
-      if (!std::isfinite(r0) || !std::isfinite(r1)) continue;
-
-      const float a0 = scan.angle_min + scan.angle_increment * static_cast<float>(j);
-      const float a1 = scan.angle_min + scan.angle_increment * static_cast<float>(endIdx);
-
-      geometry_msgs::msg::Point p0, p1;
-      p0.x = r0 * std::cos(a0); p0.y = r0 * std::sin(a0); p0.z = 0.0;
-      p1.x = r1 * std::cos(a1); p1.y = r1 * std::sin(a1); p1.z = 0.0;
-
-      Marker line;
-      line.header = scan.header;            // mismo frame del LIDAR
-      line.ns     = "clusters";
-      line.id     = static_cast<int>(i);    // id único por clúster
-      line.type   = Marker::LINE_STRIP;
-      line.action = Marker::ADD;
-
-      line.scale.x = 0.03;                  // grosor en metros
-      line.color.r = 0.1f; line.color.g = 0.8f; line.color.b = 0.2f; line.color.a = 1.0f;
-      line.pose.orientation.w = 1.0;        // identidad
-      line.points.push_back(p0);
-      line.points.push_back(p1);
-
-      arr.markers.push_back(line);
-    }
-
-    cluster_pub_->publish(arr);*/
   }
 
   void on_timer() {
     float deg = angle_deg_.load();
-    uint16_t ang_tenths = 0;
-
-    if (std::isfinite(deg)) {
-      while (deg >= 360.0f) deg -= 360.0f;
-      while (deg < 0.0f)    deg += 360.0f;
-      ang_tenths = static_cast<uint16_t>(deg * 10.0f + 0.5f);
-    } else {
-      ang_tenths = 300; // 30.0° como valor por defecto
-    }
-
-    auto clamp_byte = [](float v)->uint8_t {
-      if (v < 0.f)   v = 0.f;
-      if (v > 255.f) v = 255.f;
-      return static_cast<uint8_t>(v + 0.5f);
-    };
-    const uint8_t send_pwm = clamp_byte(pwm_.load());
-    const uint8_t send_kp  = clamp_byte(kp_.load());
-
-    auto frame = empaquetar(ang_tenths, send_pwm, send_kp);
+    
+    //RCLCPP_INFO(this->get_logger(), "angulo mandado: %f", deg);
+    auto frame = empaquetar(static_cast<uint16_t>(deg), 10, 10,this->get_logger());
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
 

@@ -1,0 +1,17 @@
+[1.662s] Invoking command in '/home/chabots/ros2_ws/build/vision_node': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/vision_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/chabots/ros2_ws/build/vision_node/build --no-deps symlink_data
+[2.274s] running develop
+[2.633s] running egg_info
+[2.668s] writing vision_node.egg-info/PKG-INFO
+[2.668s] writing dependency_links to vision_node.egg-info/dependency_links.txt
+[2.671s] writing entry points to vision_node.egg-info/entry_points.txt
+[2.671s] writing requirements to vision_node.egg-info/requires.txt
+[2.671s] writing top-level names to vision_node.egg-info/top_level.txt
+[2.741s] reading manifest file 'vision_node.egg-info/SOURCES.txt'
+[2.743s] writing manifest file 'vision_node.egg-info/SOURCES.txt'
+[2.776s] running build_ext
+[2.776s] Creating /home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages/vision-node.egg-link (link to .)
+[2.777s] Installing color_detection_node script to /home/chabots/ros2_ws/install/vision_node/lib/vision_node
+[2.778s] 
+[2.778s] Installed /home/chabots/ros2_ws/build/vision_node
+[2.778s] running symlink_data
+[2.925s] Invoked command in '/home/chabots/ros2_ws/build/vision_node' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/vision_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/chabots/ros2_ws/build/vision_node/build --no-deps symlink_data

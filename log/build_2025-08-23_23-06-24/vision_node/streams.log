@@ -1,0 +1,24 @@
+[1.259s] Invoking command in '/home/chabots/ros2_ws/build/vision_node': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/vision_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/chabots/ros2_ws/build/vision_node/build --no-deps symlink_data
+[1.716s] running develop
+[1.996s] running egg_info
+[1.996s] creating vision_node.egg-info
+[2.022s] writing vision_node.egg-info/PKG-INFO
+[2.022s] writing dependency_links to vision_node.egg-info/dependency_links.txt
+[2.023s] writing entry points to vision_node.egg-info/entry_points.txt
+[2.023s] writing requirements to vision_node.egg-info/requires.txt
+[2.023s] writing top-level names to vision_node.egg-info/top_level.txt
+[2.023s] writing manifest file 'vision_node.egg-info/SOURCES.txt'
+[2.077s] reading manifest file 'vision_node.egg-info/SOURCES.txt'
+[2.078s] writing manifest file 'vision_node.egg-info/SOURCES.txt'
+[2.105s] running build_ext
+[2.106s] Creating /home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages/vision-node.egg-link (link to .)
+[2.106s] Installing color_detection_node script to /home/chabots/ros2_ws/install/vision_node/lib/vision_node
+[2.107s] 
+[2.107s] Installed /home/chabots/ros2_ws/build/vision_node
+[2.107s] running symlink_data
+[2.107s] creating /home/chabots/ros2_ws/install/vision_node/share/ament_index
+[2.108s] creating /home/chabots/ros2_ws/install/vision_node/share/ament_index/resource_index
+[2.108s] creating /home/chabots/ros2_ws/install/vision_node/share/ament_index/resource_index/packages
+[2.108s] symbolically linking /home/chabots/ros2_ws/build/vision_node/resource/vision_node -> /home/chabots/ros2_ws/install/vision_node/share/ament_index/resource_index/packages
+[2.108s] symbolically linking /home/chabots/ros2_ws/build/vision_node/package.xml -> /home/chabots/ros2_ws/install/vision_node/share/vision_node
+[2.206s] Invoked command in '/home/chabots/ros2_ws/build/vision_node' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/chabots/ros2_ws/build/vision_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/chabots/ros2_ws/install/vision_node/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/chabots/ros2_ws/build/vision_node/build --no-deps symlink_data
