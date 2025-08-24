@@ -201,9 +201,13 @@ private:
 
   void on_timer() {
     float deg = angle_deg_.load();
-    
+    float head = heading.load();
+    int vel = 50;
+    if (std::fabs(head) > 1020){
+      vel = 1
+    }
     //RCLCPP_INFO(this->get_logger(), "angulo mandado: %f", deg);
-    auto frame = empaquetar(static_cast<uint16_t>(deg), 10, 10,this->get_logger());
+    auto frame = empaquetar(static_cast<uint16_t>(deg), vel, 10,this->get_logger());
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
 
@@ -228,17 +232,44 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
   // Callback para la odometría
-  void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
-  // Extraer yaw (heading) del quaternion de la odometría
+void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
   const auto& q = msg->pose.pose.orientation;
-  // yaw = atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z))
+
+  // yaw en grados en [-180,180)
   float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
   float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
-  float yaw = std::atan2(siny_cosp, cosy_cosp); // radianes
-  float yaw_deg = yaw * 180.0f / static_cast<float>(M_PI);
-  RCLCPP_INFO(this->get_logger(), "Heading: %.2f", yaw_deg);
-  heading.store(yaw_deg);
+  float yaw_deg = std::atan2(siny_cosp, cosy_cosp) * 180.0f / static_cast<float>(M_PI);
+  if (yaw_deg >= 180.0f) yaw_deg -= 360.0f;
+  if (yaw_deg <  -180.0f) yaw_deg += 360.0f;
+
+  // Estado para unwrap y acumulado
+  static bool  init = false;
+  static float prev = 0.0f;   // último yaw en [-180,180)
+  static float acc  = 0.0f;   // rotación absoluta acumulada (0 ? ?)
+
+  if (!init) {
+    // Arranca en 0 y fija la referencia al primer yaw
+    prev = yaw_deg;
+    acc  = 0.0f;     // <- **empieza en 0**
+    init = true;
+  } else {
+    // Delta con corrección de cruce ±180°
+    float delta = yaw_deg - prev;
+    if (delta >  180.0f) delta -= 360.0f;
+    if (delta < -180.0f) delta += 360.0f;
+
+    acc += delta;    // nunca regresa a 0; sigue acumulando
+    prev = yaw_deg;
   }
+
+  heading.store(acc);
+  RCLCPP_INFO(this->get_logger(), "Heading abs: %.2f deg", acc);
+
+  // Si alguna vez quieres "versión envuelta" para mostrar: 
+  // float acc_0360 = std::fmod(acc, 360.0f); if (acc_0360 < 0) acc_0360 += 360.0f;
+}
+
+
 };
 
 int main(int argc, char** argv) {

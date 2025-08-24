@@ -135,7 +135,7 @@ def generate_launch_description():
             name='camera',
             output='screen',
             parameters=[{
-            'format': 'BGR888',
+            'format': 'RGB888',
             'width': 640,
             'height': 480,
             'camera': '/base/axi/pcie@120000/rp1/i2c@80000/ov5647@36',
@@ -143,7 +143,7 @@ def generate_launch_description():
                 'FrameDurationLimits': [33333, 33333],  # 30 fps
                 'AeEnable': True,                       # deja que AE ajuste exposición/ganancia
                 'AwbEnable': True,       
-                'AwbMode': 'fluorescent', 
+                'AwbMode': 'indoor', 
                 'HorizontalFlip': True,   # <-- añade
                 'VerticalFlip': True,                 # muy importante para color correcto
                 # No fijes ColourGains si AwbEnable=True
