@@ -26,12 +26,6 @@
 
 using namespace std::chrono_literals;
 
-struct ClusterProps {
-  float angle;     // rad: dirección (punto inicio -> punto fin)
-  float magnitud;  // distancia euclidiana inicio-fin
-  float size;      // número de muestras abarcadas (incluye gaps tolerados si los agregas)
-  int   initPoint; // índice de inicio en ranges
-};
 
 class SerialPort {
 public:
@@ -105,26 +99,8 @@ public:
 
     angle_pub_   = create_publisher<std_msgs::msg::Float32>("/send_angle", 10);
     cluster_pub_ = create_publisher<visualization_msgs::msg::MarkerArray>("/clusters_markers", 10);
-
-    control_sub_ = create_subscription<geometry_msgs::msg::Vector3>(
-      "/control_params", 10,
-      [this](const geometry_msgs::msg::Vector3::SharedPtr msg){
-        pwm_.store(static_cast<float>(msg->x));
-        kp_.store(static_cast<float>(msg->y));
-      }
-    );
-
-    scan_sub_ = create_subscription<sensor_msgs::msg::LaserScan>(
-      "/scan", rclcpp::SensorDataQoS(),
-      std::bind(&TeensyCommNode::on_scan, this, std::placeholders::_1)
-    );
-
-    // Suscripción al tópico de odometría
-    odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
-      "odom", 10,
-      std::bind(&TeensyCommNode::on_odom, this, std::placeholders::_1)
-    );
-
+    scan_sub_ = create_subscription<sensor_msgs::msg::LaserScan>("/scan", rclcpp::SensorDataQoS(),std::bind(&TeensyCommNode::on_scan, this, std::placeholders::_1));
+    odom_sub_ = create_subscription<nav_msgs::msg::Odometry>("odom", 10,std::bind(&TeensyCommNode::on_odom, this, std::placeholders::_1));
     timer_ = create_wall_timer(10ms, std::bind(&TeensyCommNode::on_timer, this));
   }
 
@@ -135,7 +111,6 @@ private:
   }
   static inline float pointAngX(float ang, float r){ return std::cos(ang) * r; }
   static inline float pointAngY(float ang, float r){ return std::sin(ang) * r; }
-
   static inline float getDiffAngle(float ang1, float r1, float ang2, float r2){
     const float dx = pointAngX(ang2, r2) - pointAngX(ang1, r1);
     const float dy = pointAngY(ang2, r2) - pointAngY(ang1, r1);
@@ -152,9 +127,66 @@ private:
     while (a < 0.0f)    a += two_pi;
     return a;
   }
+  
+  float getOffsetFromCenter(){
+      bool getleft = false;
+      bool getright = false;
+      int rightDis = 0;
+      int leftDis = 0;
+    for(int i = 0; i < msg->ranges.size(); ++i) {
+      const float ang = angle_min + angle_inc * static_cast<float>(i);
+      if (ang < 0.0f || ang > pi) continue; // 0..180°
+      const float r = msg->ranges[i];
+      if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
+      if (getleft == false) {
+        if (r < 0.78f)
+          rightDis = 
+        getleft = true;
+      }
+      if (getright == false) {
+        right = ang;
+        getright = true;
+      }
+  }
 
-  // ---------- Empaquetado (6 bytes) ----------
-  // [0xAB][ANG_H][ANG_L][PWM][KP][CHK]
+// -----------maquina de estados ----------
+
+  void state_machine() {
+    if (laps == 1) {
+      getMiddleAndEnd();
+    } else if (end == 1) {
+      getEnd();
+    } else if (safe == 1) {
+      goAngleAndCenter();
+    } else if (turn == 1) {
+      turnRobot();
+    } else if (dis == 0) {
+      searchHole();
+    }
+    
+  }
+  //funciones de la maquina de estados
+  void getMiddleAndEnd() {
+    // Implementar lógica para obtener el punto medio y el final
+  }
+
+  void getEnd() {
+    // Implementar lógica para obtener el final
+  }
+
+  void goAngleAndCenter() {
+
+  }
+
+  void turnRobot() {
+    // Implementar lógica para girar el robot
+  }
+
+  void searchHole() {
+    // Implementar lógica para buscar un agujero
+  }
+
+  //funcion para enviar por serial
   static std::array<uint8_t, 6> empaquetar(uint16_t ang_tenths, uint8_t pwm_byte, uint8_t kp_byte, rclcpp::Logger logger) {
     std::array<uint8_t, 6> f{};
     f[0] = 0xAB;
@@ -169,17 +201,18 @@ private:
     return f;
   }
 
-  // ---------- Procesamiento principal ----------
+
+  //callbacks que se ejecutan al leer un topic
   void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
     const float angle_min = msg->angle_min;
     const float angle_inc = msg->angle_increment;
     const float pi        = static_cast<float>(M_PI);
 
-    // (A) Ángulo global (vectorial) para publicar como Float32
+
     double sum_x = 0.0, sum_y = 0.0;
     size_t used = 0;
 
-    //vector con mas espacio absoluto
+
     for (size_t i = 0; i < msg->ranges.size(); ++i) {
       const float ang = angle_min + angle_inc * static_cast<float>(i);
       if (ang < 0.0f || ang > pi) continue; // 0..180°
@@ -200,6 +233,7 @@ private:
   }
 
   void on_timer() {
+
     float deg = angle_deg_.load();
     float head = heading.load();
     int vel = 50;
@@ -210,67 +244,45 @@ private:
     auto frame = empaquetar(static_cast<uint16_t>(deg), vel, 10,this->get_logger());
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
+  void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
+    const auto& q = msg->pose.pose.orientation;
+    float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
+    float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+    float yaw_deg = std::atan2(siny_cosp, cosy_cosp) * 180.0f / static_cast<float>(M_PI);
+    if (yaw_deg >= 180.0f) yaw_deg -= 360.0f;
+    if (yaw_deg <  -180.0f) yaw_deg += 360.0f;
 
+    static bool init=false; static float prev=0.0f; static float acc=0.0f;
+    if (!init) { prev = yaw_deg; acc = 0.0f; init = true; }
+    else {
+      float d = yaw_deg - prev;
+      if (d >  180.0f) d -= 360.0f;
+      if (d < -180.0f) d += 360.0f;
+      acc += d; prev = yaw_deg;
+    }
+    heading.store(acc);
+    heading360_.store(wrap_360(acc));
+  }
   // Serial
   SerialPort serial_;
 
   // ROS
   rclcpp::TimerBase::SharedPtr                                    timer_;
   rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr            angle_pub_;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr cluster_pub_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr    scan_sub_;
-  rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr    control_sub_;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
-  // Estado
+  // variables persistentes
+  std::atomic<float> heading360{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> angle_deg_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> pwm_{70.0f};
   std::atomic<float> kp_{2.0f};
   std::atomic<float> heading{std::numeric_limits<float>::quiet_NaN()};
-  std::vector<ClusterProps> clusters_;
-
-  // Subscripción odometría
-  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
-
-  // Callback para la odometría
-void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
-  const auto& q = msg->pose.pose.orientation;
-
-  // yaw en grados en [-180,180)
-  float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
-  float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
-  float yaw_deg = std::atan2(siny_cosp, cosy_cosp) * 180.0f / static_cast<float>(M_PI);
-  if (yaw_deg >= 180.0f) yaw_deg -= 360.0f;
-  if (yaw_deg <  -180.0f) yaw_deg += 360.0f;
-
-  // Estado para unwrap y acumulado
-  static bool  init = false;
-  static float prev = 0.0f;   // último yaw en [-180,180)
-  static float acc  = 0.0f;   // rotación absoluta acumulada (0 ? ?)
-
-  if (!init) {
-    // Arranca en 0 y fija la referencia al primer yaw
-    prev = yaw_deg;
-    acc  = 0.0f;     // <- **empieza en 0**
-    init = true;
-  } else {
-    // Delta con corrección de cruce ±180°
-    float delta = yaw_deg - prev;
-    if (delta >  180.0f) delta -= 360.0f;
-    if (delta < -180.0f) delta += 360.0f;
-
-    acc += delta;    // nunca regresa a 0; sigue acumulando
-    prev = yaw_deg;
-  }
-
-  heading.store(acc);
-  RCLCPP_INFO(this->get_logger(), "Heading abs: %.2f deg", acc);
-
-  // Si alguna vez quieres "versión envuelta" para mostrar: 
-  // float acc_0360 = std::fmod(acc, 360.0f); if (acc_0360 < 0) acc_0360 += 360.0f;
-}
-
-
-};
+  std::atomic<bool> dis{false};
+  std::atomic<bool> turn{false};
+  std::atomic<bool> safe{true};
+  std::atomic<bool> end{false};
+  std::atomic<bool> laps{false};
 
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
