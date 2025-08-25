@@ -1,6 +1,0 @@
-source;share/otos_reader/hook/pythonpath.ps1
-source;share/otos_reader/hook/pythonpath.dsv
-source;share/otos_reader/hook/pythonpath.sh
-source;share/otos_reader/hook/ament_prefix_path.ps1
-source;share/otos_reader/hook/ament_prefix_path.dsv
-source;share/otos_reader/hook/ament_prefix_path.sh
