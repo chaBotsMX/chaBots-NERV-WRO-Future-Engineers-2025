@@ -1,8 +1,0 @@
-source;share/teensy_communication/hook/cmake_prefix_path.ps1
-source;share/teensy_communication/hook/cmake_prefix_path.dsv
-source;share/teensy_communication/hook/cmake_prefix_path.sh
-source;share/teensy_communication/local_setup.bash
-source;share/teensy_communication/local_setup.dsv
-source;share/teensy_communication/local_setup.ps1
-source;share/teensy_communication/local_setup.sh
-source;share/teensy_communication/local_setup.zsh
