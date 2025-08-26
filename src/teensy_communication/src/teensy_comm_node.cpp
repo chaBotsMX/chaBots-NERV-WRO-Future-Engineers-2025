@@ -128,26 +128,43 @@ private:
     return a;
   }
   
-  float getOffsetFromCenter(){
-      bool getleft = false;
-      bool getright = false;
-      int rightDis = 0;
-      int leftDis = 0;
+  float getOffsetFromCenter( const sensor_msgs::msg::LaserScan::SharedPtr msg, float kp){
+    bool getleft = false;
+    bool getright = false;
+    float rightDis = 0;
+    float leftDis = 0;
+    float totalDis = 0;
+    float setpoint = 0;
     for(int i = 0; i < msg->ranges.size(); ++i) {
       const float ang = angle_min + angle_inc * static_cast<float>(i);
       if (ang < 0.0f || ang > pi) continue; // 0..180°
       const float r = msg->ranges[i];
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
       if (getleft == false) {
-        if (r < 0.78f)
-          rightDis = 
+        if (ang < 0.78f){
+          leftDis = r * std::cos(ang+(heading360.load() - headingSetPoint.load())*M_PI/180);
+        }
         getleft = true;
       }
       if (getright == false) {
-        right = ang;
+        if(ang >  2.35f){
+          rightDis = r * std::cos(ang+(heading360.load() - headingSetPoint.load())*M_PI/180);
+        }
         getright = true;
       }
+      totalDis = leftDis + rightDis;
+      setpoint = totalDis / 2.0f;
+      
+      return (setpoint - rightDis) * kp;
   }
+
+  float headingError(const sensor_msgs::msg::LaserScan::SharedPtr msg, float kp){
+    float heading = heading360.load();
+    float error = headingSetPoint.load() - heading;
+    return error * kp;
+  }
+
+}
 
 // -----------maquina de estados ----------
 
@@ -175,6 +192,9 @@ private:
   }
 
   void goAngleAndCenter() {
+    float vecCenter = getOffsetFromCenter(msg, kp_);  
+    float vecHeading = headingError(msg, kp_);
+    float vecFinal = vecCenter + vecHeading;
 
   }
 
@@ -273,6 +293,7 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
   // variables persistentes
+  std::atomic<float> headingSetPoint{0.0f};
   std::atomic<float> heading360{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> angle_deg_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> pwm_{70.0f};
