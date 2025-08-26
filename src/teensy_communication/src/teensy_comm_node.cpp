@@ -109,6 +109,8 @@ private:
   static inline float pointAngFromRobot(float iteration, float angleInc, float minAngle){
     return  minAngle + angleInc * iteration; // rad
   }
+  static inline float deg2rad(float deg) { return deg * static_cast<float>(M_PI) / 180.0f; }
+  static inline float rad2deg(float rad) { return rad * 180.0f / static_cast<float>(M_PI); }
   static inline float pointAngX(float ang, float r){ return std::cos(ang) * r; }
   static inline float pointAngY(float ang, float r){ return std::sin(ang) * r; }
   static inline float getDiffAngle(float ang1, float r1, float ang2, float r2){
@@ -128,11 +130,14 @@ private:
     return a;
   }
   
-  float getOffsetFromCenter( const sensor_msgs::msg::LaserScan::SharedPtr msg, float kp){
-    bool getleft = false;
-    bool getright = false;
+  void getOffsetsFromLidar( const sensor_msgs::msg::LaserScan::SharedPtr msg){
+
     float rightDis = 0;
     float leftDis = 0;
+    float frontDis = 0;
+    int sum_left = 0;
+    int sum_right = 0;
+    int sum_front = 0;  
     float totalDis = 0;
     float setpoint = 0;
     for(int i = 0; i < msg->ranges.size(); ++i) {
@@ -140,22 +145,26 @@ private:
       if (ang < 0.0f || ang > pi) continue; // 0..180°
       const float r = msg->ranges[i];
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
-      if (getleft == false) {
         if (ang < 0.78f){
-          leftDis = r * std::cos(ang+(heading360.load() - headingSetPoint.load())*M_PI/180);
-        }
-        getleft = true;
-      }
-      if (getright == false) {
+          leftDis += r * std::cos(ang+(deg2rad(headingSetPoint.load()) - deg2rad(heading360.load())));
+          sum_left++;
+        }     
         if(ang >  2.35f){
-          rightDis = r * std::cos(ang+(heading360.load() - headingSetPoint.load())*M_PI/180);
+          rightDis += r * std::cos(ang-(deg2rad(headingSetPoint.load()) - deg2rad(heading360.load())));
+          sum_right++;
         }
-        getright = true;
+        if(ang >= 1.39f && ang <= 1.74f){
+          frontDis += r * std::sin(ang+(deg2rad(headingSetPoint.load()) - deg2rad(heading360.load())));
+          sum_front++;
+        }
       }
-      totalDis = leftDis + rightDis;
+      leftDis /= sum_left;
+      rightDis /= sum_right;
+      frontDis /= sum_front;
+      totalDis = std::fabs(leftDis) +  std::fabs(rightDis);
       setpoint = totalDis / 2.0f;
-      
-      return (setpoint - rightDis) * kp;
+      frontWallDistance.store(frontDis);
+      centeringOffset.store(setpoint - rightDis);
   }
 
   float headingError(const sensor_msgs::msg::LaserScan::SharedPtr msg, float kp){
@@ -164,7 +173,7 @@ private:
     return error * kp;
   }
 
-}
+
 
 // -----------maquina de estados ----------
 
@@ -195,7 +204,7 @@ private:
     float vecCenter = getOffsetFromCenter(msg, kp_);  
     float vecHeading = headingError(msg, kp_);
     float vecFinal = vecCenter + vecHeading;
-
+    
   }
 
   void turnRobot() {
@@ -293,6 +302,8 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
   // variables persistentes
+  std::atomic<float> centeringOffset{0.0f};
+  std::atomic<float> frontWallDistance{0.0f};
   std::atomic<float> headingSetPoint{0.0f};
   std::atomic<float> heading360{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> angle_deg_{std::numeric_limits<float>::quiet_NaN()};
