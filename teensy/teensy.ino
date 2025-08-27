@@ -26,7 +26,7 @@ int serial1Update() {
   enum State : uint8_t { WAIT_HDR, ANG_H, ANG_L, PWM_B, KP_B, GET_CK };
   static State   st = WAIT_HDR;
   static uint8_t ang_hi = 0, ang_lo = 0;
-  static uint8_t pwm = 0, kp = 0;
+  static uint8_t kp = 0;
   static uint8_t xor_acc = 0;
 
   while (Serial1.available()) {
@@ -109,12 +109,20 @@ void loop()
 {
 
   gradosRaspberry = serial1Update();
+  if(pwm == 0){
+    digitalWrite(5,LOW);
+    digitalWrite(7,LOW);
+  }
+  else{
+    digitalWrite(5,HIGH);
+    digitalWrite(7,LOW);
+  }
   analogWrite(6,pwm);
   //updateServo(calKp(gradosRaspberry));
  if(gradosRaspberry != -1){
   Serial.println(pwm);
   //Serial.println(gradosRaspberry);
   //serial1.println(calKp(0.5,gradosRaspberry));
-  updateServo(calKp(0.75,1,gradosRaspberry));
+  updateServo(calKp(0.75,2,gradosRaspberry));
   }
 } 
