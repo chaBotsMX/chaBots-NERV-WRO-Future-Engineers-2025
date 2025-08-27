@@ -93,12 +93,14 @@ private:
 };
 
 class TeensyCommNode : public rclcpp::Node {
+  // Para PID: guardar el error anterior
+  float prev_error_ = 0.0f;
+  std::chrono::steady_clock::time_point prev_time_ = std::chrono::steady_clock::now();
 public:
   TeensyCommNode() : Node("teensy_comm") {
     (void)serial_.open_port();
 
     angle_pub_   = create_publisher<std_msgs::msg::Float32>("/send_angle", 10);
-    cluster_pub_ = create_publisher<visualization_msgs::msg::MarkerArray>("/clusters_markers", 10);
     scan_sub_ = create_subscription<sensor_msgs::msg::LaserScan>("/scan", rclcpp::SensorDataQoS(),std::bind(&TeensyCommNode::on_scan, this, std::placeholders::_1));
     odom_sub_ = create_subscription<nav_msgs::msg::Odometry>("odom", 10,std::bind(&TeensyCommNode::on_odom, this, std::placeholders::_1));
     timer_ = create_wall_timer(10ms, std::bind(&TeensyCommNode::on_timer, this));
@@ -141,8 +143,8 @@ private:
     float totalDis = 0;
     float setpoint = 0;
     for(int i = 0; i < msg->ranges.size(); ++i) {
-      const float ang = angle_min + angle_inc * static_cast<float>(i);
-      if (ang < 0.0f || ang > pi) continue; // 0..180°
+      const float ang = msg->angle_min + msg->angle_increment * static_cast<float>(i);
+      if (ang < 0.0f || ang > M_PI) continue; // 0..180°
       const float r = msg->ranges[i];
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
         if (ang < 0.78f){
@@ -164,13 +166,13 @@ private:
       totalDis = std::fabs(leftDis) +  std::fabs(rightDis);
       setpoint = totalDis / 2.0f;
       frontWallDistance.store(frontDis);
-      centeringOffset.store(setpoint - rightDis);
+      centeringOffset.store(setpoint - std::fabs(rightDis));
   }
 
   float headingError(const sensor_msgs::msg::LaserScan::SharedPtr msg, float kp){
     float heading = heading360.load();
     float error = headingSetPoint.load() - heading;
-    return error * kp;
+    return error;
   }
 
 
@@ -178,15 +180,15 @@ private:
 // -----------maquina de estados ----------
 
   void state_machine() {
-    if (laps == 1) {
+    if (laps.load() == 1) {
       getMiddleAndEnd();
-    } else if (end == 1) {
+    } else if (end.load() == 1) {
       getEnd();
-    } else if (safe == 1) {
+    } else if (safe.load() == 1) {
       goAngleAndCenter();
-    } else if (turn == 1) {
+    } else if (turn.load() == 1) {
       turnRobot();
-    } else if (dis == 0) {
+    } else if (dis.load() == 0) {
       searchHole();
     }
     
@@ -201,10 +203,10 @@ private:
   }
 
   void goAngleAndCenter() {
-    float vecCenter = getOffsetFromCenter(msg, kp_);  
+   /* float vecCenter = getOffsetFromCenter(msg, kp_);  
     float vecHeading = headingError(msg, kp_);
     float vecFinal = vecCenter + vecHeading;
-    
+    */
   }
 
   void turnRobot() {
@@ -236,12 +238,10 @@ private:
     const float angle_min = msg->angle_min;
     const float angle_inc = msg->angle_increment;
     const float pi        = static_cast<float>(M_PI);
-
-
     double sum_x = 0.0, sum_y = 0.0;
     size_t used = 0;
-
-
+  
+    getOffsetsFromLidar(msg);
     for (size_t i = 0; i < msg->ranges.size(); ++i) {
       const float ang = angle_min + angle_inc * static_cast<float>(i);
       if (ang < 0.0f || ang > pi) continue; // 0..180°
@@ -263,16 +263,71 @@ private:
 
   void on_timer() {
 
-    float deg = angle_deg_.load();
-    float head = heading.load();
-    int vel = 50;
-    if (std::fabs(head) > 1020){
-      vel = 1;
-    }
-    //RCLCPP_INFO(this->get_logger(), "angulo mandado: %f", deg);
-    auto frame = empaquetar(static_cast<uint16_t>(deg), vel, 10,this->get_logger());
-    (void)serial_.write_bytes(frame.data(), frame.size());
+  float front = frontWallDistance.load();
+  float offset = centeringOffset.load();
+  float deg = angle_deg_.load();
+  float degrees = heading360.load();
+  float head = heading.load();
+  float current_speed = speed.load();
+  int vel = 0;
+
+  // Controlador PD para velocidad con desaceleración progresiva
+  // Target speed baja linealmente de 0.5 m/s (front >= 3.0m) a 0 m/s (front <= 0m)
+  float target_speed = 0.0f;
+  if (front >= 3.0f) {
+    target_speed = 0.5f;
+  } else if (front > 0.0f) {
+    target_speed = 1.0f * (front / 3.0f); // lineal hasta 0
+  } else {
+    target_speed = 0.0f;
   }
+
+  float kp = 90.0f; // Ganancia proporcional más baja
+  float kd = 20.0f;  // Ganancia derivativa más baja
+  float min_pwm = 40.0f; // PWM mínimo para vencer fricción
+  float error = target_speed - current_speed;
+
+  // Calcular derivada del error
+  auto now = std::chrono::steady_clock::now();
+  float dt = std::chrono::duration<float>(now - prev_time_).count();
+  float deriv = 0.0f;
+  if (dt > 0.0f) {
+    deriv = (error - prev_error_) / dt;
+  }
+  prev_error_ = error;
+  prev_time_ = now;
+
+  float control = kp * error + kd * deriv;
+
+  if (error < -0.3f) {
+    // Si va mucho más rápido de lo deseado, aplica brake low (frenado fuerte)
+    vel = 0;
+  } else if (error < 0.0f) {
+    // Si va un poco más rápido de lo deseado, frenado libre (rueda libre)
+    vel = 1;
+  } else {
+    // Si va más lento o cerca del target, acelera proporcionalmente
+    vel = static_cast<int>(control);
+    if (vel > 0) {
+      // Aplica PWM mínimo si hay que acelerar
+      if (vel < min_pwm) vel = static_cast<int>(min_pwm);
+    }
+    // Limita el PWM a un rango razonable
+    if (vel > 255) vel = 255;
+    if (vel < 0) vel = 0;
+  }
+
+  // Calcula el error del IMU y aplica kp para corregir hacia 0
+  float heading = heading360.load();
+  deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f; // minimal signed difference
+  RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, deg, current_speed, vel);
+  auto frame = empaquetar(static_cast<uint16_t>(90+deg), vel, 10,this->get_logger());
+  (void)serial_.write_bytes(frame.data(), frame.size());
+  }
+
+
+  static inline float wrap_360(float a) { float x = std::fmod(a, 360.0f); return (x < 0) ? x + 360.0f : x; }
+
   void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
     const auto& q = msg->pose.pose.orientation;
     float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
@@ -290,7 +345,12 @@ private:
       acc += d; prev = yaw_deg;
     }
     heading.store(acc);
-    heading360_.store(wrap_360(acc));
+    heading360.store(wrap_360(acc));
+
+    // Leer la velocidad absoluta publicada por otos_reader (en linear.z)
+    if (msg->twist.twist.linear.z == msg->twist.twist.linear.z) { // check for NaN
+      speed.store(msg->twist.twist.linear.z);
+    }
   }
   // Serial
   SerialPort serial_;
@@ -315,6 +375,8 @@ private:
   std::atomic<bool> safe{true};
   std::atomic<bool> end{false};
   std::atomic<bool> laps{false};
+  std::atomic<float> speed{0.0f};
+};
 
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);

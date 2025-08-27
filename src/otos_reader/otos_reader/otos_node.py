@@ -372,11 +372,12 @@ class OtosRosNode(Node):
 
         # Velocidad (aprox por delta * rate)
         # Nota: dx_c, dy_c están en el marco del dispositivo (odom); si quisieras vel en base_link, rota.
-        vx = dx_c * self.rate_hz
-        vy = dy_c * self.rate_hz
-        msg.twist.twist.linear.x = vx
-        msg.twist.twist.linear.y = vy
-        msg.twist.twist.linear.z = 0.0
+    vx = dx_c * self.rate_hz
+    vy = dy_c * self.rate_hz
+    v_abs = math.hypot(vx, vy)
+    msg.twist.twist.linear.x = vx
+    msg.twist.twist.linear.y = vy
+    msg.twist.twist.linear.z = v_abs  # Publica la velocidad absoluta en el campo linear.z
         # angular z ~ derivada de yaw suavizado
         # (opcional, aquí omitimos suavizado de derivada por simplicidad)
         # msg.twist.twist.angular.z = ...
