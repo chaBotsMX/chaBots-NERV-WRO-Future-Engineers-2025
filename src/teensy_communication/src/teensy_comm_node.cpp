@@ -231,19 +231,21 @@ private:
     f[5] = chk;
     return f;
   }
-
+  float clampf(float v, float lo, float hi) {
+      return std::max(lo, std::min(v, hi));
+  }
 
   int controlACDA(float targetSpeed){
     float pwm = 0, jerk = 10;
     float error = targetSpeed - speed.load();
     float romperFriccion = 25; // Valor a determinar
-    float multPerPwm = 40; // Valor a determinar
+    float multPerPwm = 60; // Valor a determinar, escalar con max speed, 0.5m/s 25
     float aproxPwm = romperFriccion + multPerPwm * targetSpeed;
     float lastPwmLocal = lastPwm.load();
-    float kp = 90.0f; // Valor a determinar
-    float kd = 20.0f; // Valor a determinar
+    float kp = 8.25f; // Valor a determinar
+    float kd = 0.1f; // Valor a determinar
     pwm = (error * kp)  + ((error - lastError.load()) / 0.01) * kd;
-    pwm = std::clamp(std::clamp(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk),0,255);
+    pwm = clampf(clampf(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk),0,255);
     lastPwm.store(pwm);
     lastError.store(error);
     if(error < -0.5f || targetSpeed == 0) return 0;
@@ -288,14 +290,17 @@ private:
   float current_speed = speed.load();
   int returnPWM = 0;
 
-  if(frontWallDistance < 1.0f){ returnPWM = 0;}
+  if(frontWallDistance < 0.3f){ returnPWM = 0;}
+  else if(frontWallDistance > 1.5f){
+    returnPWM = controlACDA(2.0f);
+  }
   else{
-    returnPWM = controlACDA(1.0f);
+    returnPWM = controlACDA(0.5f);
   }
 
   float heading = heading360.load();
   deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f; 
-  RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, deg, current_speed, vel);
+  RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, deg, current_speed, returnPWM);
   auto frame = empaquetar(static_cast<uint16_t>(90+deg), returnPWM, 10,this->get_logger());
   (void)serial_.write_bytes(frame.data(), frame.size());
   }
