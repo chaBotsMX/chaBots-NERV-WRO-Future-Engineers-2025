@@ -217,7 +217,7 @@ private:
     // Implementar lógica para buscar un agujero
   }
 
-  //funcion para enviar por serial
+
   static std::array<uint8_t, 6> empaquetar(uint16_t ang_tenths, uint8_t pwm_byte, uint8_t kp_byte, rclcpp::Logger logger) {
     std::array<uint8_t, 6> f{};
     f[0] = 0xAB;
@@ -232,6 +232,23 @@ private:
     return f;
   }
 
+
+  int controlACDA(float targetSpeed){
+    float pwm = 0, jerk = 10;
+    float error = targetSpeed - speed.load();
+    float romperFriccion = 25; // Valor a determinar
+    float multPerPwm = 40; // Valor a determinar
+    float aproxPwm = romperFriccion + multPerPwm * targetSpeed;
+    float lastPwmLocal = lastPwm.load();
+    float kp = 90.0f; // Valor a determinar
+    float kd = 20.0f; // Valor a determinar
+    pwm = (error * kp)  + ((error - lastError.load()) / 0.01) * kd;
+    pwm = std::clamp(std::clamp(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk),0,255);
+    lastPwm.store(pwm);
+    lastError.store(error);
+    if(error < -0.5f || targetSpeed == 0) return 0;
+    return static_cast<int>(pwm);
+  }
 
   //callbacks que se ejecutan al leer un topic
   void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
@@ -269,59 +286,17 @@ private:
   float degrees = heading360.load();
   float head = heading.load();
   float current_speed = speed.load();
-  int vel = 0;
+  int returnPWM = 0;
 
-  // Controlador PD para velocidad con desaceleración progresiva
-  // Target speed baja linealmente de 0.5 m/s (front >= 3.0m) a 0 m/s (front <= 0m)
-  float target_speed = 0.0f;
-  if (front >= 3.0f) {
-    target_speed = 0.5f;
-  } else if (front > 0.0f) {
-    target_speed = 1.0f * (front / 3.0f); // lineal hasta 0
-  } else {
-    target_speed = 0.0f;
+  if(frontWallDistance < 1.0f){ returnPWM = 0;}
+  else{
+    returnPWM = controlACDA(1.0f);
   }
 
-  float kp = 90.0f; // Ganancia proporcional más baja
-  float kd = 20.0f;  // Ganancia derivativa más baja
-  float min_pwm = 40.0f; // PWM mínimo para vencer fricción
-  float error = target_speed - current_speed;
-
-  // Calcular derivada del error
-  auto now = std::chrono::steady_clock::now();
-  float dt = std::chrono::duration<float>(now - prev_time_).count();
-  float deriv = 0.0f;
-  if (dt > 0.0f) {
-    deriv = (error - prev_error_) / dt;
-  }
-  prev_error_ = error;
-  prev_time_ = now;
-
-  float control = kp * error + kd * deriv;
-
-  if (error < -0.3f) {
-    // Si va mucho más rápido de lo deseado, aplica brake low (frenado fuerte)
-    vel = 0;
-  } else if (error < 0.0f) {
-    // Si va un poco más rápido de lo deseado, frenado libre (rueda libre)
-    vel = 1;
-  } else {
-    // Si va más lento o cerca del target, acelera proporcionalmente
-    vel = static_cast<int>(control);
-    if (vel > 0) {
-      // Aplica PWM mínimo si hay que acelerar
-      if (vel < min_pwm) vel = static_cast<int>(min_pwm);
-    }
-    // Limita el PWM a un rango razonable
-    if (vel > 255) vel = 255;
-    if (vel < 0) vel = 0;
-  }
-
-  // Calcula el error del IMU y aplica kp para corregir hacia 0
   float heading = heading360.load();
-  deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f; // minimal signed difference
+  deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f; 
   RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, deg, current_speed, vel);
-  auto frame = empaquetar(static_cast<uint16_t>(90+deg), vel, 10,this->get_logger());
+  auto frame = empaquetar(static_cast<uint16_t>(90+deg), returnPWM, 10,this->get_logger());
   (void)serial_.write_bytes(frame.data(), frame.size());
   }
 
@@ -362,6 +337,8 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
   // variables persistentes
+  std::atomic<int> lastPwm{0};
+  std::atomic<float> lastError{0.0f};
   std::atomic<float> centeringOffset{0.0f};
   std::atomic<float> frontWallDistance{0.0f};
   std::atomic<float> headingSetPoint{0.0f};
