@@ -263,7 +263,7 @@ private:
   lastPwm.store(pwm);
   lastError.store(error);
   if(error < -0.5f || targetSpeed == 0) return 0;
-  //if (error < -0.1f) return 1;
+  if (error < -0.1f) return 1;
   return static_cast<int>(pwm);
   }
 
@@ -309,6 +309,11 @@ private:
   else if(frontWallDistance > 1.0f){
     returnPWM = controlACDA(1.8f);
   }
+  else if (frontWallDistance > 1.5f)
+  {
+    returnPWM = controlACDA(2.5f);
+  }
+  
   else{
     returnPWM = controlACDA(1.0f);
   }
@@ -316,6 +321,14 @@ private:
   float heading = heading360.load();
   deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f;
   if (std::fabs(head) > 1076.0f && front < 1.8f) { // check for NaN
+    returnPWM = 0;
+  }
+  
+  if(!init.load()){
+    if(std::isfinite(absolute_angle.load()) && front != 0.0f){
+    
+      init.store(true);
+    }
     returnPWM = 0;
   }
   RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
@@ -369,6 +382,7 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
   // variables persistentes
+  std::atomic<bool> init{false};
   std::atomic<int> lastPwm{0};
   std::atomic<float> lastError{0.0f};
   std::atomic<float> centeringOffset{0.0f};
