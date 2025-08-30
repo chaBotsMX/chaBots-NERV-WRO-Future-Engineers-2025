@@ -235,21 +235,33 @@ private:
       return std::max(lo, std::min(v, hi));
   }
 
+    float feedforward_pwm_multiplier(float targetSpeed) {
+    // Si la velocidad es menor o igual a 0, no hay PWM
+    if (targetSpeed <= 0.0f) return 0.0f;
+    // Puntos de referencia
+    const float v1 = 0.5f, pwm1 = 25.0f;
+    const float v2 = 2.0f, pwm2 = 60.0f;
+    if (targetSpeed <= v1) return pwm1;
+    if (targetSpeed >= v2) return pwm2;
+    // Interpolación lineal entre los dos puntos
+    float pwm = pwm1 + (pwm2 - pwm1) * (targetSpeed - v1) / (v2 - v1);
+    return pwm;
+  }
+
   int controlACDA(float targetSpeed){
-    float pwm = 0, jerk = 10;
-    float error = targetSpeed - speed.load();
-    float romperFriccion = 25; // Valor a determinar
-    float multPerPwm = 60; // Valor a determinar, escalar con max speed, 0.5m/s 25
-    float aproxPwm = romperFriccion + multPerPwm * targetSpeed;
-    float lastPwmLocal = lastPwm.load();
-    float kp = 8.25f; // Valor a determinar
-    float kd = 0.1f; // Valor a determinar
-    pwm = (error * kp)  + ((error - lastError.load()) / 0.01) * kd;
-    pwm = clampf(clampf(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk),0,255);
-    lastPwm.store(pwm);
-    lastError.store(error);
-    if(error < -0.5f || targetSpeed == 0) return 0;
-    return static_cast<int>(pwm);
+  float pwm = 0, jerk = 10;
+  float error = targetSpeed - speed.load();
+  float aproxPwm = feedforward_pwm_multiplier(targetSpeed); // PWM feedforward no lineal
+  float lastPwmLocal = lastPwm.load();
+  float kp = 8.25f; // Valor a determinar
+  float kd = 0.1f; // Valor a determinar
+  pwm = (error * kp)  + ((error - lastError.load()) / 0.01) * kd;
+  pwm = clampf(clampf(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk),0,255);
+  lastPwm.store(pwm);
+  lastError.store(error);
+  if(error < -0.5f || targetSpeed == 0) return 0;
+  if (error < -0.1f) return 1;
+  return static_cast<int>(pwm);
   }
 
   //callbacks que se ejecutan al leer un topic
@@ -277,7 +289,7 @@ private:
       angle = angulo_positivo(angle);
       angle_deg = angle * 180.0f / static_cast<float>(M_PI);
     }
-    angle_deg_.store(angle_deg);
+    absolute_angle.store(angle_deg);
   }
 
   void on_timer() {
@@ -290,18 +302,18 @@ private:
   float current_speed = speed.load();
   int returnPWM = 0;
 
-  if(frontWallDistance < 0.3f){ returnPWM = 0;}
+  if(frontWallDistance < 0.8f){returnPWM = controlACDA(0.5f);}
   else if(frontWallDistance > 1.5f){
-    returnPWM = controlACDA(2.0f);
+    returnPWM = controlACDA(1.4f);
   }
   else{
-    returnPWM = controlACDA(0.5f);
+    returnPWM = controlACDA(0.8f);
   }
 
   float heading = heading360.load();
   deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f; 
   RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, deg, current_speed, returnPWM);
-  auto frame = empaquetar(static_cast<uint16_t>(90+deg), returnPWM, 10,this->get_logger());
+  auto frame = empaquetar(static_cast<uint16_t>(absolute_angle.load()), returnPWM, 10,this->get_logger());
   (void)serial_.write_bytes(frame.data(), frame.size());
   }
 
@@ -349,6 +361,7 @@ private:
   std::atomic<float> headingSetPoint{0.0f};
   std::atomic<float> heading360{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> angle_deg_{std::numeric_limits<float>::quiet_NaN()};
+  std::atomic<float> absolute_angle{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> pwm_{70.0f};
   std::atomic<float> kp_{2.0f};
   std::atomic<float> heading{std::numeric_limits<float>::quiet_NaN()};
