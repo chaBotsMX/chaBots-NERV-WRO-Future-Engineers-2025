@@ -304,7 +304,8 @@ private:
   float head = heading.load();
   float current_speed = speed.load();
   int returnPWM = 0;
-
+  int dir = 1;
+  bool ending = false;
   if(frontWallDistance < 0.8f){returnPWM = controlACDA(0.8f);}
   else if(frontWallDistance > 1.0f){
     returnPWM = controlACDA(1.8f);
@@ -321,6 +322,7 @@ private:
   float heading = heading360.load();
   deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f;
   if (std::fabs(head) > 1076.0f && front < 1.8f) { // check for NaN
+    ending = true;
     returnPWM = 0;
   }
   
@@ -331,8 +333,21 @@ private:
     }
     returnPWM = 0;
   }
+  /*if(ending){
+    if(front > 2.3){
+      returnPWM = controlACDA(2.0f);
+      dir = 1;
+    }
+    else if(front < 1.3f){
+      returnPWM = controlACDA(2.0f);
+      dir = 0;
+    }
+    else{
+      returnPWM = 0;
+    }
+  }*/
   RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
-  auto frame = empaquetar(static_cast<uint16_t>(absolute_angle.load()), returnPWM, 10,this->get_logger());
+  auto frame = empaquetar(static_cast<uint16_t>(absolute_angle.load()), returnPWM, dir,this->get_logger());
   (void)serial_.write_bytes(frame.data(), frame.size());
   }
 
