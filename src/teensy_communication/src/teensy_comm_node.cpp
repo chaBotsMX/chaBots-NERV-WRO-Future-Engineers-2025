@@ -156,7 +156,7 @@ private:
           sum_right++;
         }
         if(ang >= 1.39f && ang <= 1.74f){
-          frontDis += r * std::sin(ang+(deg2rad(headingSetPoint.load()) - deg2rad(heading360.load())));
+          frontDis += r; 
           sum_front++;
         }
       }
@@ -244,14 +244,17 @@ private:
     if (targetSpeed <= v1) return pwm1;
     if (targetSpeed >= v2) return pwm2;
     // Interpolación lineal entre los dos puntos
-    float pwm = pwm1 + (pwm2 - pwm1) * (targetSpeed - v1) / (v2 - v1);
-    return pwm;
+    float feedpwm = pwm1 + (pwm2 - pwm1) * (targetSpeed - v1) / (v2 - v1);
+    return feedpwm;
   }
 
   int controlACDA(float targetSpeed){
   float pwm = 0, jerk = 10;
   float error = targetSpeed - speed.load();
-  float aproxPwm = feedforward_pwm_multiplier(targetSpeed); // PWM feedforward no lineal
+  float aproxPwm = 35.0f;
+  if(targetSpeed < 0.6f){aproxPwm = 35.0f;}
+  else if(targetSpeed < 1.2f){aproxPwm = 40.0f;}
+  else{aproxPwm = 60.0f;}
   float lastPwmLocal = lastPwm.load();
   float kp = 8.25f; // Valor a determinar
   float kd = 0.1f; // Valor a determinar
@@ -260,7 +263,7 @@ private:
   lastPwm.store(pwm);
   lastError.store(error);
   if(error < -0.5f || targetSpeed == 0) return 0;
-  if (error < -0.1f) return 1;
+  //if (error < -0.1f) return 1;
   return static_cast<int>(pwm);
   }
 
@@ -302,17 +305,20 @@ private:
   float current_speed = speed.load();
   int returnPWM = 0;
 
-  if(frontWallDistance < 0.8f){returnPWM = controlACDA(0.5f);}
-  else if(frontWallDistance > 1.5f){
-    returnPWM = controlACDA(1.4f);
+  if(frontWallDistance < 0.8f){returnPWM = controlACDA(0.8f);}
+  else if(frontWallDistance > 1.0f){
+    returnPWM = controlACDA(1.8f);
   }
   else{
-    returnPWM = controlACDA(0.8f);
+    returnPWM = controlACDA(1.0f);
   }
 
   float heading = heading360.load();
-  deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f; 
-  RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, deg, current_speed, returnPWM);
+  deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f;
+  if (std::fabs(head) > 1076.0f && front < 1.8f) { // check for NaN
+    returnPWM = 0;
+  }
+  RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
   auto frame = empaquetar(static_cast<uint16_t>(absolute_angle.load()), returnPWM, 10,this->get_logger());
   (void)serial_.write_bytes(frame.data(), frame.size());
   }
@@ -321,23 +327,32 @@ private:
   static inline float wrap_360(float a) { float x = std::fmod(a, 360.0f); return (x < 0) ? x + 360.0f : x; }
 
   void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
-    const auto& q = msg->pose.pose.orientation;
-    float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
-    float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
-    float yaw_deg = std::atan2(siny_cosp, cosy_cosp) * 180.0f / static_cast<float>(M_PI);
-    if (yaw_deg >= 180.0f) yaw_deg -= 360.0f;
-    if (yaw_deg <  -180.0f) yaw_deg += 360.0f;
 
-    static bool init=false; static float prev=0.0f; static float acc=0.0f;
-    if (!init) { prev = yaw_deg; acc = 0.0f; init = true; }
-    else {
-      float d = yaw_deg - prev;
-      if (d >  180.0f) d -= 360.0f;
-      if (d < -180.0f) d += 360.0f;
-      acc += d; prev = yaw_deg;
-    }
-    heading.store(acc);
-    heading360.store(wrap_360(acc));
+  const auto& q = msg->pose.pose.orientation;
+  // Usar el valor crudo de atan2, sin normalizar a [-180, 180)
+  float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
+  float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+  float yaw_deg = std::atan2(siny_cosp, cosy_cosp) * 180.0f / static_cast<float>(M_PI);
+
+  static bool init = false;
+  static float prev = 0.0f;
+  static float acc = 0.0f;
+  if (!init) {
+    prev = yaw_deg;
+    acc = 0.0f;
+    init = true;
+  } else {
+    float d = yaw_deg - prev;
+    // Corrige saltos de 360/-360
+    if (d > 180.0f) d -= 360.0f;
+    if (d < -180.0f) d += 360.0f;
+    acc += d;
+    prev = yaw_deg;
+  }
+  // heading: grados totales recorridos (puede ser >360 o <-360)
+  heading.store(acc);
+  // heading360: solo para mostrar el ángulo normalizado
+  heading360.store(wrap_360(std::fmod(acc, 360.0f)));
 
     // Leer la velocidad absoluta publicada por otos_reader (en linear.z)
     if (msg->twist.twist.linear.z == msg->twist.twist.linear.z) { // check for NaN
