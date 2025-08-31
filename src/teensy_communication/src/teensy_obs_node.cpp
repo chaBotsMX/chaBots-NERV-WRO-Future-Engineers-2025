@@ -204,34 +204,34 @@ int controlACDA(float targetSpeed){
 
 // --- on_timer: guarda inicial y usa object_distance_ cuando haya objeto ---
 void on_timer() {
-  if (!std::isfinite(heading360_.load())) return;
+  if (!std::isfinite(heading360_.load()) || !std::isfinite(dist_Left_.load()) || !std::isfinite(dist_Right_.load())) return;
   if(outOfParking_.load() == false) {
-    if(direction_.load() == ""){
+    if(direction_.load() == false){
       if(dist_Left_.load() < dist_Right_.load()){
-        direction_.store("LEFT");
+        direction_.store(false);
       } else {
-        direction_.store("RIGHT");
+        direction_.store(true);
       }
     } 
 
-    if(poseY_.load() < -0.029f){
+    if(poseY_.load() < -0.035f) {
       backInParking_.store(true);
     } 
-    if(poseY_.load() > -0.03f && backInParking_.load() == false){
-      auto frame = pack(90, 25, 1);
+    if(poseY_.load() > -0.036f && backInParking_.load() == false){
+      auto frame = pack(90, 30, 1);
       (void)serial_.write_bytes(frame.data(), frame.size());
     }
     else if (poseY_.load() < 0.30f) {
-      if(direction_.load() == "LEFT"){
-        auto frame = pack(150, 25, 0);
+      std::array<uint8_t, 6> frame;
+      if(direction_.load() == false){
+        frame = pack(150, 30, 0);
       } else {
-        auto frame = pack(50, 25, 0);
+        frame = pack(50, 30, 0);
       }
       (void)serial_.write_bytes(frame.data(), frame.size());
     }
     else {
       outOfParking_.store(true);
-  
     }
 
   } 
@@ -332,7 +332,7 @@ void on_timer() {
   // atómicos (siempre .load() / .store())
   std::atomic<bool> backInParking_{false};
   std::atomic<bool> outOfParking_{false};
-  std::atomic<std::string> direction_{""};
+  std::atomic<bool> direction_{false}; // false = "LEFT", true = "RIGHT"
   std::atomic<float> dist_Left_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> dist_Right_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> poseY_{std::numeric_limits<float>::quiet_NaN()};
