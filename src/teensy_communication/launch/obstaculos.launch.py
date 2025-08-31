@@ -22,11 +22,11 @@ def generate_launch_description():
     # --------- Args CÁMARA ----------
     cam_device = LaunchConfiguration(
         'camera',
-        default='/base/axi/pcie@120000/rp1/i2c@80000/ov5647@36'
+        default='/base/axi/pcie@120000/rp1/i2c@80000/imx708@1a'
     )
     cam_format = LaunchConfiguration('format', default='RGB888')  # más ligero que XRGB8888
-    cam_width  = LaunchConfiguration('width',  default='1280')
-    cam_height = LaunchConfiguration('height', default='720')
+    cam_width  = LaunchConfiguration('width',  default='1920')
+    cam_height = LaunchConfiguration('height', default='1080')
     # Opcional: URL de calibración (deja vacío si no tienes YAML aún)
     cam_info_url = LaunchConfiguration('camera_info_url', default='')
 
@@ -136,20 +136,10 @@ def generate_launch_description():
             output='screen',
             parameters=[{
             'format': 'RGB888',
-            'width': 640,
-            'height': 480,
-            'camera': '/base/axi/pcie@120000/rp1/i2c@80000/ov5647@36',
+            'width': 1920,
+            'height': 1080,
             'controls': {
-                'FrameDurationLimits': [33333, 33333],  # 30 fps
-                'AeEnable': True,                       # deja que AE ajuste exposición/ganancia
-                'AwbEnable': True,       
-                'AwbMode': 'indoor', 
-                'HorizontalFlip': True,   # <-- añade
-                'VerticalFlip': True,                 # muy importante para color correcto
-                # No fijes ColourGains si AwbEnable=True
-                'Saturation': 1.10,                     # leve empuje al color (1.0?1.15 máx)
-                'Contrast': 1.05,                       # pequeño contraste
-                'Sharpness': 1.05                       # un poco de nitidez; evita valores altos
+                'FrameDurationLimits': [33333, 33333],  # 30 fps        
             }
             }],
     
@@ -164,6 +154,15 @@ def generate_launch_description():
                 # descomenta si quieres desactivar el backend de archivo
                 # 'RCL_LOGGING_IMPLEMENTATION': 'rcl_logging_noop',
             }
+        ),
+
+        ### VISION NODE
+        Node(
+            package='vision_node',
+            executable='color_detection_node',
+            name='color_detection',
+            output='screen',
+            prefix=['/home/chabots/ros2_ws/vision_node/bin/python', ' -u '],
         ),
 
     ])
