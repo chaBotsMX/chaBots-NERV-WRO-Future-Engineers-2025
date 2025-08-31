@@ -13,6 +13,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <cerrno>
+#include <functional>
+#include <algorithm>
 
 using namespace std::chrono_literals;
 
@@ -114,26 +117,38 @@ private:
     dist_front_.store(mean);
   }
 
-  void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
-    const auto& q = msg->pose.pose.orientation;
-    float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
-    float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
-    float yaw_deg = std::atan2(siny_cosp, cosy_cosp) * 180.0f / static_cast<float>(M_PI);
-    if (yaw_deg >= 180.0f) yaw_deg -= 360.0f;
-    if (yaw_deg <  -180.0f) yaw_deg += 360.0f;
+  constexpr float kPI = 3.14159265358979323846f;
+// --- on_odom: corrige nombres y M_PI ---
+void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
+  const auto& q = msg->pose.pose.orientation;
+  float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
+  float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+  float yaw_deg = std::atan2(siny_cosp, cosy_cosp) * 180.0f / kPI;
 
-    static bool init=false; static float prev=0.0f; static float acc=0.0f;
-    if (!init) { prev = yaw_deg; acc = 0.0f; init = true; }
-    else {
-      float d = yaw_deg - prev;
-      if (d >  180.0f) d -= 360.0f;
-      if (d < -180.0f) d += 360.0f;
-      acc += d; prev = yaw_deg;
-    }
-    heading_acc_.store(acc);
-    heading360_.store(wrap_360(acc));
+  static bool init = false;
+  static float prev = 0.0f;
+  static float acc = 0.0f;
+  if (!init) {
+    prev = yaw_deg;
+    acc = 0.0f;
+    init = true;
+  } else {
+    float d = yaw_deg - prev;
+    if (d >  180.0f) d -= 360.0f;
+    if (d < -180.0f) d += 360.0f;
+    acc += d;
+    prev = yaw_deg;
   }
 
+  // FIX: nombres correctos
+  heading_acc_.store(acc);
+  heading360_.store(wrap_360(acc));
+
+  // velocidad absoluta (si no es NaN)
+  if (!std::isnan(msg->twist.twist.linear.z)) {
+    speed_.store(msg->twist.twist.linear.z);
+  }
+}
   // ---- empaquetado ----
   static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t kp) {
     std::array<uint8_t, 6> f{};
@@ -146,23 +161,82 @@ private:
     return f;
   }
 
-  // ---- control periódico ----
+static inline float clampf(float v, float lo, float hi) {
+  return std::max(lo, std::min(v, hi));
+}
+
+
+// --- controlACDA: usa miembros y clampf ---
+int controlACDA(float targetSpeed){
+  float pwm = 0, jerk = 10;
+  float error = targetSpeed - speed_.load();
+  float aproxPwm;
+  if      (targetSpeed < 0.6f) aproxPwm = 35.0f;
+  else if (targetSpeed < 1.2f) aproxPwm = 40.0f;
+  else                         aproxPwm = 60.0f;
+
+  float lastPwmLocal = lastPwm_.load();
+  float kp = 8.25f;
+  float kd = 0.1f;
+  pwm = (error * kp) + ((error - lastError_.load()) / 0.01f) * kd;
+  pwm = clampf(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk);
+  pwm = clampf(pwm, 0.0f, 255.0f);
+  lastPwm_.store(pwm);
+  lastError_.store(error);
+
+  if (error < -0.5f || targetSpeed == 0.0f) return 0; // brake
+  if (error < -0.1f) return 1;                        // coast
+  return static_cast<int>(pwm);
+}
+
+
+
+// --- on_timer: guarda inicial y usa object_distance_ cuando haya objeto ---
 void on_timer() {
-  constexpr float EVADE_OFFSET_DEG = 30.0f;   // evadir por la derecha (CW)
-  constexpr float MAX_MAG          = 90.0f;   // magnitud máx alrededor de 90
-  constexpr float LARGE_ERR_DEG    = 5.0f;   // umbral de "mucho error"
+  if (!std::isfinite(heading360_.load())) return; // aún no hay odom
+
+  constexpr float EVADE_OFFSET_DEG = 30.0f;
+  constexpr float EVADE_MIN_DIST   = 0.25f;
+  constexpr float EVADE_MAX_DIST   = 1.75f;
+  constexpr float MAX_MAG          = 90.0f;
+  constexpr float LARGE_ERR_DEG    = 5.0f;
 
   const bool  has_object = (object_status_.load() == 1.0f);
-  const float d          = dist_front_.load();
-  const bool  blocked    = (!has_object) && std::isfinite(d) && (d < 1.0f);
+  const float d_front    = dist_front_.load();
+  const bool  blocked    = (!has_object) && std::isfinite(d_front) && (d_front < 1.0f);
 
-  // --- objetivo absoluto (0..360) ---
-  float target_abs_deg;
+  float target_abs_deg = 0.0f;
+
   if (has_object) {
-    // Evadir por derecha: objetivo = heading - offset (CW)
-    float h = heading360_.load();
-    target_abs_deg = h - EVADE_OFFSET_DEG;
-    if (target_abs_deg < 0.0f) target_abs_deg += 360.0f;
+    int color = static_cast<int>(object_color_.load());
+    if (color == 0 || color == 1) {
+      float h = heading360_.load();
+
+      // Preferir distancia del objeto; fallback al LiDAR frontal
+      float dist = object_distance_.load();
+      if (!std::isfinite(dist)) dist = d_front;
+
+      if (!std::isfinite(dist)) dist = EVADE_MAX_DIST;
+      dist = clampf(dist, EVADE_MIN_DIST, EVADE_MAX_DIST);
+
+      float alpha = (EVADE_MAX_DIST - dist) / (EVADE_MAX_DIST - EVADE_MIN_DIST);
+      float evade_angle = EVADE_OFFSET_DEG * alpha;
+      if (color == 1) { // rojo: derecha (CW)
+        target_abs_deg = h - evade_angle;
+        if (target_abs_deg < 0.0f) target_abs_deg += 360.0f;
+      } else {          // verde: izquierda (CCW)
+        target_abs_deg = h + evade_angle;
+        if (target_abs_deg >= 360.0f) target_abs_deg -= 360.0f;
+      }
+    } else {
+      // color desconocido => sigue ciclo
+      switch (cycle_idx_.load()) {
+        case 0: target_abs_deg = 0.0f;   break;
+        case 1: target_abs_deg = 90.0f;  break;
+        case 2: target_abs_deg = 180.0f; break;
+        default: target_abs_deg = 270.0f; break;
+      }
+    }
   } else {
     switch (cycle_idx_.load()) {
       case 0: target_abs_deg = 0.0f;   break;
@@ -172,42 +246,32 @@ void on_timer() {
     }
   }
 
-  // --- delta firmado en [-180,180) respecto al heading actual ---
   const float heading = heading360_.load();
   float delta = target_abs_deg - heading;
   delta = std::fmod(delta + 180.0f, 360.0f);
   if (delta < 0.0f) delta += 360.0f;
   delta -= 180.0f;
 
-  // === SOLO UN IF ===
-  // Si NO hay objeto y el error al objetivo es grande, ignorar la distancia media.
   const bool consider_block = (!has_object) && (std::fabs(delta) <= LARGE_ERR_DEG);
-
-  // flanco de subida del "bloqueo considerado" para avanzar ciclo
   const bool last_blk = last_blocked_.load();
   if (consider_block && blocked && !last_blk) {
     int idx = cycle_idx_.load();
-    idx = (idx + 1) & 3;          // 0->1->2->3->0
+    idx = (idx + 1) & 3;
     cycle_idx_.store(idx);
   }
   last_blocked_.store(consider_block && blocked);
 
-  // --- mapear delta a 0..180 con centro en 90 (lo que espera la Teensy) ---
-  float mag = std::fabs(delta);
-  if (mag > MAX_MAG) mag = MAX_MAG;
-  float input_deg = 90.0f + ((delta >= 0.0f) ? +mag : -mag);  // 90±|delta|
-  if (input_deg < 0.0f)   input_deg = 0.0f;
-  if (input_deg > 180.0f) input_deg = 180.0f;
+  float mag = std::min(std::fabs(delta), MAX_MAG);
+  float input_deg = 90.0f + ((delta >= 0.0f) ? +mag : -mag);
+  input_deg = clampf(input_deg, 0.0f, 180.0f);
 
   const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
-  const uint8_t  pwm = 50;  // placeholders
-  const uint8_t  kp  = 10;  // placeholders
+  const uint8_t  pwm = 50; // TODO: si quieres, sustituir por controlACDA(targetSpeed)
+  const uint8_t  kp  = 10;
 
   auto frame = pack(send_deg, pwm, kp);
   (void)serial_.write_bytes(frame.data(), frame.size());
 }
-
-
   // ---- miembros ----
   SerialPort serial_;
   rclcpp::TimerBase::SharedPtr timer_;
@@ -220,6 +284,9 @@ void on_timer() {
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr object_status_sub_;
 
   // atómicos (siempre .load() / .store())
+  std::atomic<float> speed_{0.0f};
+  std::atomic<float> lastPwm_{0.0f};
+  std::atomic<float> lastError_{0.0f};
   std::atomic<float> heading_acc_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> heading360_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> dist_front_{std::numeric_limits<float>::quiet_NaN()};
