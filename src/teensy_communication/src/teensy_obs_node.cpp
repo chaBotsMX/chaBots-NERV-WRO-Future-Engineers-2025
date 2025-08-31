@@ -193,12 +193,12 @@ int controlACDA(float targetSpeed){
 
 // --- on_timer: guarda inicial y usa object_distance_ cuando haya objeto ---
 void on_timer() {
-  if (!std::isfinite(heading360_.load())) return; // aún no hay odom
+  if (!std::isfinite(heading360_.load())) return;
 
-  // Constantes originales + bang-bang
-  constexpr float EVADE_OFFSET_DEG = 30.0f;   // bang-bang: ±30° respecto a 90
-  constexpr float EVADE_MIN_DIST   = 0.25f;   // (se mantiene por si usas después)
-  constexpr float EVADE_MAX_DIST   = 1.75f;   // (se mantiene por si usas después)
+  // Constantes (evasión proporcional 0..30°)
+  constexpr float EVADE_OFFSET_DEG = 30.0f;
+  constexpr float EVADE_MIN_DIST   = 30.0f;
+  constexpr float EVADE_MAX_DIST   = 100.0f;
   constexpr float MAX_MAG          = 90.0f;
   constexpr float LARGE_ERR_DEG    = 5.0f;
 
@@ -206,59 +206,45 @@ void on_timer() {
   const float d_front    = dist_front_.load();
   const bool  blocked    = (!has_object) && std::isfinite(d_front) && (d_front < 1.0f);
 
-  // --- BANG-BANG directo cuando hay objeto ---
+  auto cycle_target = [&]() -> float {
+    switch (cycle_idx_.load()) {
+      case 0: return 0.0f;
+      case 1: return 90.0f;
+      case 2: return 180.0f;
+      default: return 270.0f;
+    }
+  };
+
+  float target_abs_deg = cycle_target();  // valor por defecto
+
   if (has_object) {
-    const int color = static_cast<int>(object_color_.load()); // 0=verde, 1=rojo
+    const int color = static_cast<int>(object_color_.load()); // 0=VERDE, 1=ROJO
+    float h    = heading360_.load();
+    float dist = object_distance_.load() / 2.0f; 
 
-    if (color == 1) {
-      // ROJO -> derecha: 90 + 30
-      const float input_deg = clampf(90.0f + EVADE_OFFSET_DEG, 0.0f, 180.0f);
-      RCLCPP_INFO(get_logger(), "[OBJ=SI] color=ROJO salida=%.1f°", input_deg);
+    if (!std::isfinite(dist)) dist = EVADE_MAX_DIST;
+    dist = clampf(dist, EVADE_MIN_DIST, EVADE_MAX_DIST);
 
-      const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
-      const uint8_t  pwm = 50;
-      const uint8_t  kp  = 10;
-      auto frame = pack(send_deg, pwm, kp);
-      (void)serial_.write_bytes(frame.data(), frame.size());
-      return; // evitamos la rama de setpoints/heading
-    }
-    if (color == 0) {
-      // VERDE -> izquierda: 90 - 30
-      const float input_deg = clampf(90.0f - EVADE_OFFSET_DEG, 0.0f, 180.0f);
-      RCLCPP_INFO(get_logger(), "[OBJ=SI] color=VERDE salida=%.1f°", input_deg);
+    const float alpha = (EVADE_MAX_DIST - dist) / (EVADE_MAX_DIST - EVADE_MIN_DIST);
+    const float evade = EVADE_OFFSET_DEG * alpha; // 0..30°
 
-      const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
-      const uint8_t  pwm = 50;
-      const uint8_t  kp  = 10;
-      auto frame = pack(send_deg, pwm, kp);
-      (void)serial_.write_bytes(frame.data(), frame.size());
-      return; // evitamos la rama de setpoints/heading
+    if (color == 1) {           // ROJO → derecha (CW)
+      target_abs_deg = h - evade;
+    } else if (color == 0) {    // VERDE → izquierda (CCW)
+      target_abs_deg = h + evade;
+    } else {
+      target_abs_deg = cycle_target(); // color desconocido → setpoint
+      RCLCPP_INFO(get_logger(), "[OBJ=SI] color_desconocido salida=%.1f°", target_abs_deg);
     }
 
-    // color desconocido -> seguimos flujo normal pero imprimimos que sí ve
-    RCLCPP_INFO(get_logger(), "[OBJ=SI] color_desconocido");
+    if (target_abs_deg < 0.0f)    target_abs_deg += 360.0f;
+    if (target_abs_deg >= 360.0f) target_abs_deg -= 360.0f;
+
+    RCLCPP_INFO(get_logger(),
+      "[OBJ=SI] color=%d dist=%.1fcm evade=%.1f° salida=%.1f°",
+      color, dist, evade, target_abs_deg);
   } else {
-    // NO ve objeto
     RCLCPP_INFO(get_logger(), "[OBJ=NO]");
-  }
-
-  // --- SIN objeto (o color desconocido): tu lógica original de setpoints/heading ---
-  float target_abs_deg;
-  if (has_object) {
-    // color desconocido => sigue ciclo
-    switch (cycle_idx_.load()) {
-      case 0: target_abs_deg = 0.0f;   break;
-      case 1: target_abs_deg = 90.0f;  break;
-      case 2: target_abs_deg = 180.0f; break;
-      default: target_abs_deg = 270.0f; break;
-    }
-  } else {
-    switch (cycle_idx_.load()) {
-      case 0: target_abs_deg = 0.0f;   break;
-      case 1: target_abs_deg = 90.0f;  break;
-      case 2: target_abs_deg = 180.0f; break;
-      default: target_abs_deg = 270.0f; break;
-    }
   }
 
   // --- delta firmado en [-180,180)
@@ -273,7 +259,7 @@ void on_timer() {
   const bool last_blk = last_blocked_.load();
   if (consider_block && blocked && !last_blk) {
     int idx = cycle_idx_.load();
-    idx = (idx + 1) & 3;          // 0->1->2->3->0
+    idx = (idx + 1) & 3;
     cycle_idx_.store(idx);
   }
   last_blocked_.store(consider_block && blocked);
@@ -283,8 +269,8 @@ void on_timer() {
   input_deg = clampf(input_deg, 0.0f, 180.0f);
 
   const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
-  const uint8_t  pwm = 50;  // placeholders
-  const uint8_t  kp  = 10;  // placeholders
+  const uint8_t  pwm = 50;
+  const uint8_t  kp  = 10;
 
   auto frame = pack(send_deg, pwm, kp);
   (void)serial_.write_bytes(frame.data(), frame.size());
