@@ -117,7 +117,7 @@ private:
     dist_front_.store(mean);
   }
 
-  constexpr float kPI = 3.14159265358979323846f;
+  const float kPI = 3.14159265358979323846f;
 // --- on_odom: corrige nombres y M_PI ---
 void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
   const auto& q = msg->pose.pose.orientation;
