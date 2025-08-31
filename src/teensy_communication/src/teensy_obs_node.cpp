@@ -105,20 +105,29 @@ private:
     const float a_min = msg->angle_min;
     const float a_inc = msg->angle_increment;
 
-    float sum = 0.0f; size_t n = 0;
+    float sumFront = 0.0f; size_t totalFront = 0;
+    float sumLeft = 0.0f; size_t totalLeft = 0;
+    float sumRight = 0.0f; size_t totalRight = 0;
     for (size_t i = 0; i < msg->ranges.size(); ++i) {
       const float a = a_min + a_inc * static_cast<float>(i);
-      if (a < 1.22f || a > 1.91f) continue; // ~70°–110°
+      if (a < 0.0f || a > 3.141592f) continue; // ~70°–110°
       const float r = msg->ranges[i];
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
-      sum += r; ++n;
+      if (a > 1.39 && a < 1.7453f) { sumFront += r; ++totalFront; }
+      if( a > 0.0f && a < 0.5235f) { sumLeft += r; ++totalLeft; }
+      if( a > 2.79252f && a < 3.141592f) { sumRight += r; ++totalRight; }
     }
-    const float mean = (n ? (sum / static_cast<float>(n)) : std::numeric_limits<float>::quiet_NaN());
-    dist_front_.store(mean);
+
+    const float frontmean = (totalFront ? (sumFront / static_cast<float>(totalFront)) : std::numeric_limits<float>::quiet_NaN());
+    dist_front_.store(frontmean);
+    const float leftmean = (totalLeft ? (sumLeft / static_cast<float>(totalLeft)) : std::numeric_limits<float>::quiet_NaN());
+    dist_Left_.store(leftmean);
+    const float rightmean = (totalRight ? (sumRight / static_cast<float>(totalRight)) : std::numeric_limits<float>::quiet_NaN());
+    dist_Right_.store(rightmean);
   }
 
   const float kPI = 3.14159265358979323846f;
-// --- on_odom: corrige nombres y M_PI ---
+
 void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
   const auto& q = msg->pose.pose.orientation;
   float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
@@ -148,25 +157,27 @@ void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
   if (!std::isnan(msg->twist.twist.linear.z)) {
     speed_.store(msg->twist.twist.linear.z);
   }
+    poseY_.store(msg->pose.pose.position.y);
 }
   // ---- empaquetado ----
-  static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t kp) {
+static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t dir) {
     std::array<uint8_t, 6> f{};
     f[0] = 0xAB;
     f[1] = static_cast<uint8_t>((err_deg >> 8) & 0xFF);
     f[2] = static_cast<uint8_t>(err_deg & 0xFF);
     f[3] = pwm_byte;    // velocidad
-    f[4] = kp;   
+    f[4] = dir;
     uint8_t chk = 0; for (int i=0;i<5;++i) chk ^= f[i]; f[5] = chk;
     return f;
   }
 
-static inline float clampf(float v, float lo, float hi) {
-  return std::max(lo, std::min(v, hi));
-}
+
+  static inline float clampf(float v, float lo, float hi) {
+    return std::max(lo, std::min(v, hi));
+  }
 
 
-// --- controlACDA: usa miembros y clampf ---
+
 int controlACDA(float targetSpeed){
   float pwm = 0, jerk = 10;
   float error = targetSpeed - speed_.load();
@@ -194,8 +205,38 @@ int controlACDA(float targetSpeed){
 // --- on_timer: guarda inicial y usa object_distance_ cuando haya objeto ---
 void on_timer() {
   if (!std::isfinite(heading360_.load())) return;
+  if(outOfParking_.load() == false) {
+    if(direction_.load() == ""){
+      if(dist_Left_.load() < dist_Right_.load()){
+        direction_.store("LEFT");
+      } else {
+        direction_.store("RIGHT");
+      }
+    } 
 
-  // Constantes (evasión proporcional 0..30°)
+    if(poseY_.load() < -0.029f){
+      backInParking_.store(true);
+    } 
+    if(poseY_.load() > -0.03f && backInParking_.load() == false){
+      auto frame = pack(90, 25, 1);
+      (void)serial_.write_bytes(frame.data(), frame.size());
+    }
+    else if (poseY_.load() < 0.30f) {
+      if(direction_.load() == "LEFT"){
+        auto frame = pack(150, 25, 0);
+      } else {
+        auto frame = pack(50, 25, 0);
+      }
+      (void)serial_.write_bytes(frame.data(), frame.size());
+    }
+    else {
+      outOfParking_.store(true);
+  
+    }
+
+  } 
+  else{
+
   constexpr float EVADE_OFFSET_DEG = 30.0f;
   constexpr float EVADE_MIN_DIST   = 30.0f;
   constexpr float EVADE_MAX_DIST   = 100.0f;
@@ -275,6 +316,7 @@ void on_timer() {
   auto frame = pack(send_deg, pwm, kp);
   (void)serial_.write_bytes(frame.data(), frame.size());
 }
+}
 
 // ---- miembros ----
   SerialPort serial_;
@@ -288,6 +330,12 @@ void on_timer() {
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr object_status_sub_;
 
   // atómicos (siempre .load() / .store())
+  std::atomic<bool> backInParking_{false};
+  std::atomic<bool> outOfParking_{false};
+  std::atomic<std::string> direction_{""};
+  std::atomic<float> dist_Left_{std::numeric_limits<float>::quiet_NaN()};
+  std::atomic<float> dist_Right_{std::numeric_limits<float>::quiet_NaN()};
+  std::atomic<float> poseY_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> speed_{0.0f};
   std::atomic<float> lastPwm_{0.0f};
   std::atomic<float> lastError_{0.0f};
