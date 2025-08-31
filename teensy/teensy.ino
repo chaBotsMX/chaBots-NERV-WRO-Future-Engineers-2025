@@ -8,6 +8,7 @@ int target = 90;
 int pos = 60;    
 Bounce boton = Bounce(2, 10);
 int pwm = 0;
+int dir = 1;
 int lastError = 0;
 int calKp(float newD,float newK, int input){
   
@@ -66,7 +67,7 @@ int serial1Update() {
           // Serial.print("ANG_0.1deg="); Serial.print(ang_tenths);
           // Serial.print("  PWM="); Serial.print(pwm);
           // Serial.print("  KP=");  Serial.println(kp);
-
+          dir = kp;
           int deg = ang_tenths;  // redondeo a grados
       
           // aquí puedes guardar pwm/kp globalmente si los necesitas
@@ -113,6 +114,10 @@ void loop()
     digitalWrite(5,LOW);
     digitalWrite(7,LOW);
   }
+  else if(dir == 1){
+    digitalWrite(5,LOW);
+    digitalWrite(7,HIGH);
+  }
   else{
     digitalWrite(5,HIGH);
     digitalWrite(7,LOW);
@@ -120,9 +125,9 @@ void loop()
   analogWrite(6,pwm);
   //updateServo(calKp(gradosRaspberry));
  if(gradosRaspberry != -1){
-  Serial.println(pwm);
+  Serial.println(dir);
   //Serial.println(gradosRaspberry);
   //serial1.println(calKp(0.5,gradosRaspberry));
-  updateServo(calKp(0.75,2,gradosRaspberry));
+  updateServo(calKp(0.89,2,gradosRaspberry));
   }
 } 
