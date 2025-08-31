@@ -18,8 +18,8 @@ int calKp(float newD,float newK, int input){
 }
 
 void updateServo(int k){
-  myservo.write(constrain(target+k,50,120));
-  //Serial.println(target+k);
+  myservo.write(constrain(target+k,60,120));
+  Serial.println(target+k);
   
 }
 int serial1Update() {
