@@ -195,9 +195,10 @@ int controlACDA(float targetSpeed){
 void on_timer() {
   if (!std::isfinite(heading360_.load())) return; // aún no hay odom
 
-  constexpr float EVADE_OFFSET_DEG = 30.0f;
-  constexpr float EVADE_MIN_DIST   = 0.25f;
-  constexpr float EVADE_MAX_DIST   = 1.75f;
+  // Constantes originales + bang-bang
+  constexpr float EVADE_OFFSET_DEG = 30.0f;   // bang-bang: ±30° respecto a 90
+  constexpr float EVADE_MIN_DIST   = 0.25f;   // (se mantiene por si usas después)
+  constexpr float EVADE_MAX_DIST   = 1.75f;   // (se mantiene por si usas después)
   constexpr float MAX_MAG          = 90.0f;
   constexpr float LARGE_ERR_DEG    = 5.0f;
 
@@ -205,37 +206,51 @@ void on_timer() {
   const float d_front    = dist_front_.load();
   const bool  blocked    = (!has_object) && std::isfinite(d_front) && (d_front < 1.0f);
 
-  float target_abs_deg = 0.0f;
-
+  // --- BANG-BANG directo cuando hay objeto ---
   if (has_object) {
-    int color = static_cast<int>(object_color_.load());
-    if (color == 0 || color == 1) {
-      float h = heading360_.load();
+    const int color = static_cast<int>(object_color_.load()); // 0=verde, 1=rojo
 
-      // Preferir distancia del objeto; fallback al LiDAR frontal
-      float dist = object_distance_.load();
-      if (!std::isfinite(dist)) dist = d_front;
+    if (color == 1) {
+      // ROJO -> derecha: 90 + 30
+      const float input_deg = clampf(90.0f + EVADE_OFFSET_DEG, 0.0f, 180.0f);
+      RCLCPP_INFO(get_logger(), "[OBJ=SI] color=ROJO salida=%.1f°", input_deg);
 
-      if (!std::isfinite(dist)) dist = EVADE_MAX_DIST;
-      dist = clampf(dist, EVADE_MIN_DIST, EVADE_MAX_DIST);
+      const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
+      const uint8_t  pwm = 50;
+      const uint8_t  kp  = 10;
+      auto frame = pack(send_deg, pwm, kp);
+      (void)serial_.write_bytes(frame.data(), frame.size());
+      return; // evitamos la rama de setpoints/heading
+    }
+    if (color == 0) {
+      // VERDE -> izquierda: 90 - 30
+      const float input_deg = clampf(90.0f - EVADE_OFFSET_DEG, 0.0f, 180.0f);
+      RCLCPP_INFO(get_logger(), "[OBJ=SI] color=VERDE salida=%.1f°", input_deg);
 
-      float alpha = (EVADE_MAX_DIST - dist) / (EVADE_MAX_DIST - EVADE_MIN_DIST);
-      float evade_angle = EVADE_OFFSET_DEG * alpha;
-      if (color == 1) { // rojo: derecha (CW)
-        target_abs_deg = h - evade_angle;
-        if (target_abs_deg < 0.0f) target_abs_deg += 360.0f;
-      } else {          // verde: izquierda (CCW)
-        target_abs_deg = h + evade_angle;
-        if (target_abs_deg >= 360.0f) target_abs_deg -= 360.0f;
-      }
-    } else {
-      // color desconocido => sigue ciclo
-      switch (cycle_idx_.load()) {
-        case 0: target_abs_deg = 0.0f;   break;
-        case 1: target_abs_deg = 90.0f;  break;
-        case 2: target_abs_deg = 180.0f; break;
-        default: target_abs_deg = 270.0f; break;
-      }
+      const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
+      const uint8_t  pwm = 50;
+      const uint8_t  kp  = 10;
+      auto frame = pack(send_deg, pwm, kp);
+      (void)serial_.write_bytes(frame.data(), frame.size());
+      return; // evitamos la rama de setpoints/heading
+    }
+
+    // color desconocido -> seguimos flujo normal pero imprimimos que sí ve
+    RCLCPP_INFO(get_logger(), "[OBJ=SI] color_desconocido");
+  } else {
+    // NO ve objeto
+    RCLCPP_INFO(get_logger(), "[OBJ=NO]");
+  }
+
+  // --- SIN objeto (o color desconocido): tu lógica original de setpoints/heading ---
+  float target_abs_deg;
+  if (has_object) {
+    // color desconocido => sigue ciclo
+    switch (cycle_idx_.load()) {
+      case 0: target_abs_deg = 0.0f;   break;
+      case 1: target_abs_deg = 90.0f;  break;
+      case 2: target_abs_deg = 180.0f; break;
+      default: target_abs_deg = 270.0f; break;
     }
   } else {
     switch (cycle_idx_.load()) {
@@ -246,6 +261,7 @@ void on_timer() {
     }
   }
 
+  // --- delta firmado en [-180,180)
   const float heading = heading360_.load();
   float delta = target_abs_deg - heading;
   delta = std::fmod(delta + 180.0f, 360.0f);
@@ -253,10 +269,11 @@ void on_timer() {
   delta -= 180.0f;
 
   const bool consider_block = (!has_object) && (std::fabs(delta) <= LARGE_ERR_DEG);
+
   const bool last_blk = last_blocked_.load();
   if (consider_block && blocked && !last_blk) {
     int idx = cycle_idx_.load();
-    idx = (idx + 1) & 3;
+    idx = (idx + 1) & 3;          // 0->1->2->3->0
     cycle_idx_.store(idx);
   }
   last_blocked_.store(consider_block && blocked);
@@ -266,13 +283,14 @@ void on_timer() {
   input_deg = clampf(input_deg, 0.0f, 180.0f);
 
   const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
-  const uint8_t  pwm = 50; // TODO: si quieres, sustituir por controlACDA(targetSpeed)
-  const uint8_t  kp  = 10;
+  const uint8_t  pwm = 50;  // placeholders
+  const uint8_t  kp  = 10;  // placeholders
 
   auto frame = pack(send_deg, pwm, kp);
   (void)serial_.write_bytes(frame.data(), frame.size());
 }
-  // ---- miembros ----
+
+// ---- miembros ----
   SerialPort serial_;
   rclcpp::TimerBase::SharedPtr timer_;
 
