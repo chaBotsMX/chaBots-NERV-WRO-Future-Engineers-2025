@@ -100,6 +100,47 @@ public:
   }
 
 private:
+
+  // ---- empaquetado ----
+  static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t dir) {
+      std::array<uint8_t, 6> f{};
+      f[0] = 0xAB;
+      f[1] = static_cast<uint8_t>((err_deg >> 8) & 0xFF);
+      f[2] = static_cast<uint8_t>(err_deg & 0xFF);
+      f[3] = pwm_byte;    // velocidad
+      f[4] = dir;
+      uint8_t chk = 0; for (int i=0;i<5;++i) chk ^= f[i]; f[5] = chk;
+      return f;
+    }
+
+  static inline float clampf(float v, float lo, float hi) {
+    return std::max(lo, std::min(v, hi));
+  }
+
+  const float kPI = 3.14159265358979323846f;
+
+  int controlACDA(float targetSpeed){
+    float pwm = 0, jerk = 10;
+    float error = targetSpeed - speed_.load();
+    float aproxPwm;
+    if      (targetSpeed < 0.6f) aproxPwm = 35.0f;
+    else if (targetSpeed < 1.2f) aproxPwm = 40.0f;
+    else                         aproxPwm = 60.0f;
+
+    float lastPwmLocal = lastPwm_.load();
+    float kp = 8.25f;
+    float kd = 0.1f;
+    pwm = (error * kp) + ((error - lastError_.load()) / 0.01f) * kd;
+    pwm = clampf(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk);
+    pwm = clampf(pwm, 0.0f, 255.0f);
+    lastPwm_.store(pwm);
+    lastError_.store(error);
+
+    if (error < -0.5f || targetSpeed == 0.0f) return 0; // brake
+    if (error < -0.1f) return 1;                        // coast
+    return static_cast<int>(pwm);
+  }
+
   // ---- callbacks ----
   void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
     const float a_min = msg->angle_min;
@@ -126,9 +167,8 @@ private:
     dist_Right_.store(rightmean);
   }
 
-  const float kPI = 3.14159265358979323846f;
 
-void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
+  void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
   const auto& q = msg->pose.pose.orientation;
   float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
   float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
@@ -159,164 +199,122 @@ void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
   }
     poseY_.store(msg->pose.pose.position.y);
 }
-  // ---- empaquetado ----
-static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t dir) {
-    std::array<uint8_t, 6> f{};
-    f[0] = 0xAB;
-    f[1] = static_cast<uint8_t>((err_deg >> 8) & 0xFF);
-    f[2] = static_cast<uint8_t>(err_deg & 0xFF);
-    f[3] = pwm_byte;    // velocidad
-    f[4] = dir;
-    uint8_t chk = 0; for (int i=0;i<5;++i) chk ^= f[i]; f[5] = chk;
-    return f;
-  }
-
-
-  static inline float clampf(float v, float lo, float hi) {
-    return std::max(lo, std::min(v, hi));
-  }
-
-
-
-int controlACDA(float targetSpeed){
-  float pwm = 0, jerk = 10;
-  float error = targetSpeed - speed_.load();
-  float aproxPwm;
-  if      (targetSpeed < 0.6f) aproxPwm = 35.0f;
-  else if (targetSpeed < 1.2f) aproxPwm = 40.0f;
-  else                         aproxPwm = 60.0f;
-
-  float lastPwmLocal = lastPwm_.load();
-  float kp = 8.25f;
-  float kd = 0.1f;
-  pwm = (error * kp) + ((error - lastError_.load()) / 0.01f) * kd;
-  pwm = clampf(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk);
-  pwm = clampf(pwm, 0.0f, 255.0f);
-  lastPwm_.store(pwm);
-  lastError_.store(error);
-
-  if (error < -0.5f || targetSpeed == 0.0f) return 0; // brake
-  if (error < -0.1f) return 1;                        // coast
-  return static_cast<int>(pwm);
-}
-
-
 
 // --- on_timer: guarda inicial y usa object_distance_ cuando haya objeto ---
-void on_timer() {
-  if (!std::isfinite(heading360_.load()) || !std::isfinite(dist_Left_.load()) || !std::isfinite(dist_Right_.load())) return;
-  if(outOfParking_.load() == false) {
-    if(direction_.load() == false){
-      if(dist_Left_.load() < dist_Right_.load()){
-        direction_.store(false);
-      } else {
-        direction_.store(true);
-      }
-    } 
-
-    if(poseY_.load() < -0.035f) {
-      backInParking_.store(true);
-    } 
-    if(poseY_.load() > -0.036f && backInParking_.load() == false){
-      auto frame = pack(90, 30, 1);
-      (void)serial_.write_bytes(frame.data(), frame.size());
-    }
-    else if (poseY_.load() < 0.30f) {
-      std::array<uint8_t, 6> frame;
+  void on_timer() {
+    if (!std::isfinite(heading360_.load()) || !std::isfinite(dist_Left_.load()) || !std::isfinite(dist_Right_.load())) return;
+    if(outOfParking_.load() == false) {
       if(direction_.load() == false){
-        frame = pack(150, 30, 0);
-      } else {
-        frame = pack(50, 30, 0);
+        if(dist_Left_.load() < dist_Right_.load()){
+          direction_.store(false);
+        } else {
+          direction_.store(true);
+        }
+      } 
+
+      if(poseY_.load() < -0.035f) {
+        backInParking_.store(true);
+      } 
+      if(poseY_.load() > -0.036f && backInParking_.load() == false){
+        auto frame = pack(90, 30, 1);
+        (void)serial_.write_bytes(frame.data(), frame.size());
       }
-      (void)serial_.write_bytes(frame.data(), frame.size());
-    }
-    else {
-      outOfParking_.store(true);
-    }
+      else if (poseY_.load() < 0.30f) {
+        std::array<uint8_t, 6> frame;
+        if(direction_.load() == false){
+          frame = pack(150, 30, 0);
+        } else {
+          frame = pack(50, 30, 0);
+        }
+        (void)serial_.write_bytes(frame.data(), frame.size());
+      }
+      else {
+        outOfParking_.store(true);
+      }
 
-  } 
-  else{
+    } 
+    else{
 
-  constexpr float EVADE_OFFSET_DEG = 30.0f;
-  constexpr float EVADE_MIN_DIST   = 30.0f;
-  constexpr float EVADE_MAX_DIST   = 100.0f;
-  constexpr float MAX_MAG          = 90.0f;
-  constexpr float LARGE_ERR_DEG    = 5.0f;
+    constexpr float EVADE_OFFSET_DEG = 30.0f;
+    constexpr float EVADE_MIN_DIST   = 30.0f;
+    constexpr float EVADE_MAX_DIST   = 100.0f;
+    constexpr float MAX_MAG          = 90.0f;
+    constexpr float LARGE_ERR_DEG    = 5.0f;
 
-  const bool  has_object = (object_status_.load() == 1.0f);
-  const float d_front    = dist_front_.load();
-  const bool  blocked    = (!has_object) && std::isfinite(d_front) && (d_front < 1.0f);
+    const bool  has_object = (object_status_.load() == 1.0f);
+    const float d_front    = dist_front_.load();
+    const bool  blocked    = (!has_object) && std::isfinite(d_front) && (d_front < 1.0f);
 
-  auto cycle_target = [&]() -> float {
-    switch (cycle_idx_.load()) {
-      case 0: return 0.0f;
-      case 1: return 90.0f;
-      case 2: return 180.0f;
-      default: return 270.0f;
-    }
-  };
+    auto cycle_target = [&]() -> float {
+      switch (cycle_idx_.load()) {
+        case 0: return 0.0f;
+        case 1: return 90.0f;
+        case 2: return 180.0f;
+        default: return 270.0f;
+      }
+    };
 
-  float target_abs_deg = cycle_target();  // valor por defecto
+    float target_abs_deg = cycle_target();  // valor por defecto
 
-  if (has_object) {
-    const int color = static_cast<int>(object_color_.load()); // 0=VERDE, 1=ROJO
-    float h    = heading360_.load();
-    float dist = object_distance_.load() / 2.0f; 
+    if (has_object) {
+      const int color = static_cast<int>(object_color_.load()); // 0=VERDE, 1=ROJO
+      float h    = heading360_.load();
+      float dist = object_distance_.load() / 2.0f; 
 
-    if (!std::isfinite(dist)) dist = EVADE_MAX_DIST;
-    dist = clampf(dist, EVADE_MIN_DIST, EVADE_MAX_DIST);
+      if (!std::isfinite(dist)) dist = EVADE_MAX_DIST;
+      dist = clampf(dist, EVADE_MIN_DIST, EVADE_MAX_DIST);
 
-    const float alpha = (EVADE_MAX_DIST - dist) / (EVADE_MAX_DIST - EVADE_MIN_DIST);
-    const float evade = EVADE_OFFSET_DEG * alpha; // 0..30°
+      const float alpha = (EVADE_MAX_DIST - dist) / (EVADE_MAX_DIST - EVADE_MIN_DIST);
+      const float evade = EVADE_OFFSET_DEG * alpha; // 0..30°
 
-    if (color == 1) {           // ROJO → derecha (CW)
-      target_abs_deg = h - evade;
-    } else if (color == 0) {    // VERDE → izquierda (CCW)
-      target_abs_deg = h + evade;
+      if (color == 1) {           // ROJO → derecha (CW)
+        target_abs_deg = h - evade;
+      } else if (color == 0) {    // VERDE → izquierda (CCW)
+        target_abs_deg = h + evade;
+      } else {
+        target_abs_deg = cycle_target(); // color desconocido → setpoint
+        RCLCPP_INFO(get_logger(), "[OBJ=SI] color_desconocido salida=%.1f°", target_abs_deg);
+      }
+
+      if (target_abs_deg < 0.0f)    target_abs_deg += 360.0f;
+      if (target_abs_deg >= 360.0f) target_abs_deg -= 360.0f;
+
+      RCLCPP_INFO(get_logger(),
+        "[OBJ=SI] color=%d dist=%.1fcm evade=%.1f° salida=%.1f°",
+        color, dist, evade, target_abs_deg);
     } else {
-      target_abs_deg = cycle_target(); // color desconocido → setpoint
-      RCLCPP_INFO(get_logger(), "[OBJ=SI] color_desconocido salida=%.1f°", target_abs_deg);
+      RCLCPP_INFO(get_logger(), "[OBJ=NO]");
     }
 
-    if (target_abs_deg < 0.0f)    target_abs_deg += 360.0f;
-    if (target_abs_deg >= 360.0f) target_abs_deg -= 360.0f;
+    // --- delta firmado en [-180,180)
+    const float heading = heading360_.load();
+    float delta = target_abs_deg - heading;
+    delta = std::fmod(delta + 180.0f, 360.0f);
+    if (delta < 0.0f) delta += 360.0f;
+    delta -= 180.0f;
 
-    RCLCPP_INFO(get_logger(),
-      "[OBJ=SI] color=%d dist=%.1fcm evade=%.1f° salida=%.1f°",
-      color, dist, evade, target_abs_deg);
-  } else {
-    RCLCPP_INFO(get_logger(), "[OBJ=NO]");
+    const bool consider_block = (!has_object) && (std::fabs(delta) <= LARGE_ERR_DEG);
+
+    const bool last_blk = last_blocked_.load();
+    if (consider_block && blocked && !last_blk) {
+      int idx = cycle_idx_.load();
+      idx = (idx + 1) & 3;
+      cycle_idx_.store(idx);
+    }
+    last_blocked_.store(consider_block && blocked);
+
+    float mag = std::min(std::fabs(delta), MAX_MAG);
+    float input_deg = 90.0f + ((delta >= 0.0f) ? +mag : -mag);
+    input_deg = clampf(input_deg, 0.0f, 180.0f);
+
+    const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
+    const uint8_t  pwm = 50;
+    const uint8_t  kp  = 10;
+
+    auto frame = pack(send_deg, pwm, kp);
+    (void)serial_.write_bytes(frame.data(), frame.size());
   }
-
-  // --- delta firmado en [-180,180)
-  const float heading = heading360_.load();
-  float delta = target_abs_deg - heading;
-  delta = std::fmod(delta + 180.0f, 360.0f);
-  if (delta < 0.0f) delta += 360.0f;
-  delta -= 180.0f;
-
-  const bool consider_block = (!has_object) && (std::fabs(delta) <= LARGE_ERR_DEG);
-
-  const bool last_blk = last_blocked_.load();
-  if (consider_block && blocked && !last_blk) {
-    int idx = cycle_idx_.load();
-    idx = (idx + 1) & 3;
-    cycle_idx_.store(idx);
   }
-  last_blocked_.store(consider_block && blocked);
-
-  float mag = std::min(std::fabs(delta), MAX_MAG);
-  float input_deg = 90.0f + ((delta >= 0.0f) ? +mag : -mag);
-  input_deg = clampf(input_deg, 0.0f, 180.0f);
-
-  const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
-  const uint8_t  pwm = 50;
-  const uint8_t  kp  = 10;
-
-  auto frame = pack(send_deg, pwm, kp);
-  (void)serial_.write_bytes(frame.data(), frame.size());
-}
-}
 
 // ---- miembros ----
   SerialPort serial_;
