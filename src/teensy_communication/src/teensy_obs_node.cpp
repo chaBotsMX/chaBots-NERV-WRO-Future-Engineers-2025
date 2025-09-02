@@ -96,10 +96,48 @@ public:
     cycle_idx_.store(0);
     last_blocked_.store(false);
 
-  timer_ = create_wall_timer(10ms, std::bind(&TeensyObsNode::on_timer, this));
+  timer_ = create_wall_timer(10ms, std::bind(&TeensyObsNode::on_timer, t his));
   }
 
 private:
+
+  bool outOfParkingLot(){
+    const float leftDistance = dist_Left_.load();
+    const float rightDistance = dist_Right_.load();
+    bool reversed = backInParking_.load();
+    float Ypos = poseY_.load();
+    int direction = direction_.load();
+
+    if(!isFinite(leftDistance) || !isFinite(rightDistance)) return false;
+
+    if(leftDistance > rightDistance && direction == 0) direction_.store(1);
+    else if (leftDistance < rightDistance && direction == 0) direction_.store(2);
+
+    if(reversed == false){
+      Ypos < -0.02 ? backInParking_.store(true) : backInParking_.store(false);
+      auto frame = pack(90, 40, 1);
+      (void)serial_.write_bytes(frame.data(), frame.size());
+    }
+    else{
+      if(direction ==  1 && Ypos < 0.30){
+        auto frame = pack(50, 40, 0);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+        return false;
+      }
+      else if(direction ==  2 && Ypos < 0.30){
+        auto frame = pack(150, 40, 0);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
 
   // ---- empaquetado ----
   static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t dir) {
@@ -136,8 +174,8 @@ private:
     lastPwm_.store(pwm);
     lastError_.store(error);
 
-    if (error < -0.5f || targetSpeed == 0.0f) return 0; // brake
-    if (error < -0.1f) return 1;                        // coast
+    if (error < -0.5f || targetSpeed == 0.0f) return 0; 
+    if (error < -0.1f) return 1;                        
     return static_cast<int>(pwm);
   }
 
@@ -189,11 +227,11 @@ private:
     prev = yaw_deg;
   }
 
-  // FIX: nombres correctos
+
   heading_acc_.store(acc);
   heading360_.store(wrap_360(acc));
 
-  // velocidad absoluta (si no es NaN)
+  
   if (!std::isnan(msg->twist.twist.linear.z)) {
     speed_.store(msg->twist.twist.linear.z);
   }
@@ -202,118 +240,94 @@ private:
 
 // --- on_timer: guarda inicial y usa object_distance_ cuando haya objeto ---
   void on_timer() {
-    if (!std::isfinite(heading360_.load()) || !std::isfinite(dist_Left_.load()) || !std::isfinite(dist_Right_.load())) return;
-    if(outOfParking_.load() == false) {
-      if(direction_.load() == false){
-        if(dist_Left_.load() < dist_Right_.load()){
-          direction_.store(false);
-        } else {
-          direction_.store(true);
+    if (!std::isfinite(heading360_.load()) || !std::isfinite(dist_Left_.load()) || !std::isfinite(dist_Right_.load()) && dist_Left != 0.0f) return;
+
+    bool initDrive = outOfParking_.load();  
+
+    if(initDrive == true){
+      constexpr float EVADE_OFFSET_DEG = 30.0f;
+      constexpr float EVADE_MIN_DIST   = 30.0f;
+      constexpr float EVADE_MAX_DIST   = 100.0f;
+      constexpr float MAX_MAG          = 90.0f;
+      constexpr float LARGE_ERR_DEG    = 5.0f;
+
+      const bool  hayObjeto = (object_status_.load() == 1.0f);
+      const float d_front    = dist_front_.load();
+      const bool  blocked    = (!hayObjeto) && std::isfinite(d_front) && (d_front < 1.0f);
+
+      auto cycle_target = [&]() -> float {
+        switch (cycle_idx_.load()) {
+          case 0: return 0.0f;
+          case 1: return 90.0f;
+          case 2: return 180.0f;
+          default: return 270.0f;
         }
-      } 
+      };   
+      
 
-      if(poseY_.load() < -0.035f) {
-        backInParking_.store(true);
-      } 
-      if(poseY_.load() > -0.036f && backInParking_.load() == false){
-        auto frame = pack(90, 30, 1);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-      }
-      else if (poseY_.load() < 0.30f) {
-        std::array<uint8_t, 6> frame;
-        if(direction_.load() == false){
-          frame = pack(150, 30, 0);
+      float target_abs_deg = cycle_target();  // valor por defecto
+
+      if (hayObjeto) {
+        const int color = static_cast<int>(object_color_.load()); // 0=VERDE, 1=ROJO
+        float h    = heading360_.load();
+        float Object_dist = object_distance_.load() / 2.0f; 
+
+        if (!std::isfinite(Object_dist)) Object_dist = EVADE_MAX_DIST;
+        Object_dist = clampf(Object_dist, EVADE_MIN_DIST, EVADE_MAX_DIST);
+
+        const float alpha = (EVADE_MAX_DIST - Object_dist) / (EVADE_MAX_DIST - EVADE_MIN_DIST);
+        const float evade = EVADE_OFFSET_DEG * alpha; // 0..30°
+
+        if (color == 1) {           // ROJO → derecha (CW)
+          target_abs_deg = h - evade;
+        } else if (color == 0) {    // VERDE → izquierda (CCW)
+          target_abs_deg = h + evade;
         } else {
-          frame = pack(50, 30, 0);
+          target_abs_deg = cycle_target(); // color desconocido → setpoint
+          RCLCPP_INFO(get_logger(), "[OBJ=SI] color_desconocido salida=%.1f°", target_abs_deg);
         }
-        (void)serial_.write_bytes(frame.data(), frame.size());
-      }
-      else {
-        outOfParking_.store(true);
-      }
 
-    } 
-    else{
+        if (target_abs_deg < 0.0f)    target_abs_deg += 360.0f;
+        if (target_abs_deg >= 360.0f) target_abs_deg -= 360.0f;
 
-    constexpr float EVADE_OFFSET_DEG = 30.0f;
-    constexpr float EVADE_MIN_DIST   = 30.0f;
-    constexpr float EVADE_MAX_DIST   = 100.0f;
-    constexpr float MAX_MAG          = 90.0f;
-    constexpr float LARGE_ERR_DEG    = 5.0f;
-
-    const bool  has_object = (object_status_.load() == 1.0f);
-    const float d_front    = dist_front_.load();
-    const bool  blocked    = (!has_object) && std::isfinite(d_front) && (d_front < 1.0f);
-
-    auto cycle_target = [&]() -> float {
-      switch (cycle_idx_.load()) {
-        case 0: return 0.0f;
-        case 1: return 90.0f;
-        case 2: return 180.0f;
-        default: return 270.0f;
-      }
-    };
-
-    float target_abs_deg = cycle_target();  // valor por defecto
-
-    if (has_object) {
-      const int color = static_cast<int>(object_color_.load()); // 0=VERDE, 1=ROJO
-      float h    = heading360_.load();
-      float dist = object_distance_.load() / 2.0f; 
-
-      if (!std::isfinite(dist)) dist = EVADE_MAX_DIST;
-      dist = clampf(dist, EVADE_MIN_DIST, EVADE_MAX_DIST);
-
-      const float alpha = (EVADE_MAX_DIST - dist) / (EVADE_MAX_DIST - EVADE_MIN_DIST);
-      const float evade = EVADE_OFFSET_DEG * alpha; // 0..30°
-
-      if (color == 1) {           // ROJO → derecha (CW)
-        target_abs_deg = h - evade;
-      } else if (color == 0) {    // VERDE → izquierda (CCW)
-        target_abs_deg = h + evade;
+        RCLCPP_INFO(get_logger(),
+          "[OBJ=SI] color=%d dist=%.1fcm evade=%.1f° salida=%.1f°",
+          color, dist, evade, target_abs_deg);
       } else {
-        target_abs_deg = cycle_target(); // color desconocido → setpoint
-        RCLCPP_INFO(get_logger(), "[OBJ=SI] color_desconocido salida=%.1f°", target_abs_deg);
+        RCLCPP_INFO(get_logger(), "[OBJ=NO]");
       }
 
-      if (target_abs_deg < 0.0f)    target_abs_deg += 360.0f;
-      if (target_abs_deg >= 360.0f) target_abs_deg -= 360.0f;
+      // --- delta firmado en [-180,180)
+      const float heading = heading360_.load();
+      float delta = target_abs_deg - heading;
+      delta = std::fmod(delta + 180.0f, 360.0f);
+      if (delta < 0.0f) delta += 360.0f;
+      delta -= 180.0f;
 
-      RCLCPP_INFO(get_logger(),
-        "[OBJ=SI] color=%d dist=%.1fcm evade=%.1f° salida=%.1f°",
-        color, dist, evade, target_abs_deg);
-    } else {
-      RCLCPP_INFO(get_logger(), "[OBJ=NO]");
+      const bool consider_block = (!hayObjeto) && (std::fabs(delta) <= LARGE_ERR_DEG);
+
+      const bool last_blk = last_blocked_.load();
+      if (consider_block && blocked && !last_blk) {
+        int idx = cycle_idx_.load();
+        idx = (idx + 1) & 3;
+        cycle_idx_.store(idx);
+      }
+      last_blocked_.store(consider_block && blocked);
+
+      float mag = std::min(std::fabs(delta), MAX_MAG);
+      float input_deg = 90.0f + ((delta >= 0.0f) ? +mag : -mag);
+      input_deg = clampf(input_deg, 0.0f, 180.0f);
+
+      const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
+      const uint8_t  pwm = 50;
+      const uint8_t  kp  = 10;
+
+      auto frame = pack(send_deg, pwm, kp);
+      (void)serial_.write_bytes(frame.data(), frame.size());
     }
-
-    // --- delta firmado en [-180,180)
-    const float heading = heading360_.load();
-    float delta = target_abs_deg - heading;
-    delta = std::fmod(delta + 180.0f, 360.0f);
-    if (delta < 0.0f) delta += 360.0f;
-    delta -= 180.0f;
-
-    const bool consider_block = (!has_object) && (std::fabs(delta) <= LARGE_ERR_DEG);
-
-    const bool last_blk = last_blocked_.load();
-    if (consider_block && blocked && !last_blk) {
-      int idx = cycle_idx_.load();
-      idx = (idx + 1) & 3;
-      cycle_idx_.store(idx);
-    }
-    last_blocked_.store(consider_block && blocked);
-
-    float mag = std::min(std::fabs(delta), MAX_MAG);
-    float input_deg = 90.0f + ((delta >= 0.0f) ? +mag : -mag);
-    input_deg = clampf(input_deg, 0.0f, 180.0f);
-
-    const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
-    const uint8_t  pwm = 50;
-    const uint8_t  kp  = 10;
-
-    auto frame = pack(send_deg, pwm, kp);
-    (void)serial_.write_bytes(frame.data(), frame.size());
   }
+  else{
+    outOfParking_.store(outOfParkingLot());
   }
 
 // ---- miembros ----
@@ -330,7 +344,7 @@ private:
   // atómicos (siempre .load() / .store())
   std::atomic<bool> backInParking_{false};
   std::atomic<bool> outOfParking_{false};
-  std::atomic<bool> direction_{false}; // false = "LEFT", true = "RIGHT"
+  std::atomic<int> direction_{0}; // 1 = "LEFT", 2 = "RIGHT"
   std::atomic<float> dist_Left_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> dist_Right_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> poseY_{std::numeric_limits<float>::quiet_NaN()};
