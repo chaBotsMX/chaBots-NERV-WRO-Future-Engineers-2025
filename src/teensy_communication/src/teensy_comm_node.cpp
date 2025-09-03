@@ -7,6 +7,7 @@
 #include <geometry_msgs/msg/point.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 
+#include <thread>
 #include <string>
 #include <chrono>
 #include <atomic>
@@ -23,7 +24,6 @@
 #include <cerrno>
 #include <cstring>
 #include <algorithm>
-
 using namespace std::chrono_literals;
 
 
@@ -218,13 +218,13 @@ private:
   }
 
 
-  static std::array<uint8_t, 6> empaquetar(uint16_t ang_tenths, uint8_t pwm_byte, uint8_t kp_byte, rclcpp::Logger logger) {
+  static std::array<uint8_t, 6> empaquetar(uint16_t ang_tenths, uint8_t pwm_byte, uint8_t dir, rclcpp::Logger logger) {
     std::array<uint8_t, 6> f{};
     f[0] = 0xAB;
     f[1] = static_cast<uint8_t>((ang_tenths >> 8) & 0xFF);
     f[2] = static_cast<uint8_t>(ang_tenths & 0xFF);
     f[3] = pwm_byte;
-    f[4] = kp_byte;
+    f[4] = dir;
     uint8_t chk = 0x00;
   //  RCLCPP_INFO(logger, "angulo mandado: %ld", ang_tenths);
     for (size_t i = 0; i < 5; ++i) chk ^= f[i];
@@ -267,6 +267,41 @@ private:
   return static_cast<int>(pwm);
   }
 
+
+
+float objectiveAngleVelPD(float vel_min, float vel_max){
+  const float alpha = 0.3f;   // suavizado EMA
+  const float dt    = 0.01f;  // 10 ms (tu timer)
+
+  float a = absolute_angle.load();
+  // Si quieres evitar spikes al primer ciclo sin dato:
+  if (!std::isfinite(a)) return vel_min;   // sin reducción cuando no hay ángulo
+
+  // Error envuelto a [-180, 180]
+  float e = 90.0f - a;
+  while (e > 180.0f)  e -= 360.0f;
+  while (e < -180.0f) e += 360.0f;
+
+  // Derivada cruda con el error previo
+  float e_prev       = lastVelErr.load();
+  float raw_derivada = (e - e_prev) / dt;      // deg/s "amplificado"
+  lastVelErr.store(e);
+
+  // EMA correcto: y(k) = y(k-1) + alpha * (x(k) - y(k-1))
+  float der_prev  = de_f.load();
+  float derivada  = der_prev + alpha * (raw_derivada - der_prev);
+  de_f.store(derivada);
+
+  // (Opcional) tope duro a la derivada filtrada para eliminar picos extremos
+  // derivada = clampf(derivada, -400.0f, 400.0f);
+
+  const float kp = 0.02f;  // m/s por grado
+  const float kd = 0.005f; // m/s por (grado/seg filtrado)
+  float reduccion = kp * std::fabs(e) + kd * std::fabs(derivada);
+
+  return clampf(reduccion, vel_min, vel_max);  // p.ej. [0.0f, 0.8f]
+}
+
   //callbacks que se ejecutan al leer un topic
   void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
     const float angle_min = msg->angle_min;
@@ -299,65 +334,60 @@ private:
 
   float front = frontWallDistance.load();
   float offset = centeringOffset.load();
-  float deg = angle_deg_.load();
   float degrees = heading360.load();
   float head = heading.load();
   float current_speed = speed.load();
   int returnPWM = 0;
   int dir = 1;
-  bool ending = false;
-  if(frontWallDistance < 0.8f){returnPWM = controlACDA(0.8f);}
-  else if(frontWallDistance > 1.0f){
-    returnPWM = controlACDA(1.8f);
-  }
-  else if (frontWallDistance > 1.5f)
-  {
-    returnPWM = controlACDA(2.5f);
-  }
-  
-  else{
-    returnPWM = controlACDA(1.0f);
-  }
+  bool ending = endRound.load();
 
-  float heading = heading360.load();
-  deg = std::fmod((0.0f - heading + 540.0f), 360.0f) - 180.0f;
-  if (std::fabs(head) > 1076.0f && front < 1.8f) { // check for NaN
-    ending = true;
-    returnPWM = 0;
-  }
-  
-  if(!init.load()){
-    if(std::isfinite(absolute_angle.load()) && front != 0.0f){
-    
-      init.store(true);
-    }
-    returnPWM = 0;
-  }
-  /*if(ending){
-    if(front > 2.3){
-      returnPWM = controlACDA(2.0f);
-      dir = 1;
-    }
-    else if(front < 1.3f){
-      returnPWM = controlACDA(2.0f);
-      dir = 0;
+  if(ending == false){
+    if(front < 0.8f){returnPWM = controlACDA(0.8f);}
+    else if(front > 1.0f){
+      returnPWM = controlACDA(1.8f - fabs(objectiveAngleVelPD(0.0f, 0.8f)));
     }
     else{
+      returnPWM = controlACDA(1.0f);
+    }
+
+    float heading = heading360.load();
+    if (std::fabs(head) > 1076.0f && front < 1.8f) { // check for NaN
+      endRound.store(true);
       returnPWM = 0;
     }
-  }*/
-  RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
-  auto frame = empaquetar(static_cast<uint16_t>(absolute_angle.load()), returnPWM, dir,this->get_logger());
-  (void)serial_.write_bytes(frame.data(), frame.size());
+    
+    if(!init.load()){
+      if(std::isfinite(absolute_angle.load()) && front != 0.0f){
+      
+        init.store(true);
+      }
+      returnPWM = 0;
+    }
+    RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
+    auto frame = empaquetar(static_cast<uint16_t>(absolute_angle.load()), returnPWM, dir,this->get_logger());
+    (void)serial_.write_bytes(frame.data(), frame.size());
   }
-
+  else{
+    if(front < 1.2){
+      auto frame = empaquetar(static_cast<uint16_t>(90), 50, 1,this->get_logger());
+      (void)serial_.write_bytes(frame.data(), frame.size());
+    }
+    else if(front > 2.2){
+      auto frame = empaquetar(static_cast<uint16_t>(90), 50, 0,this->get_logger());
+      (void)serial_.write_bytes(frame.data(), frame.size());
+    }
+    else{
+      auto frame = empaquetar(static_cast<uint16_t>(90), 0, 1,this->get_logger());
+      (void)serial_.write_bytes(frame.data(), frame.size());
+    }
+  }
+  }
 
   static inline float wrap_360(float a) { float x = std::fmod(a, 360.0f); return (x < 0) ? x + 360.0f : x; }
 
   void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
 
   const auto& q = msg->pose.pose.orientation;
-  // Usar el valor crudo de atan2, sin normalizar a [-180, 180)
   float siny_cosp = 2.0f * (q.w * q.z + q.x * q.y);
   float cosy_cosp = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
   float yaw_deg = std::atan2(siny_cosp, cosy_cosp) * 180.0f / static_cast<float>(M_PI);
@@ -371,23 +401,21 @@ private:
     init = true;
   } else {
     float d = yaw_deg - prev;
-    // Corrige saltos de 360/-360
+
     if (d > 180.0f) d -= 360.0f;
     if (d < -180.0f) d += 360.0f;
     acc += d;
     prev = yaw_deg;
   }
-  // heading: grados totales recorridos (puede ser >360 o <-360)
   heading.store(acc);
-  // heading360: solo para mostrar el ángulo normalizado
   heading360.store(wrap_360(std::fmod(acc, 360.0f)));
 
-    // Leer la velocidad absoluta publicada por otos_reader (en linear.z)
-    if (msg->twist.twist.linear.z == msg->twist.twist.linear.z) { // check for NaN
+    
+    if (msg->twist.twist.linear.z == msg->twist.twist.linear.z) { 
       speed.store(msg->twist.twist.linear.z);
     }
   }
-  // Serial
+  
   SerialPort serial_;
 
   // ROS
@@ -397,14 +425,16 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
   // variables persistentes
+  std::atomic<bool> endRound{false};
   std::atomic<bool> init{false};
   std::atomic<int> lastPwm{0};
+  std::atomic<float> de_f{0.0f};
+  std::atomic<float> lastVelErr{0.0f};
   std::atomic<float> lastError{0.0f};
   std::atomic<float> centeringOffset{0.0f};
   std::atomic<float> frontWallDistance{0.0f};
   std::atomic<float> headingSetPoint{0.0f};
   std::atomic<float> heading360{std::numeric_limits<float>::quiet_NaN()};
-  std::atomic<float> angle_deg_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> absolute_angle{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> pwm_{70.0f};
   std::atomic<float> kp_{2.0f};
@@ -419,6 +449,7 @@ private:
 
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
+  std::this_thread::sleep_for(std::chrono::seconds(3));
   rclcpp::spin(std::make_shared<TeensyCommNode>());
   rclcpp::shutdown();
   return 0;
