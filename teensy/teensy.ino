@@ -128,6 +128,6 @@ void loop()
   Serial.println(dir);
   //Serial.println(gradosRaspberry);
   //serial1.println(calKp(0.5,gradosRaspberry));
-  updateServo(calKp(0.01,0.5 ,gradosRaspberry));
+  updateServo(calKp(0.0,1.0 ,gradosRaspberry));
   }
 } 
