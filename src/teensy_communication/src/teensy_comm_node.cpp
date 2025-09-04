@@ -294,10 +294,9 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
 
   // (Opcional) tope duro a la derivada filtrada para eliminar picos extremos
   // derivada = clampf(derivada, -400.0f, 400.0f);
-
-  const float kp = 0.02f;  // m/s por grado
+  const float kp = 0.04f;  // m/s por grado
   const float kd = 0.005f; // m/s por (grado/seg filtrado)
-  float reduccion = kp * std::fabs(e) + kd * std::fabs(derivada);
+  float reduccion = kp * std::fabs(e); /*+ kd * std::fabs(derivada);*/
 
   return clampf(reduccion, vel_min, vel_max);  // p.ej. [0.0f, 0.8f]
 }
@@ -313,7 +312,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
     getOffsetsFromLidar(msg);
     for (size_t i = 0; i < msg->ranges.size(); ++i) {
       const float ang = angle_min + angle_inc * static_cast<float>(i);
-      if (ang < 0.0f || ang > pi) continue; // 0..180°
+      if (ang < -0.5235f && ang > -2.6180f || ang > pi) continue; // 0..180°
       const float r = msg->ranges[i];
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
       sum_x += static_cast<double>(r * std::cos(ang));
@@ -338,16 +337,16 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
   float head = heading.load();
   float current_speed = speed.load();
   int returnPWM = 0;
-  int dir = 1;
+  int dir = 0;
   bool ending = endRound.load();
 
   if(ending == false){
-    if(front < 0.8f){returnPWM = controlACDA(0.8f);}
-    else if(front > 1.0f){
-      returnPWM = controlACDA(1.8f - fabs(objectiveAngleVelPD(0.0f, 0.8f)));
+    if(front <= 1.4f){returnPWM = controlACDA(0.7f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));}
+    else if(front > 1.4f){
+      returnPWM = controlACDA(1.5f - fabs(objectiveAngleVelPD(0.0f, 1.2)));
     }
     else{
-      returnPWM = controlACDA(1.0f);
+      returnPWM = controlACDA(1.0f - fabs(objectiveAngleVelPD(0.0f, 0.6f)));
     }
 
     float heading = heading360.load();
