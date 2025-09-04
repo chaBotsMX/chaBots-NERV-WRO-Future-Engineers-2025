@@ -231,6 +231,7 @@ private:
     f[5] = chk;
     return f;
   }
+  
   float clampf(float v, float lo, float hi) {
       return std::max(lo, std::min(v, hi));
   }
@@ -267,7 +268,12 @@ private:
   return static_cast<int>(pwm);
   }
 
-
+    float angleProccesing(float kpNoLinear = 1.0f, float maxOut = 40.0f){
+        float angleInput = absolute_angle.load();
+        float angularError = 90.0f - angleInput;
+        float beta = kpNoLinear/maxOut;
+        return kpNoLinear * (angularError / (1 + beta * std::fabs(angularError)));
+      }
 
 float objectiveAngleVelPD(float vel_min, float vel_max){
   const float alpha = 0.3f;   // suavizado EMA
@@ -363,7 +369,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
       returnPWM = 0;
     }
     RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
-    auto frame = empaquetar(static_cast<uint16_t>(absolute_angle.load()), returnPWM, dir,this->get_logger());
+    auto frame = empaquetar(static_cast<uint16_t>(angleProccesing()), returnPWM, dir,this->get_logger());
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
   else{
