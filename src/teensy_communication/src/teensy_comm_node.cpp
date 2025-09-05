@@ -268,11 +268,11 @@ private:
   return static_cast<int>(pwm);
   }
 
-    float angleProccesing(float kpNoLinear = 1.0f, float maxOut = 40.0f){
+    float angleProccesing(float kpNoLinear = 0.75f, float maxOut = 30.0f){
         float angleInput = absolute_angle.load();
         float angularError = 90.0f - angleInput;
         float beta = kpNoLinear/maxOut;
-        return kpNoLinear * (angularError / (1 + beta * std::fabs(angularError)));
+        return maxOut * std::tanh(angularError / (maxOut / kpNoLinear));
       }
 
 float objectiveAngleVelPD(float vel_min, float vel_max){
@@ -345,14 +345,27 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
   int returnPWM = 0;
   int dir = 0;
   bool ending = endRound.load();
-
+  float sendAngle = absolute_angle.load();
   if(ending == false){
-    if(front <= 1.4f){returnPWM = controlACDA(0.7f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));}
+    if(front <= 0.4f){
+      returnPWM = controlACDA(0.5f);
+      sendAngle = 90 + -angleProccesing( 0.80f, 30.0f);
+    }
+    else if(front > 0.4f && front <= 1.4f){
+      returnPWM = controlACDA(0.8f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
+      sendAngle = 90 + -angleProccesing( 0.70f, 50.0f);
+    }
+    else if(front <= 1.4f){
+      returnPWM = controlACDA(1.0f) - fabs(objectiveAngleVelPD(0.0f, 0.5f));
+      sendAngle = 90 + -angleProccesing( 0.5f, 50.0f);
+    }
     else if(front > 1.4f){
-      returnPWM = controlACDA(1.5f - fabs(objectiveAngleVelPD(0.0f, 1.2)));
+      returnPWM = controlACDA(1.8f - fabs(objectiveAngleVelPD(0.0f, 1.2f)));
+      sendAngle = 90 + -angleProccesing( 0.50f, 60.0f);
     }
     else{
-      returnPWM = controlACDA(1.0f - fabs(objectiveAngleVelPD(0.0f, 0.6f)));
+      returnPWM = controlACDA(1.0f - fabs(objectiveAngleVelPD(0.0f, 0.4f)));
+      sendAngle = 90 + -angleProccesing(0.75f, 30.0f);
     }
 
     float heading = heading360.load();
@@ -369,7 +382,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
       returnPWM = 0;
     }
     RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
-    auto frame = empaquetar(static_cast<uint16_t>(angleProccesing()), returnPWM, dir,this->get_logger());
+    auto frame = empaquetar(static_cast<uint16_t>(sendAngle), returnPWM, dir,this->get_logger());
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
   else{
@@ -377,7 +390,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
       auto frame = empaquetar(static_cast<uint16_t>(90), 50, 1,this->get_logger());
       (void)serial_.write_bytes(frame.data(), frame.size());
     }
-    else if(front > 2.2){
+    else if(front > 1.8){
       auto frame = empaquetar(static_cast<uint16_t>(90), 50, 0,this->get_logger());
       (void)serial_.write_bytes(frame.data(), frame.size());
     }
