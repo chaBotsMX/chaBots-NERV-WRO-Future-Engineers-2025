@@ -111,6 +111,7 @@ private:
   static inline float pointAngFromRobot(float iteration, float angleInc, float minAngle){
     return  minAngle + angleInc * iteration; // rad
   }
+  float anchos[4] = {0.0f, 0.0f, 0.0f, 0.0f};
   static inline float deg2rad(float deg) { return deg * static_cast<float>(M_PI) / 180.0f; }
   static inline float rad2deg(float rad) { return rad * 180.0f / static_cast<float>(M_PI); }
   static inline float pointAngX(float ang, float r){ return std::cos(ang) * r; }
@@ -132,6 +133,7 @@ private:
     return a;
   }
   
+
   void getOffsetsFromLidar( const sensor_msgs::msg::LaserScan::SharedPtr msg){
 
     float rightDis = 0;
@@ -142,28 +144,36 @@ private:
     int sum_front = 0;  
     float totalDis = 0;
     float setpoint = 0;
-    for(int i = 0; i < msg->ranges.size(); ++i) {
+    const float phi = (90.0f - absolute_angle.load()) * static_cast<float>(M_PI) / 180.0f;
+
+    for (int i = 0; i < static_cast<int>(msg->ranges.size()); ++i) {
       const float ang = msg->angle_min + msg->angle_increment * static_cast<float>(i);
-      if (ang < 0.0f || ang > M_PI) continue; // 0..180°
+      if (ang < 0.0f || ang > static_cast<float>(M_PI)) continue;
+
       const float r = msg->ranges[i];
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
-        if (ang < 0.78f){
-          leftDis += r * std::cos(ang+(deg2rad(headingSetPoint.load()) - deg2rad(heading360.load())));
-          sum_left++;
-        }     
-        if(ang >  2.35f){
-          rightDis += r * std::cos(ang-(deg2rad(headingSetPoint.load()) - deg2rad(heading360.load())));
-          sum_right++;
-        }
-        if(ang >= 1.39f && ang <= 1.74f){
-          frontDis += r; 
-          sum_front++;
-        }
+
+      const float ang_eff = ang + phi;  // MISMA rotación para todos
+
+      // Bandas en el frame rotado (0=izq, π/2=frente, π=der)
+      if (ang_eff >= 0.0f && ang_eff < 0.78f) {                 // izquierda ~ 0..45°
+        leftDis  += r * std::cos(ang_eff - 0.0f);
+        ++sum_left;
       }
+      if (ang_eff > 2.35f && ang_eff <= static_cast<float>(M_PI)) { // derecha ~ 135..180°
+        rightDis += r * std::cos(ang_eff - static_cast<float>(M_PI));
+        ++sum_right;
+      }
+      if (ang_eff >= 1.39f && ang_eff <= 1.74f) {               // frente ~ 80..100°
+        frontDis += r;  // (o usa r * cos(ang_eff - M_PI_2) si quieres la normal frontal)
+        ++sum_front;
+      }
+    }
       leftDis /= sum_left;
       rightDis /= sum_right;
       frontDis /= sum_front;
       totalDis = std::fabs(leftDis) +  std::fabs(rightDis);
+      anchoCorredor.store(totalDis);
       setpoint = totalDis / 2.0f;
       frontWallDistance.store(frontDis);
       centeringOffset.store(setpoint - std::fabs(rightDis));
@@ -217,6 +227,44 @@ private:
     // Implementar lógica para buscar un agujero
   }
 
+  void getOptimalValues() {
+    if(driveDirection.load() == 1){ //horario
+      if(anchos[0]){
+
+      }
+    } else if(driveDirection.load() == 2){//antihorario
+      if(anchos[0]){
+
+      }
+    }
+  } 
+  void getSector(){
+    float orientation = heading360.load();
+    if(anchos[0] != 0 && anchos[1] != 0 && anchos[2] != 0 && anchos[3] != 0){
+      firstLap.store(false);
+    }
+    if(orientation >= 315 || orientation < 45){
+      if(firstLap.load()){
+        anchos[0] = anchoCorredor.load();
+      }
+        actualSector.store(1);
+    } else if(orientation >= 45 && orientation < 135){
+      if(firstLap.load()){
+        anchos[1] = anchoCorredor.load();
+      }
+        actualSector.store(2);
+    } else if(orientation >= 135 && orientation < 225){
+      if(firstLap.load()){
+        anchos[2] = anchoCorredor.load();
+      }
+        actualSector.store(3);
+    } else if(orientation >= 225 && orientation < 315){
+        if(firstLap.load()){
+          anchos[3] = anchoCorredor.load();
+          }
+        actualSector.store(4);
+    }
+  }
 
   static std::array<uint8_t, 6> empaquetar(uint16_t ang_tenths, uint8_t pwm_byte, uint8_t dir, rclcpp::Logger logger) {
     std::array<uint8_t, 6> f{};
@@ -250,30 +298,30 @@ private:
   }
 
   int controlACDA(float targetSpeed){
-  float pwm = 0, jerk = 10;
-  float error = targetSpeed - speed.load();
-  float aproxPwm = 35.0f;
-  if(targetSpeed < 0.6f){aproxPwm = 35.0f;}
-  else if(targetSpeed < 1.2f){aproxPwm = 40.0f;}
-  else{aproxPwm = 60.0f;}
-  float lastPwmLocal = lastPwm.load();
-  float kp = 8.25f; // Valor a determinar
-  float kd = 0.1f; // Valor a determinar
-  pwm = (error * kp)  + ((error - lastError.load()) / 0.01) * kd;
-  pwm = clampf(clampf(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk),0,255);
-  lastPwm.store(pwm);
-  lastError.store(error);
-  if(error < -0.5f || targetSpeed == 0) return 0;
-  if (error < -0.1f) return 1;
-  return static_cast<int>(pwm);
+    float pwm = 0, jerk = 10;
+    float error = targetSpeed - speed.load();
+    float aproxPwm = 35.0f;
+    if(targetSpeed < 0.6f){aproxPwm = 35.0f;}
+    else if(targetSpeed < 1.2f){aproxPwm = 40.0f;}
+    else{aproxPwm = 60.0f;}
+    float lastPwmLocal = lastPwm.load();
+    float kp = 8.25f; // Valor a determinar
+    float kd = 0.1f; // Valor a determinar
+    pwm = (error * kp)  + ((error - lastError.load()) / 0.01) * kd;
+    pwm = clampf(clampf(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk),0,255);
+    lastPwm.store(pwm);
+    lastError.store(error);
+    if(error < -0.5f || targetSpeed == 0) return 0;
+    if (error < -0.1f) return 1;
+    return static_cast<int>(pwm);
   }
 
-    float angleProccesing(float kpNoLinear = 0.75f, float maxOut = 30.0f){
-        float angleInput = absolute_angle.load();
-        float angularError = 90.0f - angleInput;
-        float beta = kpNoLinear/maxOut;
-        return maxOut * std::tanh(angularError / (maxOut / kpNoLinear));
-      }
+  float angleProccesing(float kpNoLinear = 0.75f, float maxOut = 30.0f){
+      float angleInput = absolute_angle.load();
+      float angularError = 90.0f - angleInput;
+      float beta = kpNoLinear/maxOut;
+      return maxOut * std::tanh(angularError / (maxOut / kpNoLinear));
+    }
 
 float objectiveAngleVelPD(float vel_min, float vel_max){
   const float alpha = 0.3f;   // suavizado EMA
@@ -315,7 +363,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
     double sum_x = 0.0, sum_y = 0.0;
     size_t used = 0;
   
-    getOffsetsFromLidar(msg);
+
     for (size_t i = 0; i < msg->ranges.size(); ++i) {
       const float ang = angle_min + angle_inc * static_cast<float>(i);
       if (ang < -0.5235f && ang > -2.6180f || ang > pi) continue; // 0..180°
@@ -333,6 +381,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
       angle_deg = angle * 180.0f / static_cast<float>(M_PI);
     }
     absolute_angle.store(angle_deg);
+    getOffsetsFromLidar(msg);
   }
 
   void on_timer() {
@@ -346,7 +395,42 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
   int dir = 0;
   bool ending = endRound.load();
   float sendAngle = absolute_angle.load();
-  if(ending == false){
+
+   if(firstLap.load()){
+      getSector();
+      if(front <= 0.4f){
+        returnPWM = controlACDA(0.5f);
+        sendAngle = 90 + -angleProccesing( 0.80f, 30.0f);
+      }
+      else if(front > 0.4f && front <= 1.4f){
+        returnPWM = controlACDA(0.8f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
+        sendAngle = 90 + -angleProccesing( 0.70f, 50.0f);
+      }
+      else if(front <= 1.4f){
+        returnPWM = controlACDA(1.0f) - fabs(objectiveAngleVelPD(0.0f, 0.5f));
+        sendAngle = 90 + -angleProccesing( 0.5f, 50.0f);
+      }
+      else if(front > 1.4f){
+        returnPWM = controlACDA(1.8f - fabs(objectiveAngleVelPD(0.0f, 1.2f)));
+        sendAngle = 90 + -angleProccesing( 0.50f, 60.0f);
+      }
+      else{
+        returnPWM = controlACDA(1.0f - fabs(objectiveAngleVelPD(0.0f, 0.4f)));
+        sendAngle = 90 + -angleProccesing(0.75f, 30.0f);
+      }
+      if(!init.load()){
+        if(std::isfinite(absolute_angle.load()) && front != 0.0f){
+      
+          init.store(true);
+        }
+        returnPWM = 0;
+      }
+    RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
+    auto frame = empaquetar(static_cast<uint16_t>(sendAngle), returnPWM, dir,this->get_logger());
+    (void)serial_.write_bytes(frame.data(), frame.size());
+
+    }
+  else if(ending == false){
     if(front <= 0.4f){
       returnPWM = controlACDA(0.5f);
       sendAngle = 90 + -angleProccesing( 0.80f, 30.0f);
@@ -371,14 +455,6 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
     float heading = heading360.load();
     if (std::fabs(head) > 1076.0f && front < 1.8f) { // check for NaN
       endRound.store(true);
-      returnPWM = 0;
-    }
-    
-    if(!init.load()){
-      if(std::isfinite(absolute_angle.load()) && front != 0.0f){
-      
-        init.store(true);
-      }
       returnPWM = 0;
     }
     RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
@@ -443,6 +519,10 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
   // variables persistentes
+  std::atomic<int> actualSector{0};
+  std::atomic<int> driveDirection{0}; //0 no determinado, 1 sentido horario, 2 sentido antihorario
+  std::atomic<bool>firstLap{true};
+  std::atomic<float> anchoCorredor{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<bool> endRound{false};
   std::atomic<bool> init{false};
   std::atomic<int> lastPwm{0};
