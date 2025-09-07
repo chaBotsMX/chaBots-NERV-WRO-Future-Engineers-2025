@@ -102,45 +102,7 @@ public:
 
 private:
 
-  bool outOfParkingLot(){
-    const float leftDistance = dist_Left_.load();
-    const float rightDistance = dist_Right_.load();
-    bool reversed = backInParking_.load();
-    float Ypos = poseY_.load();
-    int direction = direction_.load();
-
-    if (!std::isfinite(leftDistance) || !std::isfinite(rightDistance)) return false;
-
-    if(leftDistance > rightDistance && direction == 0) direction_.store(1);
-    else if (leftDistance < rightDistance && direction == 0) direction_.store(2);
-    direction = direction_.load();
-    if(reversed == false){
-      Ypos < -0.02 ? backInParking_.store(true) : backInParking_.store(false);
-      auto frame = pack(90, 40, 1);
-      (void)serial_.write_bytes(frame.data(), frame.size());
-    }
-    else{
-      if(direction ==  1 && Ypos < 0.30){
-        auto frame = pack(50, 40, 0);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-        return false;
-      }
-      else if(direction ==  2 && Ypos < 0.30){
-        auto frame = pack(150, 40, 0);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-        return false;
-      }
-      else
-      {
-        return true;
-      }
-    }
-    return false;
-  }
-
-
-
-  // ---- empaquetado ----
+    // ---- empaquetado ----
   static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t dir) {
       std::array<uint8_t, 6> f{};
       f[0] = 0xAB;
@@ -150,7 +112,100 @@ private:
       f[4] = dir;
       uint8_t chk = 0; for (int i=0;i<5;++i) chk ^= f[i]; f[5] = chk;
       return f;
+  }
+
+  bool outOfParkingLot(){
+    const float leftDistance = dist_Left_.load();
+    const float rightDistance = dist_Right_.load();
+    bool reversed = backInParking_.load();
+    float Ypos = poseY_.load();
+    int direction = direction_.load();
+    if(!std::isfinite(leftDistance) && !std::isfinite(rightDistance)) return false;
+    if(direction_.load() == 0){
+      if(rightDistance > 0.5f) direction_.store(2);
+      else if(leftDistance > 0.5f) direction_.store(1);
+      return false;
     }
+    direction = direction_.load();
+    if(!frontInParking_.load()){
+      if(Ypos < 0.03f){
+        auto frame = pack(90, 30, 0);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+        return false;
+      }
+      else{frontInParking_.store(true);}
+    }
+    else if(!changueDelay_.load()){
+      if(direction == 1){
+        auto frame = pack(150, 0, 0);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+      }
+      else if(direction == 2){
+        auto frame = pack(50, 0, 0);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+      }
+      std::this_thread::sleep_for(1s);
+      changueDelay_.store(true);
+      return false;
+    }
+    else if(reversed == false){
+      if(direction == 2 && Ypos > -0.05f){
+        auto frame = pack(50, 45, 1);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+        return false;
+      }
+      else if(direction == 1 && Ypos > -0.04f){
+        auto frame = pack(150, 45, 1);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+        return false;
+      }
+      else{backInParking_.store(true); return false;}
+    }
+    else if(!repeat_.load()){
+        backInParking_.store(false);
+        frontInParking_.store(false);
+        changueDelay_.store(false);
+        repeat_.store(true);
+
+    }
+    else if(!out_.load()){
+      if(direction ==  1 && Ypos < 0.15f){
+        auto frame = pack(50, 40, 0);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+        return false;
+      }
+      else if(direction ==  2 && Ypos < 0.15f){
+        auto frame = pack(150, 40, 0);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+        return false;
+      }
+      else
+      {
+        out_.store(true);
+        return false;
+      }
+    }
+    else if(!initCorrection_.load()){
+      if(direction == 1){
+        auto frame = pack(150, 0, 0);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+      }
+      else if(direction == 2){
+        auto frame = pack(50, 0, 0);
+        (void)serial_.write_bytes(frame.data(), frame.size());
+      }
+      std::this_thread::sleep_for(1s);
+      initCorrection_.store(true);
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+
+
+
 
   static inline float clampf(float v, float lo, float hi) {
     return std::max(lo, std::min(v, hi));
@@ -254,7 +309,7 @@ private:
     // Histeresis por ángulo de imagen (px de tu /object/angle)
     constexpr float ANGLE_INNER = 15.0f;  // activa evasión
     constexpr float ANGLE_OUTER = 25.0f;  // desactiva evasión
-
+    outOfParking_.store(outOfParkingLot());
     bool initDrive = outOfParking_.load();
 
     if (initDrive == true) {
@@ -360,6 +415,11 @@ private:
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr object_status_sub_;
 
   // atómicos (siempre .load() / .store())
+  std::atomic<bool> out_{false};
+  std::atomic<bool> initCorrection_{false};
+  std::atomic<bool> repeat_{false};
+  std::atomic<bool> changueDelay_{false};
+  std::atomic<bool> frontInParking_{false};
   std::atomic<bool> backInParking_{false};
   std::atomic<bool> outOfParking_{false};
   std::atomic<int> direction_{0}; // 1 = "LEFT", 2 = "RIGHT"
@@ -385,7 +445,7 @@ private:
 
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
-  std::this_thread::sleep_for(std::chrono::seconds(3));
+  std::this_thread::sleep_for(std::chrono::seconds(5));
   rclcpp::spin(std::make_shared<TeensyObsNode>());
   rclcpp::shutdown();
   return 0;
