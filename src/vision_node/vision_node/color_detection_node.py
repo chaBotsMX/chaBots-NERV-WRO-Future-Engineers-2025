@@ -24,17 +24,17 @@ class ObjectTracker(Node):
         self.bridge = CvBridge()
         
         # Parámetros HSV para verde
-        self.lower_green = np.array([22, 115, 26])
-        self.upper_green = np.array([78, 237, 57])
+        self.lower_green = np.array([37, 143, 0])
+        self.upper_green = np.array([68, 255, 193])
         
         # Parámetros HSV para rojo
         # El rojo en HSV puede estar en dos rangos debido a que está en los extremos (0° y 360°)
-        self.lower_red1 = np.array([0, 181, 0])    # Rojo inferior
-        self.upper_red1 = np.array([2, 255, 255])
+        self.lower_red1 = np.array([138, 145, 126])    # Rojo inferior
+        self.upper_red1 = np.array([180, 255, 255])
         
         # Parámetros de la cámara
         self.FOCAL_LENGTH =1131   # píxeles
-        self.KNOWN_WIDTH = 14.0   # cm
+        self.KNOWN_WIDTH = 14.0   # cms
         self.FRAME_WIDTH = 1920
         
         self.get_logger().info("Object Tracker Node iniciado - Detectando verde y rojo")
@@ -81,7 +81,7 @@ class ObjectTracker(Node):
                     'bgr_color': (0, 0, 255),
                     'area': area
                 })
-        
+
         return detected_objects
 
     def image_callback(self, msg):
@@ -128,7 +128,7 @@ class ObjectTracker(Node):
             
         self.pub_status.publish(Float32(data=find))
         
-        # Mostrar ventanas (para debug)
+        # Mostrar ventanas (para debugs)
         cv2.imshow("Frame", frame)
         cv2.waitKey(1)
 
