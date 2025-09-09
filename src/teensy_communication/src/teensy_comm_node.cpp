@@ -130,7 +130,9 @@ inline float wrapPi(float a) {
     return  minAngle + angleInc * iteration; // rad
   }
   float sectores[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-  float sectoresAngs[2][4] = {{45.0f, 135.0f, 225.0f, 315.0f}, {315.0f, 45.0f, 135.0f, 225.0f}};
+  float sectoresAngs[2][4] = {{45.0f, 135.0f, 225.0f, 315.0f},
+                              {315.0f, 45.0f, 135.0f, 225.0f}};
+
   static inline float deg2rad(float deg) { return deg * static_cast<float>(M_PI) / 180.0f; }
   static inline float rad2deg(float rad) { return rad * 180.0f / static_cast<float>(M_PI); }
   static inline float pointAngX(float ang, float r){ return std::cos(ang) * r; }
@@ -161,7 +163,7 @@ inline float wrapPi(float a) {
       updateX = posX_.load() - lastPosX.load();
       updateY = posY_.load() - lastPosY.load();
       updateYaw = wrapPi(deg2rad(yaw.load() - lastYaw.load()));
-      for (auto& s : data) {
+      for (auto& s : lidarMSG) {
         s.x += updateX;
         s.y += updateY;
         s.angle = wrapPi(atan2(s.y, s.x) - updateYaw);
@@ -183,7 +185,7 @@ inline float wrapPi(float a) {
     float setpoint = 0;
     const float phi = (90.0f - absolute_angle.load()) * static_cast<float>(M_PI) / 180.0f;
     float sumX = 0, sumY = 0;
-    for (const auto& s : data) {
+    for (const auto& s : lidarMSG) {
       const float ang = s.angle;
       const float ang_eff = ang + phi;  // MISMA rotación para todos
       sumX += s.x;
@@ -221,7 +223,7 @@ inline float wrapPi(float a) {
 
 
 
-  int getNextSectorSize(){
+  float getNextSectorSize(){
     int thisSector = actualSector.load();
     if(driveDirection.load() == 1){ //horario
       if(thisSector == 0){
@@ -245,43 +247,35 @@ inline float wrapPi(float a) {
       }
     }
   } 
-  int getCurrentSectorSize(){
+  float getCurrentSectorSize(){
     int thisSector = actualSector.load();
-    if(thisSector == 0){
-      return sectores[0];
-    } else if(thisSector == 1){
-      return sectores[1];
-    } else if(thisSector == 2){
-      return sectores[2];
-    } else if(thisSector == 3){
-      return sectores[3];
-    }
+    return sectores[thisSector];
   }   
   void getOptimalValues() {
-    actualSize = getCurrentSectorSize();
-    nextSize = getNextSectorSize();
-    if(actualSize >= 80){
-      if(nextSize >= 80){
+    float actualSize = getCurrentSectorSize();
+    float nextSize = getNextSectorSize();
+    if(actualSize >= 0.80f){
+      if(nextSize >= 0.80f){
         optimalSpeed.store(2.0f);
         optimalKp.store(0.60f);
         optimalSpeedTurn.store(1.5f);
         optimalKpTurn.store(0.60f);
       }
-      else if(nextSize < 80 ){
+      else if(nextSize < 0.80f){
         optimalSpeed.store(1.5f);
         optimalKp.store(0.50f);
         optimalSpeedTurn.store(1.0f);
         optimalKpTurn.store(0.50f);
       }
     }
-    else if(actualSize < 80){
-      if(nextSize >= 80){
+    else if(actualSize < 0.80f){
+      if(nextSize >= 0.80f){
         optimalSpeed.store(1.0f);
         optimalKp.store(0.50f);
         optimalSpeedTurn.store(1.5f);
         optimalKpTurn.store(0.75f);
       }
-      else if(nextSize < 80 ){
+      else if(nextSize < 0.80f){
         optimalSpeed.store(1.0f);
         optimalKp.store(0.50f);
         optimalSpeedTurn.store(1.0f);
@@ -293,42 +287,45 @@ inline float wrapPi(float a) {
 
   void getActualSector(){
     float orientation = heading360.load();
-    if(orientation >= 315 || orientation < 45){
-      actualSector.store(0);
-    } else if(orientation >= 45 && orientation < 135){
-      actualSector.store(1);
-    } else if(orientation >= 135 && orientation < 225){
-      actualSector.store(2);
-    } else if(orientation >= 225 && orientation < 315){
-      actualSector.store(3);
-    }
-  }
+    int thisSector = actualSector.load();
+    int thisSectorUpperLimit = sectoresAngs[0][thisSector];
+    int thisSectorLowerLimit = sectoresAngs[1][thisSector];
+    if(thisSector == 0){
+      orientation >= 180? orientation -= 360 : orientation = orientation;
 
+      if(orientation <  -75){
+        actualSector.store(3);
+        if(driveDirection.load() == 0){
+          driveDirection.store(2);
+        }
+      }
+      else if(orientation  > 75){
+        actualSector.store(1);
+        if(driveDirection.load() == 0){
+          driveDirection.store(1);
+        }
+      }
+    }  
+    else if(static_cast<int>(orientation) > thisSectorUpperLimit + 30) {
+      thisSector++;
+      thisSector > 3 ? thisSector = 0 : thisSector = thisSector;
+      actualSector.store(thisSector);
+    }
+    else if(static_cast<int>(orientation) < thisSectorLowerLimit - 30) {
+      thisSector--;
+      thisSector < 0 ? thisSector = 3 : thisSector = thisSector;
+      actualSector.store(thisSector);
+    }
+  }  
 
   void getSectorWidth(){
     float orientation = heading360.load();
     if(sectores[0] != 0 && sectores[1] != 0 && sectores[2] != 0 && sectores[3] != 0){
         firstLap.store(false);
     }
-    if(orientation >= 315 || orientation < 45){
-      if(firstLap.load()){
-        sectores[0] = anchoCorredor.load();
-      }
-      actualSector.store(1);
-    } else if(orientation >= 45 && orientation < 135){
-      if(firstLap.load()){
-        sectores[1] = anchoCorredor.load();
-      }
-    } else if(orientation >= 135 && orientation < 225){
-        if(firstLap.load()){
-          sectores[2] = anchoCorredor.load();
-        }
-    } else if(orientation >= 225 && orientation < 315){
-        if(firstLap.load()){
-          sectores[3] = anchoCorredor.load();
-        }
-    }
+    sectores[actualSector.load()] = anchoCorredor.load();
   }
+  
 
   static std::array<uint8_t, 6> empaquetar(uint16_t ang_tenths, uint8_t pwm_byte, uint8_t dir, rclcpp::Logger logger) {
     std::array<uint8_t, 6> f{};
@@ -437,6 +434,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
 
   void on_timer() {
     getOffsetsFromLidar();
+    getActualSector();
     float front = frontWallDistance.load();
     float offset = centeringOffset.load();
     float degrees = heading360.load();
@@ -448,7 +446,6 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
     float sendAngle = absolute_angle.load();
 
    if(firstLap.load()){
-      getSector();
       if(front <= 0.4f){
         returnPWM = controlACDA(0.5f);
         sendAngle = 90 + -angleProccesing( 0.80f, 30.0f);
@@ -460,6 +457,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
       else if(front <= 1.4f){
         returnPWM = controlACDA(1.0f) - fabs(objectiveAngleVelPD(0.0f, 0.5f));
         sendAngle = 90 + -angleProccesing( 0.5f, 50.0f);
+        getSectorWidth();
       }
       else if(front > 1.4f){
         returnPWM = controlACDA(1.8f - fabs(objectiveAngleVelPD(0.0f, 1.2f)));
@@ -482,28 +480,15 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
 
     }
   else if(ending == false){
-    if(front <= 0.4f){
-      returnPWM = controlACDA(0.5f);
-      sendAngle = 90 + -angleProccesing( 0.80f, 30.0f);
-    }
-    else if(front > 0.4f && front <= 1.4f){
-      returnPWM = controlACDA(0.8f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
-      sendAngle = 90 + -angleProccesing( 0.70f, 50.0f);
-    }
-    else if(front <= 1.4f){
-      returnPWM = controlACDA(1.0f) - fabs(objectiveAngleVelPD(0.0f, 0.5f));
-      sendAngle = 90 + -angleProccesing( 0.5f, 50.0f);
-    }
-    else if(front > 1.4f){
-      returnPWM = controlACDA(1.8f - fabs(objectiveAngleVelPD(0.0f, 1.2f)));
-      sendAngle = 90 + -angleProccesing( 0.50f, 60.0f);
+    getOptimalValues();
+    if(front <= 1.5f){
+      returnPWM = controlACDA(optimalSpeedTurn.load()) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
+      sendAngle = 90 + -angleProccesing( optimalKpTurn.load(), 30.0f);
     }
     else{
-      returnPWM = controlACDA(1.0f - fabs(objectiveAngleVelPD(0.0f, 0.4f)));
-      sendAngle = 90 + -angleProccesing(0.75f, 30.0f);
-    }
-
-
+      returnPWM = controlACDA(optimalSpeed.load() - fabs(objectiveAngleVelPD(0.0f, 0.5f)));
+      sendAngle = 90 + -angleProccesing( optimalKp.load(), 50.0f);
+    } 
     if (std::fabs(head) > 1076.0f && front < 1.8f) { // check for NaN
       endRound.store(true);
       returnPWM = 0;
