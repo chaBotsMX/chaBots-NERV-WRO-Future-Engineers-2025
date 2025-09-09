@@ -446,7 +446,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
     float sendAngle = absolute_angle.load();
 
    if(firstLap.load()){
-      if(front > 1.3f && front < 1.7f){
+      if(front > 1.3f && front < 1.7f && absolute_angle.load() > 85.0f && absolute_angle.load() < 95.0f){
         getSectorWidth();
       }
       if(front <= 0.4f){
