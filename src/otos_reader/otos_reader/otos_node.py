@@ -49,7 +49,7 @@ class OtosRosNode(Node):
         # ----------------------------
         # Parámetros ROS 2
         # ----------------------------
-        self.declare_parameter('rate_hz', 30.0)
+        self.declare_parameter('rate_hz', 100.0)
         self.declare_parameter('frame_id', 'odom')
         self.declare_parameter('child_frame_id', 'base_link')
         self.declare_parameter('publish_tf', True)

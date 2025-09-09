@@ -256,30 +256,30 @@ inline float wrapPi(float a) {
     float nextSize = getNextSectorSize();
     if(actualSize >= 0.80f){
       if(nextSize >= 0.80f){
-        optimalSpeed.store(2.0f);
-        optimalKp.store(0.60f);
+        optimalSpeed.store(3.0f);
+        optimalKp.store(0.40f);
         optimalSpeedTurn.store(1.5f);
-        optimalKpTurn.store(0.60f);
+        optimalKpTurn.store(0.40f);
       }
       else if(nextSize < 0.80f){
-        optimalSpeed.store(1.5f);
+        optimalSpeed.store(1.0f);
         optimalKp.store(0.50f);
-        optimalSpeedTurn.store(1.0f);
-        optimalKpTurn.store(0.50f);
+        optimalSpeedTurn.store(0.8f);
+        optimalKpTurn.store(0.80f);
       }
     }
     else if(actualSize < 0.80f){
       if(nextSize >= 0.80f){
         optimalSpeed.store(1.0f);
         optimalKp.store(0.50f);
-        optimalSpeedTurn.store(1.5f);
+        optimalSpeedTurn.store(1.0f);
         optimalKpTurn.store(0.75f);
       }
       else if(nextSize < 0.80f){
         optimalSpeed.store(1.0f);
         optimalKp.store(0.50f);
-        optimalSpeedTurn.store(1.0f);
-        optimalKpTurn.store(0.50f);
+        optimalSpeedTurn.store(0.8f);
+        optimalKpTurn.store(0.70f);
       }
     }
 
@@ -446,6 +446,9 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
     float sendAngle = absolute_angle.load();
 
    if(firstLap.load()){
+      if(front > 1.3f && front < 1.7f){
+        getSectorWidth();
+      }
       if(front <= 0.4f){
         returnPWM = controlACDA(0.5f);
         sendAngle = 90 + -angleProccesing( 0.80f, 30.0f);
@@ -454,14 +457,10 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
         returnPWM = controlACDA(0.8f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
         sendAngle = 90 + -angleProccesing( 0.70f, 50.0f);
       }
-      else if(front <= 1.4f){
-        returnPWM = controlACDA(1.0f) - fabs(objectiveAngleVelPD(0.0f, 0.5f));
-        sendAngle = 90 + -angleProccesing( 0.5f, 50.0f);
-        getSectorWidth();
-      }
       else if(front > 1.4f){
         returnPWM = controlACDA(1.8f - fabs(objectiveAngleVelPD(0.0f, 1.2f)));
         sendAngle = 90 + -angleProccesing( 0.50f, 60.0f);
+   
       }
       else{
         returnPWM = controlACDA(1.0f - fabs(objectiveAngleVelPD(0.0f, 0.4f)));
@@ -474,7 +473,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
         }
         returnPWM = 0;
       }
-    RCLCPP_INFO(this->get_logger(), "distancia al frente: %f, offset: %f, angulo: %f, correcion IMU: %f, velocidad: %f, vel_cmd: %d", front, offset, degrees, head, current_speed, returnPWM);
+    RCLCPP_INFO(this->get_logger(), "primera vuelta");
     auto frame = empaquetar(static_cast<uint16_t>(sendAngle), returnPWM, dir,this->get_logger());
     (void)serial_.write_bytes(frame.data(), frame.size());
 
