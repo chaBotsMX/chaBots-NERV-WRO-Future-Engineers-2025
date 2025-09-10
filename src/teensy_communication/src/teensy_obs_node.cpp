@@ -288,116 +288,68 @@ private:
   heading360_.store(wrap_360(acc));
 
   
-  if (!std::isnan(msg->twist.twist.linear.z)) {
-    speed_.store(msg->twist.twist.linear.z);
-  }
+    if (!std::isnan(msg->twist.twist.linear.z)) {
+      speed_.store(msg->twist.twist.linear.z);
+    }
     poseY_.store(msg->pose.pose.position.y);
-}
+  }
 
-// --- on_timer: guarda inicial y usa object_distance_ cuando haya objeto ---
+  void orientar(){
+    float offset = heading360_.load();
+    float target = targetYaw_.load();
+    float err = wrap_pm180(target - offset);
+
+    float returnCorrection = err + 1.0f;
+
+    auto frame = pack(returnCorrection, 40, 0);
+    (void)serial_.write_bytes(frame.data(), frame.size());
+  }
+
   void on_timer() {
-    // Guardias simples (evita bloquear por laterales NaN)
     if (!std::isfinite(heading360_.load())) return;
 
-    // Constantes
-    constexpr float EVADE_OFFSET_DEG = 30.0f;   // evasión máx
-    constexpr float EVADE_MIN_DIST   = 30.0f;   // cm
-    constexpr float EVADE_MAX_DIST   = 100.0f;  // cm
-    constexpr float MAX_MAG          = 90.0f;
-    constexpr float LARGE_ERR_DEG    = 5.0f;
-
-    // Histeresis por ángulo de imagen (px de tu /object/angle)
-    constexpr float ANGLE_INNER = 15.0f;  // activa evasión
-    constexpr float ANGLE_OUTER = 25.0f;  // desactiva evasión
     outOfParking_.store(outOfParkingLot());
+
+    
+
     bool initDrive = outOfParking_.load();
 
     if (initDrive == true) {
-      const bool  hayObjeto = (object_status_.load() > 0.5f);
-      const float d_front   = dist_front_.load();
-      const bool  blocked   = (!hayObjeto) && std::isfinite(d_front) && (d_front < 1.0f);
-
-      auto cycle_target = [&]() -> float {
-        switch (cycle_idx_.load()) {
-          case 0: return 0.0f;
-          case 1: return 90.0f;
-          case 2: return 180.0f;
-          default: return 270.0f;
+      int isObs = object_status_.load();
+      if(isObs == 1){
+        float angle = object_angle_.load();
+        float object_distance = object_distance_.load();
+        int color = static_cast<int>(object_color_.load());
+        if(color == 0){
+          angle = angle - 35;
+          if(angle < 0 ){
+          float returnANG = 90 - angle;
+          auto frame = pack(returnANG, 1, 0);
+          (void)serial_.write_bytes(frame.data(), frame.size());
+          }
+          else{
+            orientar();
+          }
         }
-      };
-
-      // --- Estado de evasión con histeresis por /object/angle ---
-      static bool evasive_active = false;
-      const float objAngle = object_angle_.load();         // +derecha / -izquierda
-      float Object_dist = object_distance_.load() / 2.0f;  // cm reales (tú envías cm)
-      if (!std::isfinite(Object_dist)) Object_dist = EVADE_MAX_DIST;
-      Object_dist = clampf(Object_dist, EVADE_MIN_DIST, EVADE_MAX_DIST);
-
-      const bool in_corridor  = std::isfinite(objAngle) && (std::fabs(objAngle) <= ANGLE_INNER);
-      const bool out_corridor = (!std::isfinite(objAngle)) || (std::fabs(objAngle) >= ANGLE_OUTER);
-
-      if (hayObjeto && in_corridor)  evasive_active = true;
-      if (!hayObjeto || out_corridor) evasive_active = false;
-
-      float target_abs_deg = cycle_target();  // por defecto: setpoints
-      const float h = heading360_.load();
-
-      if (evasive_active) {
-        const int color = static_cast<int>(object_color_.load()); // 0=VERDE, 1=ROJO
-        const float alpha = (EVADE_MAX_DIST - Object_dist) / (EVADE_MAX_DIST - EVADE_MIN_DIST);
-        const float evade = EVADE_OFFSET_DEG * alpha; // 0..30°
-
-        if (color == 1) {           // ROJO → derecha
-          target_abs_deg = h - evade;
-        } else if (color == 0) {    // VERDE → izquierda
-          target_abs_deg = h + evade;
-        } else {
-          target_abs_deg = cycle_target(); // color desconocido → setpoint
-          RCLCPP_INFO(get_logger(), "[OBJ=SI] color_desconocido salida=%.1f°", target_abs_deg);
+        else if(color == 1){
+          angle = angle + 35;
+          if(angle > 0 ){
+          float returnANG = 90 + angle;
+          auto frame = pack(returnANG, 1, 0);
+          (void)serial_.write_bytes(frame.data(), frame.size());
+          }
+        }
+        else{
+          orientar();
         }
 
-        if (target_abs_deg < 0.0f)    target_abs_deg += 360.0f;
-        if (target_abs_deg >= 360.0f) target_abs_deg -= 360.0f;
-
-        RCLCPP_INFO(get_logger(),
-          "[OBJ=SI] angle=%.1fpx dist=%.1fcm evade=%.1f° salida=%.1f° (EVADE=ON)",
-          objAngle, Object_dist, evade, target_abs_deg);
-      } else {
-        // Sin evasión activa: sigue setpoints
-        RCLCPP_INFO(get_logger(),
-          hayObjeto ? "[OBJ=SI] fuera de trayectoria (EVADE=OFF)"
-                    : "[OBJ=NO] (EVADE=OFF)");
       }
-
-      // --- delta firmado en [-180,180)
-      const float heading = heading360_.load();
-      float delta = target_abs_deg - heading;
-      delta = std::fmod(delta + 180.0f, 360.0f);
-      if (delta < 0.0f) delta += 360.0f;
-      delta -= 180.0f;
-
-      // Tu lógica de cambio de setpoint por LiDAR
-      const bool consider_block = (!hayObjeto) && (std::fabs(delta) <= LARGE_ERR_DEG);
-      const bool last_blk = last_blocked_.load();
-      if (consider_block && blocked && !last_blk) {
-        int idx = cycle_idx_.load();
-        idx = (idx + 1) & 3;
-        cycle_idx_.store(idx);
+      else{
+        orientar();
       }
-      last_blocked_.store(consider_block && blocked);
-
-      float mag = std::min(std::fabs(delta), MAX_MAG);
-      float input_deg = 90.0f + ((delta >= 0.0f) ? +mag : -mag);
-      input_deg = clampf(input_deg, 0.0f, 180.0f);
-
-      const uint16_t send_deg = static_cast<uint16_t>(std::lround(input_deg));
-      const uint8_t  pwm = 50;
-      const uint8_t  dir = 0; // <<< pack espera 'dir' como 3er byte
-      auto frame = pack(send_deg, pwm, dir);
-      (void)serial_.write_bytes(frame.data(), frame.size());
     }
     else {
-      // NO toco tu feature de estacionamiento
+    
       outOfParking_.store(outOfParkingLot());
     }
   }
@@ -422,6 +374,7 @@ private:
   std::atomic<bool> frontInParking_{false};
   std::atomic<bool> backInParking_{false};
   std::atomic<bool> outOfParking_{false};
+  std::atomic<float> targetYaw_{0.0f};
   std::atomic<int> direction_{0}; // 1 = "LEFT", 2 = "RIGHT"
   std::atomic<float> dist_Left_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> dist_Right_{std::numeric_limits<float>::quiet_NaN()};
