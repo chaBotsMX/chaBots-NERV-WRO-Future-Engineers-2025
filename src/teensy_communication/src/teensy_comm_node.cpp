@@ -156,23 +156,35 @@ inline float wrapPi(float a) {
   
 
   void getOffsetsFromLidar(){
-    float updateX = 0;
-    float updateY = 0;
-    float updateYaw = 0;
     if(new_otos_data.load()){
-      updateX = posX_.load() - lastPosX.load();
-      updateY = posY_.load() - lastPosY.load();
-      updateYaw = wrapPi(deg2rad(yaw.load() - lastYaw.load()));
-      for (auto& s : lidarMSG) {
-        s.x += updateX;
-        s.y += updateY;
-        s.angle = wrapPi(atan2(s.y, s.x) - updateYaw);
-        s.mag = std::hypot(s.x, s.y);
-      }
-      lastPosX.store(posX_.load());
-      lastPosY.store(posY_.load());
-      lastYaw.store(yaw.load());
-      new_otos_data.store(false);
+        const float yaw_prev = deg2rad(lastYaw.load());
+        const float dx_w = posX_.load() - lastPosX.load();
+        const float dy_w = posY_.load() - lastPosY.load();
+        const float dth  = wrapPi(deg2rad(yaw.load() - lastYaw.load()));
+
+        const float c0 = std::cos(yaw_prev), s0 = std::sin(yaw_prev);
+        const float dx_b =  c0*dx_w + s0*dy_w;
+        const float dy_b = -s0*dx_w + c0*dy_w;
+
+        const float c = std::cos(-dth), s = std::sin(-dth);
+
+        for (auto& spt : lidarMSG) {
+          float x = spt.x - dx_b;
+          float y = spt.y - dy_b;
+
+          float xr = c*x - s*y;
+          float yr = s*x + c*y;
+
+          spt.x = xr;
+          spt.y = yr;
+          spt.angle = wrapPi(std::atan2(yr, xr));   
+          spt.mag   = std::hypot(xr, yr);
+        }
+
+        lastPosX.store(posX_.load());
+        lastPosY.store(posY_.load());
+        lastYaw.store(yaw.load());
+        new_otos_data.store(false);
     } 
 
     float rightDis = 0;
