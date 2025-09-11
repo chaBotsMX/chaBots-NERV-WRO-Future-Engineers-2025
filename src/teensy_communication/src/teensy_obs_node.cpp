@@ -299,22 +299,15 @@ private:
     float target = targetYaw_.load();
     float err = wrap_pm180(target - offset);
 
-    float returnCorrection = err + 1.0f;
+    float returnCorrection = 90 +(err * 1.0f);
 
-    auto frame = pack(returnCorrection, 40, 0);
+    RCLCPP_INFO(this->get_logger(), "Offset: %f, Target: %f, Error: %f, Correction: %f", offset, target, err, returnCorrection);
+    auto frame = pack(static_cast<int>(returnCorrection), 0, 0);
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
 
   void on_timer() {
     if (!std::isfinite(heading360_.load())) return;
-
-    outOfParking_.store(outOfParkingLot());
-
-    
-
-    bool initDrive = outOfParking_.load();
-
-    if (initDrive == true) {
       int isObs = object_status_.load();
       if(isObs == 1){
         float angle = object_angle_.load();
@@ -324,8 +317,9 @@ private:
           angle = angle - 35;
           if(angle < 0 ){
           float returnANG = 90 - angle;
-          auto frame = pack(returnANG, 1, 0);
+          auto frame = pack(static_cast<int>(returnANG), 1, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
+          RCLCPP_INFO(this->get_logger(), "Obstaculo cerca verde, angulo mandado: %f", returnANG);
           }
           else{
             orientar();
@@ -334,9 +328,10 @@ private:
         else if(color == 1){
           angle = angle + 35;
           if(angle > 0 ){
-          float returnANG = 90 + angle;
-          auto frame = pack(returnANG, 1, 0);
+          float returnANG = 90 - angle;
+          auto frame = pack(static_cast<int>(returnANG), 0, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
+          RCLCPP_INFO(this->get_logger(), "Obstaculo cerca rojo, angulo mandado: %f", returnANG);
           }
         }
         else{
@@ -346,12 +341,9 @@ private:
       }
       else{
         orientar();
+        RCLCPP_INFO(this->get_logger(), "No hay obstaculo");
       }
-    }
-    else {
-    
-      outOfParking_.store(outOfParkingLot());
-    }
+
   }
 
 
