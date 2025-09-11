@@ -106,7 +106,7 @@ private:
   float sectores[4] = {0.0f, 0.0f, 0.0f, 0.0f};
   float sectoresAngs[2][4] = {{45.0f, 135.0f, 225.0f, 315.0f},
                               {315.0f, 45.0f, 135.0f, 225.0f}};
-
+  float sectoresTargets[4] = {0.0f, 90.0f, 180.0f, 270.0f};
     // ---- empaquetado ----
   static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t dir) {
       std::array<uint8_t, 6> f{};
@@ -214,6 +214,11 @@ private:
 
   const float kPI = 3.14159265358979323846f;
 
+
+  void mover(int dir, int pwm, int direction){
+    auto frame = pack(dir, pwm, direction);
+    (void)serial_.write_bytes(frame.data(), frame.size());
+  }
   int controlACDA(float targetSpeed){
     float pwm = 0, jerk = 10;
     float error = targetSpeed - speed_.load();
@@ -371,6 +376,98 @@ private:
 
   }
 
+  
+
+  void rutinaGirar(){
+    float distOutWallSide = //agregar;
+    if(turntype_.load() == 0){
+      if(distOutWall >= 0.8f){
+        turnType_.store(3);
+      }
+      else if(distOutWall < 0.8f && distOutWall >= 0.3f){
+        turnType_.store(2);
+      }
+      else if(distOutWall < 0.3f){
+        turnType_.store(1);
+      }
+    }
+
+    if(turntype_.load() == 1){
+      if(turnStep[0].load() == false){
+        float correction = (targetYaw_.load()) - heading360_.load();
+        mover(90 + correction, 40, 0);
+        if(fabs(correction) < 5.0f){
+          turnStep[0].store(true);
+        }
+      }
+      else if(turnStep[1].load() == false){
+        mover(90, 40, 1);
+        if(distBackWall < 0.5f){
+          turnStep[1].store(true);
+          inTurn_.store(false);
+          for(int i = 0; i < 4; i++){
+            turnStep[i].store(false);
+          }
+        }
+      }
+    }
+    else if(turntype_.load() == 2){
+      if(turnStep[0].load() == false){
+        float correction = (target_deg_.load() + 45) - heading360_.load();
+        mover(90 + correction, 40, 0);
+        if(distOutWallFront < 0.5f){
+          turnStep[0].store(true);
+        }
+      }
+      else if(turnStep[1].load() == false){
+        float correction = target_deg_.load() - heading360_.load();
+        if(direction_.load() == 1) mover(90 + correction, 40, 1);
+        else if(direction_.load() == 2) mover(90 - correction, 40, 1);
+        }
+        if(distBackWall < 0.5f){
+          turnStep[1].store(true);
+        }
+      }
+      else if(turnStep[2].load() == false){
+        mover(90, 40, 1); //giro parte 2
+        if(distOutWallSide < 0.5f){
+          turnStep[2].store(true);
+          inTurn_.store(false);
+          for(int i = 0; i < 4; i++){
+            turnStep[i].store(false);
+          }
+        }
+      }
+    }
+
+
+    else if(turntype_.load() == 3){
+      if(turnStep[0].load() == false){
+        mover(90, 40, 0); //giro parte 1
+        if(distOutWallFront < 0.5f){
+          turnStep[0].store(true);
+        }
+      }
+      else if(turnStep[1].load() == false){
+        if(direction_.load() == 1) mover(150, 40, 1);
+        else if(direction_.load() == 2) mover(30, 40, 1);
+        if(fabs(targetYaw_.load() - heading360_.load()) < 5.0f){
+          turnStep[1].store(true);
+        }
+      }
+      else if(turnStep[2].load() == false){
+        mover(90, 40, 1); 
+        if(distBackWall < 0.5f){
+          turnStep[2].store(true);
+          inTurn_.store(false);
+          for(int i = 0; i < 4; i++){
+            turnStep[i].store(false);
+          }
+        }
+      }
+    }
+  }
+
   void on_timer() {
     if (!std::isfinite(heading360_.load())) return;
     getActualSector();
@@ -443,6 +540,9 @@ private:
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr object_status_sub_;
 
   // atómicos (siempre .load() / .store())
+  std::atomic<bool> turnStep[4] = {false, false, false, false};
+  std::atomic<int> turntype_{0}; // 1 = close turn, 2 = middle turn , 3 = far turn
+  std::atomic<bool> inTurn{false};
   std::atomic<bool> out_{false};
   std::atomic<bool> initCorrection_{false};
   std::atomic<bool> repeat_{false};
