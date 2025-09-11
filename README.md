@@ -48,7 +48,7 @@ This repository contains the documentation for **ChaBots** participation in the 
 **Age:** 22\
 **Role:** Software Developer
 
-I am a Software Engineer student and I love robotics and programming. I have been a contestant for 8 years, from regional to national competitions, I have participated in 4 Torneo de Robótica and 1 MakeX Robotics Competition, top 3(2019) and runner-up(2019).
+I am a Software Engineer student and I love robotics and programming. I have been a contestant for 8 years, from regional to national competitions, I have participated in 4 Mexico Robocup Soccer and 1 MakeX Robotics Competition, top 3(2019) and runner-up(2019).
 
 > "Anyway, robotics is my passion and I will never forget it."
 
