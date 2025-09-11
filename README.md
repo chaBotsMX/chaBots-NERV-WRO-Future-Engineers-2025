@@ -8,17 +8,17 @@
   <a href="https://www.facebook.com/chabotsMX/">
     <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="40" alt="Facebook">
   </a>
-  
+
   <!-- Instagram (con degradado real) -->
   <a href="https://www.instagram.com/chabotsmx/" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="40" alt="Instagram">
   </a>
-  
+
   <!-- YouTube -->
   <a href="https://www.youtube.com/@chabotsmx1956/videos" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="40" alt="YouTube">
   </a>
-  
+
   <!-- Página Web (icono de internet) -->
   <a href="https://www.chabotsmx.com" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/841/841364.png" width="40" alt="Website">
@@ -44,11 +44,13 @@ This repository contains the documentation for **ChaBots** participation in the 
 
 ## The Team <a name="the-team"></a>
 
-### Hiram Jalil Castillo Gutierrez 
+### Hiram Jalil Castillo Gutierrez
 **Age:** 22\
 **Role:** Software Developer
 
-[Short bio of the teammate – use placeholder text if teammate is unknown]
+I am a Software Engineer student and I love robotics and programming. I have been a contestant for 8 years, from regional to national competitions, I have participated in 4 Mexico Robocup Soccer and 1 MakeX Robotics Competition, top 3(2019) and runner-up(2019).
+
+> "Anyway, robotics is my passion and I will never forget it."
 
 ---
 
@@ -62,7 +64,7 @@ I am a Mechatronics Engineering student passionate about technology and innovati
 ---
 ### Roy Iván Barrón Martínez
 **Age:** 20\
-**Role:** Captain, Electronics & Software Designer 
+**Role:** Captain, Electronics & Software Designer
 
 I am a self-taught robotics enthusiast with experience in embedded systems, software, and mechanical integration. my team ChaBots Ocelot won Mexico Robocup soccer Open second place and achieved multiple national awards in programming and robotics.
 
@@ -88,10 +90,10 @@ The **WRO Future Engineers** challenge pushes students to create fully autonomou
 - Detect and avoid colored obstacles (green/red blocks)
 - Execute a parallel parking maneuver
 
-Scoring is based on:  
-- Performance on track  
-- Obstacle handling  
-- Documentation quality  
+Scoring is based on:
+- Performance on track
+- Obstacle handling
+- Documentation quality
 - Innovation and engineering rigor
 
 For more indo visit: [WRO Official Site](https://wro-association.org/)
@@ -100,7 +102,7 @@ For more indo visit: [WRO Official Site](https://wro-association.org/)
 
 ## Robot Overview <a name="robot-overview"></a>
 
- **Name:** Eva  
+ **Name:** Eva
 
 | Front | Back |
 |-------|------|
@@ -121,15 +123,15 @@ For more indo visit: [WRO Official Site](https://wro-association.org/)
 
 ### Drivetrain
 
-**Design Notes:**  
+**Design Notes:**
 We opted for custom-built steel axles with a diameter of 4mm, connected to Pololu 25D 6V HP motors, which provided sufficient power and torque to meet our performancer requireeriments. The motors have a maximum RPM of, max spee 480, but theour torque output was initially too high for optimal speed. To address this, we ilemented  ado we decide use an extra reductional to 2:1 gear reduction, effectively doubling the speed while maintainingto have double speed and approximately 1.8 kg·cm of/ torque—suitable for our application.
 
 The drivetrain base and gear assemblys were manufactured in-hby ourse. We used PLA Carbon Fiber filameona QIDI Q1 proprinter for extra strength and durability. We designed and printed d, and PLA Couble Helical Gears tld  energy transmission efficiency and reduce mechanical wear.
 
 The steel axeis wer to size manually and shapemade by our self using an steel rod, we cut it at the needed size, and usinged a Ddremel tool to create D-shaped shafts, which ensured a secure grip with the wheel hubs. Our wheels were also custom-built using 3D-printed make D Shaft to ensure grip from our wheels, our wheels were also made using , using the same qidi, the made the tire rims, and motor shaft couplers sourcedused some motor coupler shaft we bugth from AaliEexpress. For tires, we repurposed LEGO rubber tires after determining that fabricating our own rubber tires was not viable.
 
-**Motor:** Pololu 25D 6V HP  
-**Gear Ratio:** 20.4:1  
+**Motor:** Pololu 25D 6V HP
+**Gear Ratio:** 20.4:1
 **Max RPM:** 480
 
 **Planned Improvements for National Phase:**
@@ -138,7 +140,7 @@ The steel axeis wer to size manually and shapemade by our self using an steel ro
 - Replace LEGO tires with higher-grip, custom-molded polyurethane ones., we used lego wheels tires as we realize that was to dificult to make our selfs tires, d us a remel to rim and  rom liess
 
 **Motor:** Maxon DCX19
-**Max RPM:** 600rpm  
+**Max RPM:** 600rpm
 
 ### Steering
 
