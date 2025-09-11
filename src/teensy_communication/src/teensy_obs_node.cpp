@@ -309,14 +309,14 @@ private:
 
       if(orientation <  -75){
         actualSector.store(3);
-        if(driveDirection.load() == 0){
-          driveDirection.store(2);
+        if(direction_.load() == 0){
+          direction_.store(2);
         }
       }
       else if(orientation  > 75){
         actualSector.store(1);
-        if(driveDirection.load() == 0){
-          driveDirection.store(1);
+        if(direction_.load() == 0){
+          direction_.store(1);
         }
       }
     }  
@@ -341,7 +341,7 @@ private:
 
     float returnCorrection = 90 +(err * 1.0f);
 
-    RCLCPP_INFO(this->get_logger(), "Offset: %f, Target: %f, Error: %f, Correction: %f", offset, target, err, returnCorrection);
+    //RCLCPP_INFO(this->get_logger(), "Offset: %f, Target: %f, Error: %f, Correction: %f", offset, target, err, returnCorrection);
     auto frame = pack(static_cast<int>(returnCorrection), 50, 0);
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
@@ -380,11 +380,14 @@ private:
       if(sector != lastSector.load()){
         lastSector.store(sector);
         turnAllowed_.store(true);
+        //RCLCPP_INFO(this->get_logger(), "Nuevo sector: %d", sector);
       }
+      RCLCPP_INFO(this->get_logger(), "Obstaculo detectado: distancia al frente: %f", dist_front_.load());
       if(isObs == 1){
         float angle = object_angle_.load();
         float object_distance = object_distance_.load();
         int color = static_cast<int>(object_color_.load());
+   
         if(color == 0){
           angle = angle - 10;
           if(angle < 0 ){
@@ -409,6 +412,7 @@ private:
         else{
           orientar();
           if(dist_front_.load() < 1.0f){
+            RCLCPP_INFO(this->get_logger(), "cambio de objetivo");
             girar();
           }
         }
@@ -416,14 +420,15 @@ private:
       }
       else{
         orientar();
-        RCLCPP_INFO(this->get_logger(), "No hay obstaculo");
+        //RCLCPP_INFO(this->get_logger(), "No hay obstaculo, orientando");
         if(dist_front_.load() < 1.0f){
+         // RCLCPP_INFO(this->get_logger(), "cambio de objetivo");
           girar();
         }
       }
     }
 
-  }
+  
 
 
 // ---- miembros ----

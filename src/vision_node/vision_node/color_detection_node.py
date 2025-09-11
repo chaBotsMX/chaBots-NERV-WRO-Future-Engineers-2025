@@ -23,21 +23,26 @@ class ObjectTracker(Node):
         
         self.bridge = CvBridge()
         
-        # Parámetros HSV para verde
+        # Parámetros HSV para verde (SIN CAMBIOS)
         self.lower_green = np.array([37, 143, 0])
         self.upper_green = np.array([68, 255, 193])
         
-        # Parámetros HSV para rojo
-        # El rojo en HSV puede estar en dos rangos debido a que está en los extremos (0° y 360°)
-        self.lower_red1 = np.array([138, 145, 126])    # Rojo inferior
-        self.upper_red1 = np.array([180, 255, 255])
+        # Parámetros HSV para rojo (PARCHE: dos rangos y se unirán)
+        # Rango bajo (cerca de 0)
+        self.lower_red1 = np.array([0,   100, 80])
+        self.upper_red1 = np.array([2,  255, 255])
+        # Rango alto (cerca de 179)
+        self.lower_red2 = np.array([170, 100, 80])
+        self.upper_red2 = np.array([179, 255, 255])
         
         # Parámetros de la cámara
-        self.FOCAL_LENGTH =1131   # píxeles
-        self.KNOWN_WIDTH = 14.0   # cms
+        self.FOCAL_LENGTH = 1131   # píxeles
+        self.KNOWN_WIDTH = 14.0    # cms
         self.FRAME_WIDTH = 1920
         
         self.get_logger().info("Object Tracker Node iniciado - Detectando verde y rojo")
+        cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("Frame", 960, 540)  # ajusta a tu pantalla
 
     def detect_objects(self, hsv):
         """
@@ -46,7 +51,7 @@ class ObjectTracker(Node):
         """
         detected_objects = []
         
-        # Detectar objetos verdes
+        # Detectar objetos verdes (SIN CAMBIOS)
         mask_green = cv2.inRange(hsv, self.lower_green, self.upper_green)
         contours_green, _ = cv2.findContours(mask_green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
@@ -63,9 +68,10 @@ class ObjectTracker(Node):
                     'area': area
                 })
         
-        # Detectar objetos rojos
-        # Crear máscara para ambos rangos de rojo
-        mask_red = cv2.inRange(hsv, self.lower_red1, self.upper_red1)
+        # Detectar objetos rojos (PARCHE: combinar dos rangos)
+        mask_r1 = cv2.inRange(hsv, self.lower_red1, self.upper_red1)
+        mask_r2 = cv2.inRange(hsv, self.lower_red2, self.upper_red2)
+        mask_red = cv2.bitwise_or(mask_r1, mask_r2)
         
         contours_red, _ = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
