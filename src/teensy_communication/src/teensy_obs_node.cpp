@@ -102,6 +102,11 @@ public:
 
 private:
 
+
+  float sectores[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+  float sectoresAngs[2][4] = {{45.0f, 135.0f, 225.0f, 315.0f},
+                              {315.0f, 45.0f, 135.0f, 225.0f}};
+
     // ---- empaquetado ----
   static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t dir) {
       std::array<uint8_t, 6> f{};
@@ -203,10 +208,6 @@ private:
     }
   }
 
-
-
-
-
   static inline float clampf(float v, float lo, float hi) {
     return std::max(lo, std::min(v, hi));
   }
@@ -234,12 +235,12 @@ private:
     if (error < -0.1f) return 1;                        
     return static_cast<int>(pwm);
   }
-
   // ---- callbacks ----
   void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
     const float a_min = msg->angle_min;
     const float a_inc = msg->angle_increment;
 
+    float sumX = 0.0f; float sumY = 0.0f;
     float sumFront = 0.0f; size_t totalFront = 0;
     float sumLeft = 0.0f; size_t totalLeft = 0;
     float sumRight = 0.0f; size_t totalRight = 0;
@@ -248,11 +249,14 @@ private:
       if (a < 0.0f || a > 3.141592f) continue; // ~70°–110°
       const float r = msg->ranges[i];
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
+      sumX += r * std::cos(a);
+      sumY += r * std::sin(a);
       if (a > 1.39 && a < 1.7453f) { sumFront += r; ++totalFront; }
       if( a > 0.0f && a < 0.5235f) { sumLeft += r; ++totalLeft; }
       if( a > 2.79252f && a < 3.141592f) { sumRight += r; ++totalRight; }
-    }
 
+    }
+    absolute_angle_.store(std::atan2(sumY, sumX) * 180.0f / kPI);
     const float frontmean = (totalFront ? (sumFront / static_cast<float>(totalFront)) : std::numeric_limits<float>::quiet_NaN());
     dist_front_.store(frontmean);
     const float leftmean = (totalLeft ? (sumLeft / static_cast<float>(totalLeft)) : std::numeric_limits<float>::quiet_NaN());
@@ -294,6 +298,42 @@ private:
     poseY_.store(msg->pose.pose.position.y);
   }
 
+
+  void getActualSector(){
+    float orientation = heading360_.load();
+    int thisSector = actualSector.load();
+    int thisSectorUpperLimit = sectoresAngs[0][thisSector];
+    int thisSectorLowerLimit = sectoresAngs[1][thisSector];
+    if(thisSector == 0){
+      orientation >= 180? orientation -= 360 : orientation = orientation;
+
+      if(orientation <  -75){
+        actualSector.store(3);
+        if(driveDirection.load() == 0){
+          driveDirection.store(2);
+        }
+      }
+      else if(orientation  > 75){
+        actualSector.store(1);
+        if(driveDirection.load() == 0){
+          driveDirection.store(1);
+        }
+      }
+    }  
+    else if(static_cast<int>(orientation) > thisSectorUpperLimit + 30) {
+      thisSector++;
+      thisSector > 3 ? thisSector = 0 : thisSector = thisSector;
+      actualSector.store(thisSector);
+    }
+    else if(static_cast<int>(orientation) < thisSectorLowerLimit - 30) {
+      thisSector--;
+      thisSector < 0 ? thisSector = 3 : thisSector = thisSector;
+      actualSector.store(thisSector);
+    }
+  }  
+
+
+  
   void orientar(){
     float offset = heading360_.load();
     float target = targetYaw_.load();
@@ -302,22 +342,54 @@ private:
     float returnCorrection = 90 +(err * 1.0f);
 
     RCLCPP_INFO(this->get_logger(), "Offset: %f, Target: %f, Error: %f, Correction: %f", offset, target, err, returnCorrection);
-    auto frame = pack(static_cast<int>(returnCorrection), 0, 0);
+    auto frame = pack(static_cast<int>(returnCorrection), 50, 0);
     (void)serial_.write_bytes(frame.data(), frame.size());
+  }
+  int getDriveDir(){
+    if(absolute_angle_.load() < 90.0f){
+      return 1; // izquierda
+    }
+    else if(absolute_angle_.load() > 90.0f){
+      return 2; // derecha
+    }
+    else{
+      return 0; 
+    }
+  }
+  void girar(){
+    if(direction_.load() == 0 ){
+      direction_.store(getDriveDir());
+    }
+    if(direction_.load() == 2 && turnAllowed_.load()){
+      targetYaw_.store(wrap_360(heading360_.load() + 90.0f));
+      turnAllowed_.store(false);
+    }
+    else if(direction_.load() == 1 && turnAllowed_.load()){
+      targetYaw_.store(wrap_360(heading360_.load() - 90.0f));
+      turnAllowed_.store(false);
+    }
+
   }
 
   void on_timer() {
     if (!std::isfinite(heading360_.load())) return;
+    getActualSector();
       int isObs = object_status_.load();
+      int sector = actualSector.load();
+
+      if(sector != lastSector.load()){
+        lastSector.store(sector);
+        turnAllowed_.store(true);
+      }
       if(isObs == 1){
         float angle = object_angle_.load();
         float object_distance = object_distance_.load();
         int color = static_cast<int>(object_color_.load());
         if(color == 0){
-          angle = angle - 35;
+          angle = angle - 10;
           if(angle < 0 ){
           float returnANG = 90 - angle;
-          auto frame = pack(static_cast<int>(returnANG), 1, 0);
+          auto frame = pack(static_cast<int>(returnANG), 50, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
           RCLCPP_INFO(this->get_logger(), "Obstaculo cerca verde, angulo mandado: %f", returnANG);
           }
@@ -326,23 +398,30 @@ private:
           }
         }
         else if(color == 1){
-          angle = angle + 35;
+          angle = angle + 10;
           if(angle > 0 ){
           float returnANG = 90 - angle;
-          auto frame = pack(static_cast<int>(returnANG), 0, 0);
+          auto frame = pack(static_cast<int>(returnANG), 50, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
           RCLCPP_INFO(this->get_logger(), "Obstaculo cerca rojo, angulo mandado: %f", returnANG);
           }
         }
         else{
           orientar();
+          if(dist_front_.load() < 1.0f){
+            girar();
+          }
         }
 
       }
       else{
         orientar();
         RCLCPP_INFO(this->get_logger(), "No hay obstaculo");
+        if(dist_front_.load() < 1.0f){
+          girar();
+        }
       }
+    }
 
   }
 
@@ -366,14 +445,18 @@ private:
   std::atomic<bool> frontInParking_{false};
   std::atomic<bool> backInParking_{false};
   std::atomic<bool> outOfParking_{false};
+  std::atomic<int> actualSector{0};
+  std::atomic<int> lastSector{0};
   std::atomic<float> targetYaw_{0.0f};
   std::atomic<int> direction_{0}; // 1 = "LEFT", 2 = "RIGHT"
+  std::atomic<bool> turnAllowed_{true}; 
   std::atomic<float> dist_Left_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> dist_Right_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> poseY_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> speed_{0.0f};
   std::atomic<float> lastPwm_{0.0f};
   std::atomic<float> lastError_{0.0f};
+  std::atomic<float> absolute_angle_{0.0f};
   std::atomic<float> heading_acc_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> heading360_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> dist_front_{std::numeric_limits<float>::quiet_NaN()};
