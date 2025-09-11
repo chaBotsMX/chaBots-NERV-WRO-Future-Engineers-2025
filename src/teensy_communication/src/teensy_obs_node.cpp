@@ -92,8 +92,7 @@ public:
     object_status_sub_ = create_subscription<std_msgs::msg::Float32>(
       "/object/status", 10, [this](std_msgs::msg::Float32::SharedPtr m){ object_status_.store(m->data); });
 
-    // Estado inicial
-    target_deg_ = 0.0f;            // 0°
+    // Estado inicial         // 0°
     cycle_idx_.store(0);
     last_blocked_.store(false);
 
@@ -249,19 +248,24 @@ private:
     float sumFront = 0.0f; size_t totalFront = 0;
     float sumLeft = 0.0f; size_t totalLeft = 0;
     float sumRight = 0.0f; size_t totalRight = 0;
+    float sumBack = 0.0f; size_t totalBack = 0;
     for (size_t i = 0; i < msg->ranges.size(); ++i) {
       const float a = a_min + a_inc * static_cast<float>(i);
-      if (a < 0.0f || a > 3.141592f) continue; // ~70°–110°
+      if (a < 0.0f && a > -1.3962f || a < -1.7453f || a > 3.141592f ) continue; 
       const float r = msg->ranges[i];
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
-      sumX += r * std::cos(a);
-      sumY += r * std::sin(a);
+      if(a> 0.0f && a < 3.1415f) {
+        sumX += r * std::cos(a);
+        sumY += r * std::sin(a);
+      }
+      if(a < -1.3962f && a > -1.7453f) { sumBack += r; ++totalBack; }
       if (a > 1.39 && a < 1.7453f) { sumFront += r; ++totalFront; }
       if( a > 0.0f && a < 0.5235f) { sumLeft += r; ++totalLeft; }
       if( a > 2.79252f && a < 3.141592f) { sumRight += r; ++totalRight; }
-
     }
     absolute_angle_.store(std::atan2(sumY, sumX) * 180.0f / kPI);
+    const float backmean = (totalBack ? (sumBack / static_cast<float>(totalBack)) : std::numeric_limits<float>::quiet_NaN());
+    dist_back_.store(backmean);
     const float frontmean = (totalFront ? (sumFront / static_cast<float>(totalFront)) : std::numeric_limits<float>::quiet_NaN());
     dist_front_.store(frontmean);
     const float leftmean = (totalLeft ? (sumLeft / static_cast<float>(totalLeft)) : std::numeric_limits<float>::quiet_NaN());
@@ -368,27 +372,28 @@ private:
     if(direction_.load() == 2 && turnAllowed_.load()){
       targetYaw_.store(wrap_360(heading360_.load() + 90.0f));
       turnAllowed_.store(false);
+      inturn.store(true);
     }
     else if(direction_.load() == 1 && turnAllowed_.load()){
       targetYaw_.store(wrap_360(heading360_.load() - 90.0f));
       turnAllowed_.store(false);
+      inturn.store(true);
     }
 
   }
 
-  
-
   void rutinaGirar(){
-    float distOutWallSide = //agregar;
+    float distanFront = dist_front_.load();
+    float distBack = dist_back_.load();
     if(turntype_.load() == 0){
-      if(distOutWall >= 0.8f){
-        turnType_.store(3);
+      if(distanFront >= 0.8f){
+        turntype_.store(3);
       }
-      else if(distOutWall < 0.8f && distOutWall >= 0.3f){
-        turnType_.store(2);
+      else if(distanFront < 0.8f && distanFront >= 0.3f){
+        turntype_.store(2);
       }
-      else if(distOutWall < 0.3f){
-        turnType_.store(1);
+      else if(distanFront < 0.3f){
+        turntype_.store(1);
       }
     }
 
@@ -402,9 +407,10 @@ private:
       }
       else if(turnStep[1].load() == false){
         mover(90, 40, 1);
-        if(distBackWall < 0.5f){
+        if(distBack < 0.5f){
           turnStep[1].store(true);
-          inTurn_.store(false);
+          inturn.store(false);
+          turntype_.store(0);
           for(int i = 0; i < 4; i++){
             turnStep[i].store(false);
           }
@@ -413,38 +419,38 @@ private:
     }
     else if(turntype_.load() == 2){
       if(turnStep[0].load() == false){
-        float correction = (target_deg_.load() + 45) - heading360_.load();
+        float correction = (targetYaw_.load() + 45) - heading360_.load();
         mover(90 + correction, 40, 0);
-        if(distOutWallFront < 0.5f){
+        if(distanFront < 0.5f){
           turnStep[0].store(true);
         }
       }
       else if(turnStep[1].load() == false){
-        float correction = target_deg_.load() - heading360_.load();
+        float correction = targetYaw_.load() - heading360_.load();
         if(direction_.load() == 1) mover(90 + correction, 40, 1);
         else if(direction_.load() == 2) mover(90 - correction, 40, 1);
-        }
-        if(distBackWall < 0.5f){
+        if(distBack < 0.5f){
           turnStep[1].store(true);
         }
       }
       else if(turnStep[2].load() == false){
         mover(90, 40, 1); //giro parte 2
-        if(distOutWallSide < 0.5f){
+        if(distanFront < 0.5f){
           turnStep[2].store(true);
-          inTurn_.store(false);
+          inturn.store(false);
+          turntype_.store(0);
           for(int i = 0; i < 4; i++){
             turnStep[i].store(false);
           }
         }
       }
-    }
+    } 
 
 
-    else if(turntype_.load() == 3){
+  else if(turntype_.load() == 3){
       if(turnStep[0].load() == false){
         mover(90, 40, 0); //giro parte 1
-        if(distOutWallFront < 0.5f){
+        if(distanFront < 0.5f){
           turnStep[0].store(true);
         }
       }
@@ -457,9 +463,10 @@ private:
       }
       else if(turnStep[2].load() == false){
         mover(90, 40, 1); 
-        if(distBackWall < 0.5f){
+        if(distBack < 0.5f){
           turnStep[2].store(true);
-          inTurn_.store(false);
+          inturn.store(false);
+          turntype_.store(0);
           for(int i = 0; i < 4; i++){
             turnStep[i].store(false);
           }
@@ -480,7 +487,11 @@ private:
         //RCLCPP_INFO(this->get_logger(), "Nuevo sector: %d", sector);
       }
       RCLCPP_INFO(this->get_logger(), "Obstaculo detectado: distancia al frente: %f", dist_front_.load());
-      if(isObs == 1){
+      if(inturn.load()){
+        rutinaGirar();
+        return;
+      }
+      else if(isObs == 1){
         float angle = object_angle_.load();
         float object_distance = object_distance_.load();
         int color = static_cast<int>(object_color_.load());
@@ -542,7 +553,7 @@ private:
   // atómicos (siempre .load() / .store())
   std::atomic<bool> turnStep[4] = {false, false, false, false};
   std::atomic<int> turntype_{0}; // 1 = close turn, 2 = middle turn , 3 = far turn
-  std::atomic<bool> inTurn{false};
+  std::atomic<bool> inturn{false};
   std::atomic<bool> out_{false};
   std::atomic<bool> initCorrection_{false};
   std::atomic<bool> repeat_{false};
@@ -555,6 +566,7 @@ private:
   std::atomic<float> targetYaw_{0.0f};
   std::atomic<int> direction_{0}; // 1 = "LEFT", 2 = "RIGHT"
   std::atomic<bool> turnAllowed_{true}; 
+  std::atomic<float> dist_back_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> dist_Left_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> dist_Right_{std::numeric_limits<float>::quiet_NaN()};
   std::atomic<float> poseY_{std::numeric_limits<float>::quiet_NaN()};
@@ -572,8 +584,6 @@ private:
   std::atomic<int>   cycle_idx_{0};
   std::atomic<bool>  last_blocked_{false};
 
-  // locales al hilo del timer
-  float target_deg_{0.0f};
 };
 
 int main(int argc, char** argv) {
