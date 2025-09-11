@@ -1,13 +1,30 @@
-# Chabots - WRO Future Engineers 2024
 
-![Banner](./other/readme-images/banner.png)
+# ChaBots - WRO Future Engineers 2025
 
-[![Website](https://img.shields.io/badge/Website-Visit-brightgreen?style=for-the-badge&logo=web&logoColor=white)](https://www.chabots.com.mx)
-[![Facebook](https://img.shields.io/badge/Facebook-%231877F2.svg?style=for-the-badge&logo=Facebook&logoColor=white)](https://www.facebook.com/chabotsMX/)
-[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white)](https://www.instagram.com/chabotsmx/)
-[![Youtube](https://img.shields.io/badge/Youtube-%23FF0000.svg?style=for-the-badge&logo=Youtube&logoColor=white)](https://www.youtube.com/@chabotsmx1956/videos)
+<!--<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/resources/ChaBotsLogo.png?raw=true" width="250">-->
 
-This repository contains the documentation for **Chabots** participation in the **WRO Future Engineers 2024** category. Our robot was designed and built by a team of Mexican students passionate about robotics and education.
+## Follow us!
+  <!-- Facebook -->
+  <a href="https://www.facebook.com/chabotsMX/">
+    <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="40" alt="Facebook">
+  </a>
+  
+  <!-- Instagram (con degradado real) -->
+  <a href="https://www.instagram.com/chabotsmx/" target="_blank">
+    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="40" alt="Instagram">
+  </a>
+  
+  <!-- YouTube -->
+  <a href="https://www.youtube.com/@chabotsmx1956/videos" target="_blank">
+    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="40" alt="YouTube">
+  </a>
+  
+  <!-- Página Web (icono de internet) -->
+  <a href="https://www.chabotsmx.com" target="_blank">
+    <img src="https://cdn-icons-png.flaticon.com/512/841/841364.png" width="40" alt="Website">
+  </a>
+
+This repository contains the documentation for **ChaBots** participation in the **WRO Future Engineers 2025** category. Our robot was designed and built by a Mexican students team,  passionate about robotics and education.
 
 ## Table of Contents
 
@@ -29,27 +46,27 @@ This repository contains the documentation for **Chabots** participation in the 
 
 ### Hiram Jalil Castillo Gutierrez 
 **Age:** 22\
-**Role:** Software Development
+**Role:** Software Developer
 
 [Short bio of the teammate – use placeholder text if teammate is unknown]
 
+---
 
 ### Leonardo Villegas Lopez
 **Age:** 20\
-**Role:** Mechanical Design
+**Role:** Mechanical Designer
 
-[Short bio of the teammate – use placeholder text if teammate is unknown]
+I am a Mechatronics Engineering student passionate about technology and innovation. I have been a contestant for eight years, winning various regional and national competitions, and participating internationally.
 
 
+---
 ### Roy Iván Barrón Martínez
 **Age:** 20\
-**Role:** Captain, Electronics & Software Design  
+**Role:** Captain, Electronics & Software Designer 
 
 I am a self-taught robotics enthusiast with experience in embedded systems, software, and mechanical integration. my team ChaBots Ocelot won Mexico Robocup soccer Open second place and achieved multiple national awards in programming and robotics.
 
 > "I enjoy setting nearly impossible goals to push myself while learning. I believe that learning should always lead to building something real."
-
-[Short bio of the teammate – use placeholder text if teammate is unknown]
 
 ---
 
@@ -72,31 +89,30 @@ The **WRO Future Engineers** challenge pushes students to create fully autonomou
 - Execute a parallel parking maneuver
 
 Scoring is based on:  
-✔ Performance on track  
-✔ Obstacle handling  
-✔ Documentation quality  
-✔ Innovation and engineering rigor
+- Performance on track  
+- Obstacle handling  
+- Documentation quality  
+- Innovation and engineering rigor
 
-Read more: [WRO Official Site](https://wro-association.org/)
+For more indo visit: [WRO Official Site](https://wro-association.org/)
 
 ---
 
 ## Robot Overview <a name="robot-overview"></a>
 
-> **Name:** _[To be completed]_  
-> **Meaning / Acronym:** _[Optional]_  
+ **Name:** Eva  
 
 | Front | Back |
 |-------|------|
-| ![Front](./robot-photos/front.png) | ![Back](./robot-photos/back.png) |
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-front.jpeg?raw=true" width="250">| <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-back.jpeg?raw=true" width="250">|
 
 | Left | Right |
 |------|-------|
-| ![Left](./robot-photos/left.png) | ![Right](./robot-photos/right.png) |
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-left.jpeg?raw=true" width="250">| <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-right.jpeg?raw=true" width="250">|
 
 | Top | Bottom |
 |------|--------|
-| ![Top](./robot-photos/top.png) | ![Bottom](./robot-photos/bottom.png) |
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-top.jpeg?raw=true" width="250">| <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-bottom.jpeg?raw=true" width="190">
 
 ---
 
@@ -121,29 +137,18 @@ The steel axeis wer to size manually and shapemade by our self using an steel ro
 - Implement a differential gear system for smoother cornering.
 - Replace LEGO tires with higher-grip, custom-molded polyurethane ones., we used lego wheels tires as we realize that was to dificult to make our selfs tires, d us a remel to rim and  rom liess
 
-**Motor:**  
-**Gear Ratio:** [Insert ratio]  
-**Max RPM:** [Insert speed]  
-
-**Potential Improvements:**
-- Switch to brushless motors for better efficiency and thermal performance.
-- Redesign wheel hubs to allowfor quicker swapping and maintenance.
-- Manufacture custom
-- Add diferential gear
-- Make our self tires using cast polyiurethane for improved traction.
-
+**Motor:** Maxon DCX19
+**Max RPM:** 600rpm  
 
 ### Steering
 
-We build an ackermann stering systedm to ensure smooth and better turns, we used a mg 995 servo motor cause was dificult to get a better one justo for now, all the mechanism is mounted in our 3d printed chasis and we use PolyMax PC to ensure that our mehcanism have enough sttength,  Fiberon PC
+**Servo Model:** HS 85mg
+**Rotation Range:** 180°
 
-**Servo Model:** MG995[Insert model]  
-**Rotation Range:** 0-180
+We builded an stering system to ensure smooth and better turns, we used a HS 85mg servo motor, all the mechanism is mounted on a 3d printed base, and we assemble it on the robot chassis.
 
 **Future Upgrades:**
-- Improve servo angle feedback
-- Add software-based correction via IMU
-
+- Improve steering angle
 ---
 
 #### 1. Arduino Control System (C++)
@@ -359,3 +364,6 @@ eyJoaXN0b3J5IjpbMTcyMzM3ODYxNCwtMzc2NTM2MDM5LDM1ND
 c4NDQyMCwxMjQ4Mzg0MTM1LC0yODM3NTcxNywtMTMyNzEwNTIy
 MywxMjg3Nzk2NjQsLTQ4MTYzMzM4MF19
 -->
+
+
+> Written with [StackEdit](https://stackedit.io/).
