@@ -385,16 +385,23 @@ private:
   void rutinaGirar(){
     float distanFront = dist_front_.load();
     float distBack = dist_back_.load();
+    float outWallDistance = 0;
+    if(direction_.load() == 1){
+      outWallDistance = dist_Right_.load();
+    }
+    else if(direction_.load() == 2){
+      outWallDistance = dist_Left_.load();
+    }
     if(turntype_.load() == 0){
-      if(distanFront >= 0.8f){
-        turntype_.store(3);
-      }
-      else if(distanFront < 0.8f && distanFront >= 0.3f){
-        turntype_.store(2);
-      }
-      else if(distanFront < 0.3f){
-        turntype_.store(1);
-      }
+        if(outWallDistance >= 0.8f){
+          turntype_.store(3);
+        }
+        else if(outWallDistance < 0.8f && outWallDistance >= 0.3f){
+          turntype_.store(2);
+        }
+        else if(outWallDistance < 0.3f){
+          turntype_.store(1);
+        }
     }
 
     if(turntype_.load() == 1){
@@ -419,23 +426,22 @@ private:
     }
     else if(turntype_.load() == 2){
       if(turnStep[0].load() == false){
-        float correction = (targetYaw_.load() + 45) - heading360_.load();
+        float correction = (targetYaw_.load() - 45) - heading360_.load();
         mover(90 + correction, 40, 0);
         if(distanFront < 0.5f){
           turnStep[0].store(true);
         }
       }
       else if(turnStep[1].load() == false){
-        float correction = targetYaw_.load() - heading360_.load();
-        if(direction_.load() == 1) mover(90 + correction, 40, 1);
-        else if(direction_.load() == 2) mover(90 - correction, 40, 1);
+        float correction = wrap_pm180(targetYaw_.load() - heading360_.load());
+        mover(90 - correction, 40, 1);
         if(distBack < 0.5f){
           turnStep[1].store(true);
         }
       }
-      else if(turnStep[2].load() == false){
+      else if(turnStep[2].load() == false){ 
         mover(90, 40, 1); //giro parte 2
-        if(distanFront < 0.5f){
+        if(distBack < 0.5f){
           turnStep[2].store(true);
           inturn.store(false);
           turntype_.store(0);
@@ -450,7 +456,7 @@ private:
   else if(turntype_.load() == 3){
       if(turnStep[0].load() == false){
         mover(90, 40, 0); //giro parte 1
-        if(distanFront < 0.5f){
+        if(distanFront < 0.35f){
           turnStep[0].store(true);
         }
       }
@@ -519,7 +525,7 @@ private:
         }
         else{
           orientar();
-          if(dist_front_.load() < 1.0f){
+          if(dist_front_.load() < 1.0f && fabs(targetYaw_.load() - heading360_.load()) < 5.0f){
             RCLCPP_INFO(this->get_logger(), "cambio de objetivo");
             girar();
           }
@@ -529,7 +535,7 @@ private:
       else{
         orientar();
         //RCLCPP_INFO(this->get_logger(), "No hay obstaculo, orientando");
-        if(dist_front_.load() < 1.0f){
+        if(dist_front_.load() < 1.0f && fabs(targetYaw_.load() - heading360_.load()) < 5.0f){
          // RCLCPP_INFO(this->get_logger(), "cambio de objetivo");
           girar();
         }

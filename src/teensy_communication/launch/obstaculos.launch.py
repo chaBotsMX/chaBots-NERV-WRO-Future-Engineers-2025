@@ -162,7 +162,6 @@ def generate_launch_description():
             executable='color_detection_node',
             name='color_detection',
             output='screen',
-            prefix=['/home/chabots/ros2_ws/vision_node/bin/python', ' -u '],
         ),
 
     ])
