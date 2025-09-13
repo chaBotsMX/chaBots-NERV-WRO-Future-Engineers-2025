@@ -1,3 +1,6 @@
+#ifndef SERIAL_PORT_H
+#define SERIAL_PORT_H
+
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
@@ -25,14 +28,25 @@
 #include <cstring>
 #include <algorithm>
 
-#include "TeensyCommNode.h"
-
 using namespace std::chrono_literals;
 
-int main(int argc, char** argv) {
-  rclcpp::init(argc, argv);
-  std::this_thread::sleep_for(std::chrono::seconds(3));
-  rclcpp::spin(std::make_shared<TeensyCommNode>());
-  rclcpp::shutdown();
-  return 0;
+class SerialPort {
+private:
+  int puerto_;
+  std::string last_error_;
+
+public:
+  SerialPort() : puerto_(-1) {}
+  ~SerialPort() { close_port(); }
+
+  bool open_port();
+
+  void close_port() { if (puerto_ >= 0) { ::close(puerto_); puerto_ = -1; } }
+  bool is_open() const { return puerto_ >= 0; }
+
+  bool write_bytes(const uint8_t* data, size_t len);
+
+  std::string last_error() const { return last_error_; }
 }
+
+#endif
