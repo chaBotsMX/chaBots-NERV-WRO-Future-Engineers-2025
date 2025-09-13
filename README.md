@@ -320,23 +320,26 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 - Step 4: Wiring
 - Step 5: Upload firmware
 
+## Construction Tools
+- 3D Printer (Creality K2 Plus, QIDI Q1 Pro)
 
 ## Cost Report <a name="cost-report"></a>
 
 | Item                         | Qty | Unit Cost (MXN) | Total (MXN) |
 |------------------------------|-----|------------------|-------------|
 | Teensy 4.0                   | 1   | 800              | 800         |
-| Raspberry pi camera v2       | 1   | 400             | 400        |
-| 2.2Ah LiPo 11.1V Battery    | 1   | 600              | 600         |
-| Gearmotor 50:1 Pololu       | 1   | 400              | 400         |
-| MG90S Micro Servo           | 1   | 90               | 90          |
-| SparkFun OTOS            | 1   | 2400              | 2400         |
-| VNH5019      | 1   | 800                                | 800         |
-| PLA Filament (prototypes)   | -   | 1kg = 350        | 350         |
-| PLA-CF Filament (finals)    | -   | 200g = 150       | 150         |
-| Raspberry pi 5     | 1   | 2800                      | 2800         |
-| RPlidar C1   | 1   | 2500                            | 2500         |
-| **Total**                   |     |                  | **10290 MXN**|
+| Raspberry Pi 5                | 1   | 2800             | 2800        |
+| RPlidar C1                    | 1   | 2500             | 2500        |
+| Raspberry Pi Camera 12mp V3   | 1   | 920              | 920         |
+| Raspberry Pi 5 Camera Cable   | 1   | 64               | 64          |
+| 2.2Ah LiPo 11.1V Battery     | 1   | 600              | 600         |
+| Maxon Motor DCX19            | 1   | 8500             | 8500        |
+| HS85MG Micro Servo            | 1   | 700              | 700         |
+| SparkFun OTOS                 | 1   | 2400             | 2400        |
+| VNH5019                       | 1   | 800              | 800         |
+| PLA Filament (prototypes)    | -   | 1kg = 350        | 350         |
+| PLA-CF Filament (finals)     | -   | 200g = 150       | 150         |
+| **Total**                     |     |                  | **20584 MXN**|
 
 ---
 
