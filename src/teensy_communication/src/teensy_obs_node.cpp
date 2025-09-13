@@ -492,35 +492,37 @@ private:
         turnAllowed_.store(true);
         //RCLCPP_INFO(this->get_logger(), "Nuevo sector: %d", sector);
       }
-      RCLCPP_INFO(this->get_logger(), "Obstaculo detectado: distancia al frente: %f", dist_front_.load());
+      //RCLCPP_INFO(this->get_logger(), "Obstaculo detectado: distancia al frente: %f", dist_front_.load());
       if(inturn.load()){
         rutinaGirar();
         return;
       }
-      else if(isObs == 1){
+      else if(isObs == 1){ 
         float angle = object_angle_.load();
-        float object_distance = object_distance_.load();
+        float object_distance = object_distance_.load() /2;
         int color = static_cast<int>(object_color_.load());
-   
+
         if(color == 0){
-          angle = angle - 10;
+          angle = angle - 20;
+          float prop = 1 - (object_distance / 90);
           if(angle < 0 ){
-          float returnANG = 90 - angle;
+          float returnANG = 90 + angle;
           auto frame = pack(static_cast<int>(returnANG), 50, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
-          RCLCPP_INFO(this->get_logger(), "Obstaculo cerca verde, angulo mandado: %f", returnANG);
+          RCLCPP_INFO(this->get_logger(), "Obstaculo cerca verde, angulo mandado: %f, distancia: %f, angulo: %f", returnANG, object_distance, angle);
           }
           else{
             orientar();
           }
         }
         else if(color == 1){
-          angle = angle + 10;
+          angle = angle + 20;
+          float prop = 1 - (object_distance / 90);
           if(angle > 0 ){
-          float returnANG = 90 - angle;
+          float returnANG = 90 + angle;
           auto frame = pack(static_cast<int>(returnANG), 50, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
-          RCLCPP_INFO(this->get_logger(), "Obstaculo cerca rojo, angulo mandado: %f", returnANG);
+          RCLCPP_INFO(this->get_logger(), "Obstaculo cerca rojo, angulo mandado: %f, distancia: %f, angulo: %f", returnANG, object_distance, angle);
           }
         }
         else{
