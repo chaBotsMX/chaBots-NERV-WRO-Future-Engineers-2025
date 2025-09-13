@@ -322,6 +322,10 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 ## Construction Tools
 - 3D Printer (Creality K2 Plus, QIDI Q1 Pro)
+- Mini Electric Soldering Iron Kit TS101
+-
+- Dremel Tool
+- Screwdriver Set Fanttik
 
 ## Cost Report <a name="cost-report"></a>
 
@@ -333,13 +337,18 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 | Raspberry Pi Camera 12mp V3   | 1   | 920              | 920         |
 | Raspberry Pi 5 Camera Cable   | 1   | 64               | 64          |
 | 2.2Ah LiPo 11.1V Battery     | 1   | 600              | 600         |
+| 1Ah LiPo 3.3V Battery     | 1   | 70               | 70          |
 | Maxon Motor DCX19            | 1   | 8500             | 8500        |
-| HS85MG Micro Servo            | 1   | 700              | 700         |
+| HS85MG Micro Servo            | 1   | 2000             | 2000        |
 | SparkFun OTOS                 | 1   | 2400             | 2400        |
-| VNH5019                       | 1   | 800              | 800         |
-| PLA Filament (prototypes)    | -   | 1kg = 350        | 350         |
-| PLA-CF Filament (finals)     | -   | 200g = 150       | 150         |
-| **Total**                     |     |                  | **20584 MXN**|
+| POLYMAKER PLA Filament (prototypes)    | -   | 1kg = 900        | 900         |
+| POLYMAKER PLA-CF Filament (finals)     | -   | 0.5kg = 450       | 450         |
+| Carbon Fiber                  | 1   | 2000             | 2000        |
+| SMD Components & Misc.   | -   |         1500      | 1500        |
+| PCB Manufacturing             | 1   | 800              | 800         |
+| Spike Wheels (LEGO)         | 4   | 150              | 600         |
+| EV3 Wheels (LEGO)          | 2   | 10              | 20         |
+| **Total**                     |     |                  | **26924 MXN**|
 
 ---
 
