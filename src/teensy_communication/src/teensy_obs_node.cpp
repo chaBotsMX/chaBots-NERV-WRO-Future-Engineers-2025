@@ -1,7 +1,9 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+
 #include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/float32_multi_array.hpp>
 
 #include <thread>
 #include <atomic>
@@ -70,6 +72,7 @@ private:
 static inline float wrap_360(float a) { float x = std::fmod(a, 360.0f); return (x < 0) ? x + 360.0f : x; }
 static inline float wrap_pm180(float a) { float x = std::fmod(a + 180.0f, 360.0f); if (x < 0) x += 360.0f; return x - 180.0f; }
 
+
 class TeensyObsNode : public rclcpp::Node {
 public:
   TeensyObsNode() : Node("teensy_obs") {
@@ -82,21 +85,43 @@ public:
     odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
       "odom", 10, std::bind(&TeensyObsNode::on_odom, this, std::placeholders::_1));
 
-    // Nodo de visión
-    object_distance_sub_ = create_subscription<std_msgs::msg::Float32>(
-      "/object/distance", 10, [this](std_msgs::msg::Float32::SharedPtr m){ object_distance_.store(m->data); });
-    object_angle_sub_ = create_subscription<std_msgs::msg::Float32>(
-      "/object/angle", 10, [this](std_msgs::msg::Float32::SharedPtr m){ object_angle_.store(m->data); });
-    object_color_sub_ = create_subscription<std_msgs::msg::Float32>(
-      "/object/color", 10, [this](std_msgs::msg::Float32::SharedPtr m){ object_color_.store(m->data); });
-    object_status_sub_ = create_subscription<std_msgs::msg::Float32>(
-      "/object/status", 10, [this](std_msgs::msg::Float32::SharedPtr m){ object_status_.store(m->data); });
+    // Suscripción al arreglo de detecciones de objetos
+    objects_detections_sub_ = create_subscription<std_msgs::msg::Float32MultiArray>(
+      "/objects/detections", 10,
+      std::bind(&TeensyObsNode::on_objects_detections, this, std::placeholders::_1));
 
     // Estado inicial         // 0°
     cycle_idx_.store(0);
     last_blocked_.store(false);
 
-  timer_ = create_wall_timer(10ms, std::bind(&TeensyObsNode::on_timer, this));
+    timer_ = create_wall_timer(10ms, std::bind(&TeensyObsNode::on_timer, this));
+  }
+
+  void on_objects_detections(const std_msgs::msg::Float32MultiArray::SharedPtr msg) {
+    const auto& data = msg->data;
+    size_t n = data.size() / 3;
+    if (n == 0) {
+      object_status_.store(0.0f);
+      return;
+    }
+
+    float min_dist = std::numeric_limits<float>::max();
+    int idx_min = -1;
+    for (size_t i = 0; i < n; ++i) {
+      float dist = data[i * 3 + 1];
+      if (dist < min_dist) {
+        min_dist = dist;
+        idx_min = static_cast<int>(i);
+      }
+    }
+    if (idx_min >= 0) {
+      object_color_.store(data[idx_min * 3 + 0]);
+      object_distance_.store(data[idx_min * 3 + 1]);
+      object_angle_.store(data[idx_min * 3 + 2]);
+      object_status_.store(1.0f);
+    } else {
+      object_status_.store(0.0f);
+    }
   }
 
 private:
@@ -106,7 +131,7 @@ private:
   float sectoresAngs[2][4] = {{45.0f, 135.0f, 225.0f, 315.0f},
                               {315.0f, 45.0f, 135.0f, 225.0f}};
   float sectoresTargets[4] = {0.0f, 90.0f, 180.0f, 270.0f};
-    // ---- empaquetado ----
+
   static std::array<uint8_t, 6> pack(uint16_t err_deg, uint8_t pwm_byte, uint8_t dir) {
       std::array<uint8_t, 6> f{};
       f[0] = 0xAB;
@@ -502,29 +527,115 @@ private:
         float object_distance = object_distance_.load() /2;
         int color = static_cast<int>(object_color_.load());
 
-        if(color == 0){
-          angle = angle - 20;
-          float prop = 1 - (object_distance / 90);
-          if(angle < 0 ){
-          float returnANG = 90 + angle;
-          auto frame = pack(static_cast<int>(returnANG), 50, 0);
-          (void)serial_.write_bytes(frame.data(), frame.size());
-          RCLCPP_INFO(this->get_logger(), "Obstaculo cerca verde, angulo mandado: %f, distancia: %f, angulo: %f", returnANG, object_distance, angle);
+        if (color == 0) { // VERDE => pasar SIEMPRE por la IZQUIERDA si está a la izquierda; derecha solo si bloquea
+          constexpr float minDis = 30.0f;   // cm
+          constexpr float maxDis = 100.0f;  // cm
+          constexpr float OffSetmax   = 30.0f;   // ° de desvío máximo (hacia IZQ)
+          constexpr float tickMaxChange = 3.0f;    // °/tick, límite de cambio (anti-jerk)
+          constexpr float safe = 30.0f;   // °, medio ángulo del cono frontal (para "bloquea" en derecha)
+
+          // --- Estado para suavizado ---
+          static float servo = 90.0f;
+
+          // --- Lecturas y pesos ---
+          float dis     = clampf(object_distance, minDis, maxDis);
+          float prop   = (maxDis - dis) / (maxDis - minDis);            // [0..1] más cerca => mayor
+          float theta = std::fabs(angle);                             // magnitud angular (°)
+
+          // --- Decisión: izquierda siempre; derecha solo si bloquea ---
+          bool must_evade = false;
+          float offset    = 0.0f;   // negativo = izquierda
+
+          if (angle < 0.0f) {
+            // LADO IZQUIERDO: evadir SIEMPRE (no depende de theta)
+            must_evade = true;
+            offset     = - OffSetmax * prop;                                // [-OffSetmax, 0]
+          } else {
+            // LADO DERECHO: evadir SOLO si está dentro del cono frontal (bloquea)
+            if (theta <= safe) {
+              // Peso suave por "qué tan frontal" (cos^2), opcional pero recomendable
+              float w_phi = std::pow(std::cos((kPI * 0.5f) * (theta / safe)), 2.0f); // [0..1]
+              must_evade  = true;
+              offset      = - OffSetmax * prop * w_phi;                     // [-OffSetmax, 0]
+            }
           }
-          else{
+
+          if (!must_evade || prop <= 0.0f || !std::isfinite(dis) || !std::isfinite(theta)) {
             orientar();
+          } else {
+            // --- Suavizado del mando ---
+            float cmd_raw = 90.0f + offset;                           // servo centrado en 90°
+            float delta   = clampf(cmd_raw - servo, -tickMaxChange, tickMaxChange);
+            float cmd_deg = servo + delta;
+            servo = cmd_deg;
+
+            // PWM (puedes escalarlo con w_d y |offset| si quieres)
+            const uint8_t pwm = 40;
+
+            auto frame = pack(static_cast<uint16_t>(std::lround(cmd_deg)), pwm, 0);
+            (void)serial_.write_bytes(frame.data(), frame.size());  
+            RCLCPP_INFO(this->get_logger(),
+              "Evasion IZQ | d=%.1fcm w_d=%.2f | ang=%.1f° lado=%s | off=%.1f° cmd=%.1f°",
+              dis, prop, angle, (angle < 0.0f ? "izq(always)" : (theta <= safe ? "der(block)" : "der(free)")),
+              offset, cmd_deg);
           }
         }
-        else if(color == 1){
-          angle = angle + 20;
-          float prop = 1 - (object_distance / 90);
-          if(angle > 0 ){
-          float returnANG = 90 + angle;
-          auto frame = pack(static_cast<int>(returnANG), 50, 0);
+
+        else if (color == 1) { // ROJO => pasar por la DERECHA (contrario a verde)
+
+        // --- Parámetros (usa mismos que en VERDE para tuning coherente) ---
+        constexpr float minDis        = 30.0f;   // cm
+        constexpr float maxDis        = 100.0f;  // cm
+        constexpr float OffSetmax     = 30.0f;   // ° de desvío máximo (hacia DER)
+        constexpr float tickMaxChange = 3.0f;    // °/tick (anti-jerk)
+        constexpr float safe          = 30.0f;   // °, medio ángulo del cono frontal
+
+        // --- Estado para suavizado ---
+        static float servo = 90.0f;
+
+        // --- Lecturas y pesos ---
+        float dis   = clampf(object_distance, minDis, maxDis);
+        float prop  = (maxDis - dis) / (maxDis - minDis);           // [0..1] más cerca => mayor
+        float theta = std::fabs(angle);                              // magnitud angular (°)
+
+        // --- Decisión: derecha siempre; izquierda solo si bloquea ---
+        bool  must_evade = false;
+        float offset     = 0.0f;   // positivo = DERECHA
+
+        if (angle > 0.0f) {
+          // LADO DERECHO: evadir SIEMPRE
+          must_evade = true;
+          offset     = + OffSetmax * prop;                           // [0, +OffSetmax]
+        } else {
+          // LADO IZQUIERDO: evadir SOLO si bloquea (dentro del cono frontal)
+          if (theta <= safe) {
+            float w_phi = std::pow(std::cos((kPI * 0.5f) * (theta / safe)), 2.0f); // [0..1]
+            must_evade  = true;
+            offset      = + OffSetmax * prop * w_phi;                // [0, +OffSetmax]
+          }
+        }
+
+        if (!must_evade || prop <= 0.0f || !std::isfinite(dis) || !std::isfinite(theta)) {
+          orientar();
+        } else {
+          // --- Suavizado del mando ---
+          float cmd_raw = 90.0f + offset;                            // servo centrado en 90°
+          float delta   = clampf(cmd_raw - servo, -tickMaxChange, tickMaxChange);
+          float cmd_deg = servo + delta;
+          servo = cmd_deg;
+
+          const uint8_t pwm = 40; // opcional: escalar con prop y |offset|
+
+          auto frame = pack(static_cast<uint16_t>(std::lround(cmd_deg)), pwm, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
-          RCLCPP_INFO(this->get_logger(), "Obstaculo cerca rojo, angulo mandado: %f, distancia: %f, angulo: %f", returnANG, object_distance, angle);
-          }
+          RCLCPP_INFO(this->get_logger(),
+            "Evasion DER | d=%.1fcm prop=%.2f | ang=%.1f° lado=%s | off=%.1f° cmd=%.1f°",
+            dis, prop, angle, (angle > 0.0f ? "der(always)" : (theta <= safe ? "izq(block)" : "izq(free)")),
+            offset, cmd_deg);
         }
+      }
+
+
         else{
           orientar();
           if(dist_front_.load() < 1.0f && fabs(targetYaw_.load() - heading360_.load()) < 5.0f){
@@ -553,10 +664,7 @@ private:
 
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
-  rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr object_distance_sub_;
-  rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr object_angle_sub_;
-  rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr object_color_sub_;
-  rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr object_status_sub_;
+  rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr objects_detections_sub_;
 
   // atómicos (siempre .load() / .store())
   std::atomic<bool> turnStep[4] = {false, false, false, false};
