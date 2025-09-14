@@ -25,11 +25,11 @@ class ObjectTracker(Node):
         self.lower_green = np.array([37, 143, 0])
         self.upper_green = np.array([68, 255, 193])
 
-        self.lower_red1 = np.array([0,   100, 80])
-        self.upper_red1 = np.array([2,  255, 255])
+        self.lower_red1 = np.array([0, 163, 0])
+        self.upper_red1 = np.array([2, 255, 255])
 
-        self.lower_red2 = np.array([170, 100, 80])
-        self.upper_red2 = np.array([179, 255, 255])
+        self.lower_red2 = np.array([152, 163, 0])
+        self.upper_red2 = np.array([180, 255, 255])
 
         self.lower_purple = np.array([119, 43, 0])
         self.upper_purple = np.array([166, 255, 255])
