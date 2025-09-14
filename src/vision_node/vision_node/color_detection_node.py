@@ -31,8 +31,8 @@ class ObjectTracker(Node):
         self.lower_red2 = np.array([170, 100, 80])
         self.upper_red2 = np.array([179, 255, 255])
 
-        self.lower_purple = np.array([130, 50, 50])
-        self.upper_purple = np.array([160, 255, 255])
+        self.lower_purple = np.array([119, 43, 0])
+        self.upper_purple = np.array([166, 255, 255])
 
         # Parámetros de la cámara necesarios para calcular distancia y ángulo
         self.FOCAL_LENGTH = 1131   # píxeles
@@ -87,6 +87,11 @@ class ObjectTracker(Node):
 
         mask_purple = cv2.inRange(hsv, self.lower_purple, self.upper_purple)
         contours_purple, _ = cv2.findContours(mask_purple, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # Filtros de ruido para morado
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5,5))
+        mask_purple = cv2.morphologyEx(mask_purple, cv2.MORPH_CLOSE, kernel)
+        mask_purple = cv2.morphologyEx(mask_purple, cv2.MORPH_OPEN, kernel)
 
         for cnt in contours_purple:
             area = cv2.contourArea(cnt)
