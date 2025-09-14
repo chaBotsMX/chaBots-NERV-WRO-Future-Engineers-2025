@@ -162,14 +162,12 @@ The main control loop runs on the Teensy 4.0, handling:
 - Sensor data fusion from IMU and OTOS
 - UART communication protocol with vision systems
 
-#### 2. Pi Camera 2.1v
+#### 2. Pi Camera 3v
 Handles primary computer vision tasks:
 
 **Features:**
-- Real-time color blob detection for red/green cubes
-- Line detection and tracking algorithms
+- Real-time color blob detection for red/green cubes and parking zone
 - Centroid calculation for object following
-- Adaptive thresholding for varying lighting conditions
 
 #### 3. LIDAR Sector Analysis System (Python)
 
