@@ -22,8 +22,8 @@ class ObjectTracker(Node):
         self.bridge = CvBridge()
 
         # Rangos HSV para los colores verde, rojo y morado
-        self.lower_green = np.array([37, 143, 0])
-        self.upper_green = np.array([68, 255, 193])
+        self.lower_green = np.array([37, 57, 0])
+        self.upper_green = np.array([80, 255, 115])
 
         self.lower_red1 = np.array([0, 163, 0])
         self.upper_red1 = np.array([2, 255, 255])
@@ -53,6 +53,11 @@ class ObjectTracker(Node):
         mask_green = cv2.inRange(hsv, self.lower_green, self.upper_green)
         contours_green, _ = cv2.findContours(mask_green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+        # Filtros de ruido para verde
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5,5))
+        mask_green = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
+        mask_green = cv2.morphologyEx(mask_green, cv2.MORPH_OPEN, kernel)
+
         for cnt in contours_green:
             area = cv2.contourArea(cnt)
             if area > 4000:
@@ -71,6 +76,11 @@ class ObjectTracker(Node):
         mask_red = cv2.bitwise_or(mask_r1, mask_r2)
 
         contours_red, _ = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # Filtros de ruido para rojo
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5,5))
+        mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_CLOSE, kernel)
+        mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_OPEN, kernel)
 
         for cnt in contours_red:
             area = cv2.contourArea(cnt)
