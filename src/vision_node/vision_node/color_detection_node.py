@@ -23,7 +23,7 @@ class ObjectTracker(Node):
 
         # Rangos HSV para los colores verde, rojo y morado
         self.lower_green = np.array([37, 57, 0])
-        self.upper_green = np.array([80, 255, 115])
+        self.upper_green = np.array([80, 255, 185])
 
         self.lower_red1 = np.array([0, 163, 0])
         self.upper_red1 = np.array([2, 255, 255])
