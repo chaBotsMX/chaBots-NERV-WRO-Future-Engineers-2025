@@ -517,7 +517,7 @@ private:
         turnAllowed_.store(true);
         //RCLCPP_INFO(this->get_logger(), "Nuevo sector: %d", sector);
       }
-      //RCLCPP_INFO(this->get_logger(), "Obstaculo detectado: distancia al frente: %f", dist_front_.load());
+      RCLCPP_INFO(this->get_logger(), "Obstaculo detectado: distancia al frente: %f", dist_front_.load());
       if(inturn.load()){
         rutinaGirar();
         return;

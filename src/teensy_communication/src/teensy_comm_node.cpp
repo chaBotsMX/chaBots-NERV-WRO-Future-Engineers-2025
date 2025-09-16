@@ -130,6 +130,7 @@ inline float wrapPi(float a) {
     return  minAngle + angleInc * iteration; // rad
   }
   float sectores[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+  float sectoresAbsAng[4] = {0.0f, 90.0f, 180.0f, 270.0f};
   float sectoresAngs[2][4] = {{45.0f, 135.0f, 225.0f, 315.0f},
                               {315.0f, 45.0f, 135.0f, 225.0f}};
 
@@ -389,11 +390,13 @@ inline float wrapPi(float a) {
     return static_cast<int>(pwm);
   }
 
-  float angleProccesing(float kpNoLinear = 0.75f, float maxOut = 30.0f){
-      float angleInput = absolute_angle.load();
-      float angularError = 90.0f - angleInput;
-      float beta = kpNoLinear/maxOut;
-      return maxOut * std::tanh(angularError / (maxOut / kpNoLinear));
+  float angleProccesing(float kpNoLinear = 0.75f, float maxOut = 30.0f, bool yawMode = false){
+    float yawHelpError = heading360.load() - sectoresAbsAng[actualSector.load()];
+    float angleInput = absolute_angle.load();
+    yawMode ? angleInput = angleInput + yawHelpError : angleInput = angleInput;
+    float angularError = 90.0f - angleInput;
+    float beta = kpNoLinear/maxOut;
+    return maxOut * std::tanh(angularError / (maxOut / kpNoLinear));
     }
 
 float objectiveAngleVelPD(float vel_min, float vel_max){
@@ -498,7 +501,7 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
     }
     else{
       returnPWM = controlACDA(optimalSpeed.load() - fabs(objectiveAngleVelPD(0.0f, 0.5f)));
-      sendAngle = 90 + -angleProccesing( optimalKp.load(), 50.0f);
+      sendAngle = 90 + -angleProccesing( optimalKp.load(), 50.0f, true);
     } 
     if (std::fabs(head) > 1076.0f && front < 1.8f) { // check for NaN
       endRound.store(true);
