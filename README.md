@@ -20,29 +20,29 @@
   </a>
 
   <!-- Página Web (icono de internet) -->
-  <a href="https://www.chabotsmx.com" target="_blank">
+  <a href="https://www.chabots.mx" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/841/841364.png" width="40" alt="Website">
   </a>
 
 This repository contains the documentation for **ChaBots** participation in the **WRO Future Engineers 2025** category. Our robot was designed and built by a Mexican students team,  passionate about robotics and education.
 
-## Table of Contents
 
-- [The Team](#the-team)
-- [The Challenge](#the-challenge)
-- [Robot Overview](#robot-overview)
-- [Mobility Management](#mobility-management)
-- [Power and Sense Management](#power-and-sense-management)
-- [Code Overview](#code-overview)
-- [Obstacle Management](#obstacle-management)
-- [Construction Guide](#construction-guide)
-- [Cost Report](#cost-report)
-- [Resources](#resources)
-- [License](#license)
+## 📜 Table of Contents
 
+1. 🧑‍💻 [The Team](#the-team)
+2. 🎯 [The Challenge](#the-challenge)
+3. 🤖 [Robot Overview](#robot-overview)
+4. 🔋 [Power and Sense Management](#power-and-sense-management)
+5. ⚙️ [Mobility Management](#mobility-management)
+6. 💻 [Code Overview](#code-overview)
+7. 🚧 [Obstacle Management](#obstacle-management)
+8. 🛠️ [Construction Guide](#construction-guide)
+9. 💰 [Cost Report](#cost-report)
+- 📚 [Resources](#resources)
+- ©️ [License](#license)
 ---
 
-## The Team <a name="the-team"></a>
+## 1. The Team <a name="the-team"></a>
 
 ### Hiram Jalil Castillo Gutierrez
 **Age:** 22\
@@ -59,7 +59,7 @@ I am a Software Engineer student and I love robotics and programming. I have bee
 **Role:** Mechanical Designer
 
 I am a Mechatronics Engineering student passionate about technology and innovation. I have been a contestant for eight years, winning various regional and national competitions, and participating internationally.
-
+> "I will take any opportunity to grow"
 
 ---
 ### Roy Iván Barrón Martínez
@@ -82,7 +82,7 @@ I've been involved in robotics for 14+ years being a programmer for most of the 
 
 ---
 
-## The Challenge <a name="the-challenge"></a>
+## 2. The Challenge <a name="the-challenge"></a>
 
 The **WRO Future Engineers** challenge pushes students to create fully autonomous self-driving vehicles. Each robot must:
 
@@ -100,7 +100,7 @@ For more indo visit: [WRO Official Site](https://wro-association.org/)
 
 ---
 
-## Robot Overview <a name="robot-overview"></a>
+## 3. Robot Overview <a name="robot-overview"></a>
 
  **Name:** Eva
 
@@ -118,42 +118,9 @@ For more indo visit: [WRO Official Site](https://wro-association.org/)
 
 ---
 
-## Mobility Management <a name="mobility-management"></a>
+## 4. Power and Sense Management <a name="power-and-sense-management"></a>
 
-
-### Drivetrain
-
-**Design Notes:**
-We opted for custom-built steel axles with a diameter of 4mm, connected to Pololu 25D 6V HP motors, which provided sufficient power and torque to meet our performancer requireeriments. The motors have a maximum RPM of, max spee 480, but theour torque output was initially too high for optimal speed. To address this, we ilemented  ado we decide use an extra reductional to 2:1 gear reduction, effectively doubling the speed while maintainingto have double speed and approximately 1.8 kg·cm of/ torque—suitable for our application.
-
-The drivetrain base and gear assemblys were manufactured in-hby ourse. We used PLA Carbon Fiber filameona QIDI Q1 proprinter for extra strength and durability. We designed and printed d, and PLA Couble Helical Gears tld  energy transmission efficiency and reduce mechanical wear.
-
-The steel axeis wer to size manually and shapemade by our self using an steel rod, we cut it at the needed size, and usinged a Ddremel tool to create D-shaped shafts, which ensured a secure grip with the wheel hubs. Our wheels were also custom-built using 3D-printed make D Shaft to ensure grip from our wheels, our wheels were also made using , using the same qidi, the made the tire rims, and motor shaft couplers sourcedused some motor coupler shaft we bugth from AaliEexpress. For tires, we repurposed LEGO rubber tires after determining that fabricating our own rubber tires was not viable.
-
-**Motor:** Pololu 25D 6V HP
-**Gear Ratio:** 20.4:1
-**Max RPM:** 480
-
-**Planned Improvements for National Phase:**
-- Upgrade to Maxon DCX19 motors for better power-to-weight ratio.
-- Implement a differential gear system for smoother cornering.
-- Replace LEGO tires with higher-grip, custom-molded polyurethane ones., we used lego wheels tires as we realize that was to dificult to make our selfs tires, d us a remel to rim and  rom liess
-
-**Motor:** Maxon DCX19
-**Max RPM:** 600rpm
-
-### Steering
-
-**Servo Model:** HS 85mg
-**Rotation Range:** 180°
-
-We builded an stering system to ensure smooth and better turns, we used a HS 85mg servo motor, all the mechanism is mounted on a 3d printed base, and we assemble it on the robot chassis.
-
-**Future Upgrades:**
-- Improve steering angle
----
-
-#### 1. Arduino Control System (C++)
+### 4.1. Arduino Control System (C++)
 The main control loop runs on the Teensy 4.0, handling:
 
 **Core Features:**
@@ -162,14 +129,14 @@ The main control loop runs on the Teensy 4.0, handling:
 - Sensor data fusion from IMU and OTOS
 - UART communication protocol with vision systems
 
-#### 2. Pi Camera 3v
+### 4.2. Pi Camera 3v
 Handles primary computer vision tasks:
 
 **Features:**
 - Real-time color blob detection for red/green cubes and parking zone
 - Centroid calculation for object following
 
-#### 3. LIDAR Sector Analysis System (Python)
+### 4.3. LIDAR Sector Analysis System (Python)
 
 Our LIDAR system provides 360° environmental awareness with sector-based analysis:
 
@@ -193,7 +160,7 @@ class LidarSectorAnalyzer:
 - Navigation corridor analysis
 - Backup sensor for vision system failures
 
-#### 4. OTOS Position Tracking (Python)
+### 4.4. OTOS Position Tracking (Python)
 
 The Optical Tracking Odometry Sensor provides precise position and heading data:
 
@@ -215,7 +182,7 @@ def runExample():
 - IMU calibration for drift compensation
 - Continuous tracking with 0.5s update rate
 
-#### 5. Enhanced Color Detection System (Python)
+### 4.5. Enhanced Color Detection System (Python)
 
 Advanced color detection using PiCamera2 for improved reliability:
 
@@ -230,36 +197,62 @@ Advanced color detection using PiCamera2 for improved reliability:
 - **Blue cubes:** HSV(100-130, 80-255, 80-255)
 - **Red cubes:** HSV(0-10, 80-255, 80-255) + HSV(170-180, 80-255, 80-255)
 
-### Communication Protocols
+### 4.6. Communication Protocols
 
 #### Data Flow Architecture
 
-1. **Sensor Acquisition Layer**
+**4.6.1. Sensor Acquisition Layer**
    - LIDAR: 360° distance data at 10Hz
    - OTOS: Position/heading at 2Hz
    - Camera: Color blobs at 30Hz
    - IMU: Orientation at 100Hz
 
-2. **Processing Layer**
+**4.6.2. Processing Layer**
    - Sensor fusion algorithms
    - Computer vision processing
    - Statistical filtering
    - State estimation
 
-3. **Control Layer**
+**4.6.3. Control Layer**
    - PID motor control
    - Path planning algorithms
    - Decision state machine
    - Safety monitoring
 
-4. **Hardware Interface Layer**
+**4.6.4. Hardware Interface Layer**
    - Motor driver commands
    - Servo positioning
    - LED indicators
    - Emergency stop
 
-### Code Structure
+## 5. Mobility Management <a name="mobility-management"></a>
 
+### 5.1. Gearbox:
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/models/gearbox/gearbox-assemble.png?raw=true.png">
+
+**Motor Model:** Maxon DCX19
+The team opted for custom steel shafts with a 4 mm diameter, which were connected to a Maxon DCX19 motor. This motor provided sufficient power and torque to meet the project's performance requirements, with a maximum speed of 600 RPM. The gear ratio between the motor and the output gear is 1:1, as higher speeds were not required at the time.
+The transmission base and gears were designed and manufactured by the team. To maximize strength and durability, Polymaker PTG CF filament was used on a Creality K2 Plus Combo printer. To improve efficiency and reduce mechanical wear, double helical gears were designed and printed.
+The steel shafts were manually sized from steel rod. These were cut to the required length and, using a Dremel tool, shaped into a D-shape to ensure a firm grip with the wheel hubs. The rear wheels were also custom-made with a 3D-printed D-shaped axle for secure fit.
+
+
+### 5.2. Steering System
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/models/steering-system/steering-system-assembly.png?raw=true">
+
+**Servo Model:** HS 85mg
+For the steering system, the goal was to make the mechanism as simple as possible, as this would allow for quick and easy manufacturing. It was decided to mount the HS 85mg servo on a 3D-designed and printed base, just like all the other components. The servo is connected to the beam that connects to the wheel mounts. These mounts are made to fit a LEGO axle without slipping.
+For the front wheels, the team used LEGO Spike rubber tires after determining that manufacturing them in-house was not feasible.
+
+### 5.3. Chasis
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/models/v-assembly.png?raw=true">
+The chassis is the robot's main structure, as all other systems are mounted on it. A modular design was chosen to facilitate assembly and maintenance. The chassis is made of carbon fiber, which was cut in China.
+The steering system is mounted on the chassis using 20mm-high M3 posts. The odometer PCB is anchored below the steering system, as this makes better use of space. The gearbox is mounted directly to the rear of the chassis, and the Raspberry Pi 5 is mounted on it using 20mm-high M2.5 posts. The main PCB is mounted in the middle, and the Lidar base is mounted on 20mm-high M3 posts. The Raspberry Pi camera v2 base is mounted on the Lidar base using 40mm-high M3 posts.
+Using these poles helped us keep the robot as low as possible, allowing the Lidar sensor to be level with the runway walls.
+
+---
+
+
+## 6. Code Overview <a name="code-overview"></a>
 ```
 /code/
 ├── arduino/
@@ -288,7 +281,7 @@ Advanced color detection using PiCamera2 for improved reliability:
 
 ---
 
-## Obstacle Management <a name="obstacle-management"></a>
+## 7. Obstacle Management <a name="obstacle-management"></a>
 
 The robot detects and reacts to obstacles in real-time using multiple sensor modalities:
 
@@ -305,7 +298,7 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 ---
 
-## Construction Guide <a name="construction-guide"></a>
+## 8. Construction Guide <a name="construction-guide"></a>
 - in construcction
 
 **STL Files Folder:** `3d-models/`
@@ -324,6 +317,8 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 -
 - Dremel Tool
 - Screwdriver Set Fanttik
+
+## 9. Cost Report <a name="cost-report"></a>
 
 ## Cost Report <a name="cost-report"></a>
 
@@ -347,6 +342,7 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 | Spike Wheels (LEGO)         | 4   | 150              | 600         |
 | EV3 Wheels (LEGO)          | 2   | 10              | 20         |
 | **Total**                     |     |                  | **26924 MXN**|
+
 
 ---
 
