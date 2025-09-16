@@ -373,9 +373,9 @@ private:
     float target = targetYaw_.load();
     float err = wrap_pm180(target - offset);
 
-    float returnCorrection = 90 +(err * 2.0f);
+    float returnCorrection = std::clamp(90.0f + (err * 1.8f), 40.0f, 160.0f);
 
-    //RCLCPP_INFO(this->get_logger(), "Offset: %f, Target: %f, Error: %f, Correction: %f", offset, target, err, returnCorrection);
+    RCLCPP_INFO(this->get_logger(), "Offset: %f, Target: %f, Error: %f, Correction: %f", offset, target, err, returnCorrection);
     auto frame = pack(static_cast<int>(returnCorrection), 30, 0);
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
@@ -392,15 +392,16 @@ private:
   }
   void girar(){
     if(direction_.load() == 0 ){
+      RCLCPP_INFO(this->get_logger(), "Decidiendo dirección de giro, direccion actual: %d", direction_.load());
       direction_.store(getDriveDir());
     }
     if(direction_.load() == 2 && turnAllowed_.load()){
-      targetYaw_.store(wrap_360(heading360_.load() + 90.0f));
+      targetYaw_.store(wrap_360(targetYaw_.load() + 90.0f));
       turnAllowed_.store(false);
       inturn.store(true);
     }
     else if(direction_.load() == 1 && turnAllowed_.load()){
-      targetYaw_.store(wrap_360(heading360_.load() - 90.0f));
+      targetYaw_.store(wrap_360(targetYaw_.load() - 90.0f));
       turnAllowed_.store(false);
       inturn.store(true);
     }
@@ -410,8 +411,12 @@ private:
   void rutinaGirar(){
     float distanFront = dist_front_.load();
     float distBack = dist_back_.load();
-    std::isfinite(distanFront) ? distanFront = distanFront : distanFront = 0.0f;
-    std::isfinite(distBack) ? distBack = distBack : distBack = 0.0f;
+    if(!std::isfinite(distanFront)) {
+      distanFront = 0.0f;
+    }
+    if(!std::isfinite(distBack)) {
+      distBack = 0.0f;
+    }
     float outWallDistance = 0;
     if(direction_.load() == 1){
       outWallDistance = dist_Right_.load();
@@ -420,18 +425,19 @@ private:
       outWallDistance = dist_Left_.load();
     }
     if(turntype_.load() == 0){
-        if(outWallDistance >= 0.70f){
+        if(outWallDistance >= 0.60f){
           turntype_.store(3);
         }
-        else if(outWallDistance < 0.70f && outWallDistance >= 0.40f){
+        else if(outWallDistance < 0.0f && outWallDistance >= 0.0f){
           turntype_.store(2);
         }
-        else if(outWallDistance < 0.4f){
+        else if(outWallDistance < 0.6f){
           turntype_.store(1);
         }
     }
 
     if(turntype_.load() == 1){
+      RCLCPP_INFO(this->get_logger(), "Giro tipo 1"); 
       if(turnStep[0].load() == false){
         float correction = (targetYaw_.load()) - heading360_.load();
         mover(90 + correction, 40, 0);
@@ -452,9 +458,10 @@ private:
       }
     }
     else if(turntype_.load() == 2){
+      RCLCPP_INFO(this->get_logger(), "Giro tipo 2");
       if(turnStep[0].load() == false){
         mover(90,30,0);
-        if(distanFront < 0.5){
+        if(distanFront < 0.6){
           turnStep[0].store(true);
         }
       }
@@ -462,21 +469,21 @@ private:
         RCLCPP_INFO(this->get_logger(), "Paso 2");
         float correction = (targetYaw_.load() - 45) - heading360_.load();
         mover(90 + correction, 40, 0);
-        if(distanFront < 0.3f){
+        if(distanFront < 0.4f){
           turnStep[1].store(true);
         }
       }
-      else if(turnStep[1].load() == false){
+      else if(turnStep[2].load() == false){
         float correction = wrap_pm180(targetYaw_.load() - heading360_.load());
         mover(90 - correction, 40, 1);
         if(distBack < 0.5f){
-          turnStep[1].store(true);
+          turnStep[2].store(true);
         }
       }
-      else if(turnStep[2].load() == false){ 
+      else if(turnStep[3].load() == false){ 
         mover(90, 40, 1); //giro parte 2
         if(distBack < 0.5f){
-          turnStep[2].store(true);
+          turnStep[3].store(true);
           inturn.store(false);
           turntype_.store(0);
           for(int i = 0; i < 4; i++){
@@ -488,13 +495,16 @@ private:
 
 
   else if(turntype_.load() == 3){
+      RCLCPP_INFO(this->get_logger(), "Giro tipo 3");
       if(turnStep[0].load() == false){
+        RCLCPP_INFO(this->get_logger(), "Paso 1");
         mover(90, 40, 0); //giro parte 1
-        if(distanFront < 0.35f){
+        if(distanFront < 0.30f){
           turnStep[0].store(true);
         }
       }
       else if(turnStep[1].load() == false){
+        RCLCPP_INFO(this->get_logger(), "Paso 2");
         if(direction_.load() == 1) mover(150, 40, 1);
         else if(direction_.load() == 2) mover(30, 40, 1);
         if(fabs(targetYaw_.load() - heading360_.load()) < 5.0f){
@@ -526,7 +536,7 @@ private:
         turnAllowed_.store(true);
         //RCLCPP_INFO(this->get_logger(), "Nuevo sector: %d", sector);
       }
-     // RCLCPP_INFO(this->get_logger(), "Obstaculo detectado: distancia al frente: %f, orientacion: %f", dist_front_.load(), heading360_.load());
+      RCLCPP_INFO(this->get_logger(), "Obstaculo detectado: distancia al frente: %f, orientacion: %f", dist_front_.load(), heading360_.load());
       if(inturn.load()){
         rutinaGirar();
         return;
@@ -538,7 +548,7 @@ private:
 
         if (color == 0) { // VERDE => pasar SIEMPRE por la IZQUIERDA si está a la izquierda; derecha solo si bloquea
           constexpr float minDis = 30.0f;   // cm
-          constexpr float maxDis = 100.0f;  // cm
+          constexpr float maxDis = 150.0f;  // cm
           constexpr float OffSetmax   = 30.0f;   // ° de desvío máximo (hacia IZQ)
           constexpr float tickMaxChange = 3.0f;    // °/tick, límite de cambio (anti-jerk)
           constexpr float safe = 30.0f;   // °, medio ángulo del cono frontal (para "bloquea" en derecha)
@@ -555,7 +565,7 @@ private:
           bool must_evade = false;
           float offset    = 0.0f;   // negativo = izquierda
 
-          if (angle < 0.0f) {
+          if (angle > 0.0f) {
             // LADO IZQUIERDO: evadir SIEMPRE (no depende de theta)
             must_evade = true;
             offset     = - OffSetmax * prop;                                // [-OffSetmax, 0]
@@ -573,20 +583,20 @@ private:
             orientar();
           } else {
             // --- Suavizado del mando ---
-            float cmd_raw = 90.0f + offset;                           // servo centrado en 90°
+            float cmd_raw = 90.0f - offset;                           // servo centrado en 90°
             float delta   = clampf(cmd_raw - servo, -tickMaxChange, tickMaxChange);
             float cmd_deg = servo + delta;
             servo = cmd_deg;
 
             // PWM (puedes escalarlo con w_d y |offset| si quieres)
-            const uint8_t pwm = 40;
+            const uint8_t pwm = 30;
 
             auto frame = pack(static_cast<uint16_t>(std::lround(cmd_deg)), pwm, 0);
             (void)serial_.write_bytes(frame.data(), frame.size());  
-            /*RCLCPP_INFO(this->get_logger(),
+            RCLCPP_INFO(this->get_logger(),
               "Evasion IZQ | d=%.1fcm w_d=%.2f | ang=%.1f° lado=%s | off=%.1f° cmd=%.1f°",
               dis, prop, angle, (angle < 0.0f ? "izq(always)" : (theta <= safe ? "der(block)" : "der(free)")),
-              offset, cmd_deg);*/
+              offset, cmd_deg);
           }
         }
 
@@ -594,7 +604,7 @@ private:
 
         // --- Parámetros (usa mismos que en VERDE para tuning coherente) ---
         constexpr float minDis        = 30.0f;   // cm
-        constexpr float maxDis        = 150.0f;  // cm
+        constexpr float maxDis        = 100.0f;  // cm
         constexpr float OffSetmax     = 30.0f;   // ° de desvío máximo (hacia DER)
         constexpr float tickMaxChange = 3.0f;    // °/tick (anti-jerk)
         constexpr float safe          = 30.0f;   // °, medio ángulo del cono frontal
@@ -612,15 +622,15 @@ private:
         float offset     = 0.0f;   // positivo = DERECHA
 
         if (angle < 0.0f) {
-          
+          // LADO DERECHO: evadir SIEMPRE
           must_evade = true;
-          offset     = + OffSetmax * prop;                           // [0, +OffSetmax]
+          offset     = - OffSetmax * prop;                           // [0, +OffSetmax]
         } else {
           // LADO IZQUIERDO: evadir SOLO si bloquea (dentro del cono frontal)
-          if (theta >= safe) {
+          if (theta <= safe) {
             float w_phi = std::pow(std::cos((kPI * 0.5f) * (theta / safe)), 2.0f); // [0..1]
             must_evade  = true;
-            offset      = + OffSetmax * prop * w_phi;                // [0, +OffSetmax]
+            offset      = - OffSetmax * prop * w_phi;                // [0, +OffSetmax]
           }
         }
 
@@ -628,12 +638,12 @@ private:
           orientar();
         } else {
           // --- Suavizado del mando ---
-          float cmd_raw = 90.0f - offset;                            // servo centrado en 90°
+          float cmd_raw = 90.0f + offset;                            // servo centrado en 90°
           float delta   = clampf(cmd_raw - servo, -tickMaxChange, tickMaxChange);
           float cmd_deg = servo + delta;
           servo = cmd_deg;
 
-          const uint8_t pwm = 40; // opcional: escalar con prop y |offset|
+          const uint8_t pwm = 30; // opcional: escalar con prop y |offset|
 
           auto frame = pack(static_cast<uint16_t>(std::lround(cmd_deg)), pwm, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
@@ -647,7 +657,7 @@ private:
 
         else{
           orientar();
-        //  RCLCPP_INFO(this->get_logger(), "Obstaculo no identificado, orientando");
+          RCLCPP_INFO(this->get_logger(), "Obstaculo no identificado, orientando");
           if(dist_front_.load() < 1.0f && fabs(targetYaw_.load() - heading360_.load()) < 15.0f){
             RCLCPP_INFO(this->get_logger(), "cambio de objetivo");
             girar();
@@ -657,7 +667,7 @@ private:
       }
       else{
         orientar();
-       // RCLCPP_INFO(this->get_logger(), "No hay obstaculo, orientando");
+        RCLCPP_INFO(this->get_logger(), "No hay obstaculo, orientando");
         if(dist_front_.load() < 1.0f && fabs(targetYaw_.load() - heading360_.load()) < 15.0f){
           RCLCPP_INFO(this->get_logger(), "cambio de objetivo");
           girar();

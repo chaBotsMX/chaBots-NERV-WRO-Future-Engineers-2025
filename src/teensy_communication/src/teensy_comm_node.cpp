@@ -275,9 +275,9 @@ inline float wrapPi(float a) {
     float nextSize = getNextSectorSize();
     if(actualSize >= 0.80f){
       if(nextSize >= 0.80f){
-        optimalSpeed.store(3.5f);
-        optimalKp.store(0.40f);
-        optimalSpeedTurn.store(3.0f);
+        optimalSpeed.store(5.0f);
+        optimalKp.store(0.20f);
+        optimalSpeedTurn.store(4.0f);
         optimalKpTurn.store(0.30f);
         yawMult.store(0.125f);
         turnYawMult.store(0.1f);
@@ -304,12 +304,12 @@ inline float wrapPi(float a) {
         turnDis.store(1.0f);
       }
       else if(nextSize < 0.80f){
-        optimalSpeed.store(1.0f);
+        optimalSpeed.store(3.0f);
         optimalKp.store(0.50f);
-        optimalSpeedTurn.store(0.8f);
-        optimalKpTurn.store(0.70f);
+        optimalSpeedTurn.store(1.5f);
+        optimalKpTurn.store(0.60f);
         yawMult.store(0.125f);
-        turnYawMult.store(0.05f);
+        turnYawMult.store(0.125f);
         turnDis.store(0.8f);
       }
     }
@@ -501,16 +501,16 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
       if(front > 1.3f && front < 1.7f && absolute_angle.load() > 85.0f && absolute_angle.load() < 95.0f){
         getSectorWidth();
       }
-      if(front <= 0.4f){
-        returnPWM = controlACDA(0.5f);
-        sendAngle = 90 + -angleProccesing( 0.80f, 30.0f);
+      if(front <= 0.8f){
+        returnPWM = controlACDA(1.5f);
+        sendAngle = 90 + -angleProccesing( 1.00f, 50.0f);
       }
-      else if(front > 0.4f && front <= 1.4f){
-        returnPWM = controlACDA(0.8f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
-        sendAngle = 90 + -angleProccesing( 0.70f, 50.0f);
+      else if(front > 0.8f && front <= 1.4f){
+        returnPWM = controlACDA(1.5f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
+        sendAngle = 90 + -angleProccesing( 0.80f, 50.0f);
       }
       else if(front > 1.4f){
-        returnPWM = controlACDA(1.8f - fabs(objectiveAngleVelPD(0.0f, 1.2f)));
+        returnPWM = controlACDA(3.0f - fabs(objectiveAngleVelPD(0.0f, 1.2f)));
         sendAngle = 90 + -angleProccesing( 0.50f, 60.0f);
    
       }
