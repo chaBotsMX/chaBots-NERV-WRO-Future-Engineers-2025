@@ -352,7 +352,7 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 ## Resources <a name="resources"></a>
 
-- [Chabots Main Site](https://www.chabots.com.mx)
+- [Chabots Main Site](https://www.chabots.mx)
 - [WRO Future Engineers Rules PDF](https://wro-association.org/wp-content/uploads/WRO-2024-Future-Engineers-Self-Driving-Cars-General-Rules.pdf)
 - [GitHub Repos](https://github.com/chabotsmx) *(to be added)*
 
