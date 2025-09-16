@@ -127,6 +127,27 @@
     "functional": "cpp",
     "list": "cpp",
     "unordered_map": "cpp",
-    "xhash": "cpp"
+    "xhash": "cpp",
+    "cstdarg": "cpp",
+    "cwctype": "cpp",
+    "strstream": "cpp",
+    "bitset": "cpp",
+    "condition_variable": "cpp",
+    "deque": "cpp",
+    "set": "cpp",
+    "unordered_set": "cpp",
+    "memory_resource": "cpp",
+    "numeric": "cpp",
+    "regex": "cpp",
+    "source_location": "cpp",
+    "string_view": "cpp",
+    "future": "cpp",
+    "numbers": "cpp",
+    "semaphore": "cpp",
+    "shared_mutex": "cpp",
+    "span": "cpp",
+    "cinttypes": "cpp",
+    "typeindex": "cpp",
+    "variant": "cpp"
   }
 }

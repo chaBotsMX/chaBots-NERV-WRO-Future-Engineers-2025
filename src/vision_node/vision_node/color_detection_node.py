@@ -22,20 +22,21 @@ class ObjectTracker(Node):
         self.pub_status = self.create_publisher(Float32, "/object/status", 10)
         
         self.bridge = CvBridge()
-        
-        # Parámetros HSV para verde (SIN CAMBIOS)
-        self.lower_green = np.array([37, 143, 0])
-        self.upper_green = np.array([68, 255, 193])
-        
-        # Parámetros HSV para rojo (PARCHE: dos rangos y se unirán)
-        # Rango bajo (cerca de 0)
-        self.lower_red1 = np.array([0,   100, 80])
-        self.upper_red1 = np.array([2,  255, 255])
-        # Rango alto (cerca de 179)
-        self.lower_red2 = np.array([170, 100, 80])
-        self.upper_red2 = np.array([179, 255, 255])
-        
-        # Parámetros de la cámara
+
+        # Rangos HSV para los colores verde, rojo y morado
+        self.lower_green = np.array([37, 57, 0])
+        self.upper_green = np.array([80, 255, 185])
+
+        self.lower_red1 = np.array([0, 163, 0])
+        self.upper_red1 = np.array([2, 255, 255])
+
+        self.lower_red2 = np.array([152, 163, 0])
+        self.upper_red2 = np.array([180, 255, 255])
+
+        self.lower_purple = np.array([119, 43, 200])
+        self.upper_purple = np.array([166, 255, 255])
+
+        # Parámetros de la cámara necesarios para calcular distancia y ángulo
         self.FOCAL_LENGTH = 1131   # píxeles
         self.KNOWN_WIDTH = 14.0    # cms
         self.FRAME_WIDTH = 1920
