@@ -129,14 +129,12 @@ The main control loop runs on the Teensy 4.0, handling:
 - Sensor data fusion from IMU and OTOS
 - UART communication protocol with vision systems
 
-### 4.2. Pi Camera 2.1v
+### 4.2. Pi Camera 3v
 Handles primary computer vision tasks:
 
 **Features:**
-- Real-time color blob detection for red/green cubes
-- Line detection and tracking algorithms
+- Real-time color blob detection for red/green cubes and parking zone
 - Centroid calculation for object following
-- Adaptive thresholding for varying lighting conditions
 
 ### 4.3. LIDAR Sector Analysis System (Python)
 
@@ -313,29 +311,44 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 - Step 4: Wiring
 - Step 5: Upload firmware
 
+## Construction Tools
+- 3D Printer (Creality K2 Plus, QIDI Q1 Pro)
+- Mini Electric Soldering Iron Kit TS101
+-
+- Dremel Tool
+- Screwdriver Set Fanttik
 
 ## 9. Cost Report <a name="cost-report"></a>
+
+## Cost Report <a name="cost-report"></a>
 
 | Item                         | Qty | Unit Cost (MXN) | Total (MXN) |
 |------------------------------|-----|------------------|-------------|
 | Teensy 4.0                   | 1   | 800              | 800         |
-| Raspberry pi camera v2       | 1   | 400             | 400        |
-| 2.2Ah LiPo 11.1V Battery    | 1   | 600              | 600         |
-| Gearmotor 50:1 Pololu       | 1   | 400              | 400         |
-| MG90S Micro Servo           | 1   | 90               | 90          |
-| SparkFun OTOS            | 1   | 2400              | 2400         |
-| VNH5019      | 1   | 800                                | 800         |
-| PLA Filament (prototypes)   | -   | 1kg = 350        | 350         |
-| PLA-CF Filament (finals)    | -   | 200g = 150       | 150         |
-| Raspberry pi 5     | 1   | 2800                      | 2800         |
-| RPlidar C1   | 1   | 2500                            | 2500         |
-| **Total**                   |     |                  | **10290 MXN**|
+| Raspberry Pi 5                | 1   | 2800             | 2800        |
+| RPlidar C1                    | 1   | 2500             | 2500        |
+| Raspberry Pi Camera 12mp V3   | 1   | 920              | 920         |
+| Raspberry Pi 5 Camera Cable   | 1   | 64               | 64          |
+| 2.2Ah LiPo 11.1V Battery     | 1   | 600              | 600         |
+| 1Ah LiPo 3.3V Battery     | 1   | 70               | 70          |
+| Maxon Motor DCX19            | 1   | 8500             | 8500        |
+| HS85MG Micro Servo            | 1   | 2000             | 2000        |
+| SparkFun OTOS                 | 1   | 2400             | 2400        |
+| POLYMAKER PLA Filament (prototypes)    | -   | 1kg = 900        | 900         |
+| POLYMAKER PLA-CF Filament (finals)     | -   | 0.5kg = 450       | 450         |
+| Carbon Fiber                  | 1   | 2000             | 2000        |
+| SMD Components & Misc.   | -   |         1500      | 1500        |
+| PCB Manufacturing             | 1   | 800              | 800         |
+| Spike Wheels (LEGO)         | 4   | 150              | 600         |
+| EV3 Wheels (LEGO)          | 2   | 10              | 20         |
+| **Total**                     |     |                  | **26924 MXN**|
+
 
 ---
 
 ## Resources <a name="resources"></a>
 
-- [Chabots Main Site](https://www.chabots.com.mx)
+- [Chabots Main Site](https://www.chabots.mx)
 - [WRO Future Engineers Rules PDF](https://wro-association.org/wp-content/uploads/WRO-2024-Future-Engineers-Self-Driving-Cars-General-Rules.pdf)
 - [GitHub Repos](https://github.com/chabotsmx) *(to be added)*
 
