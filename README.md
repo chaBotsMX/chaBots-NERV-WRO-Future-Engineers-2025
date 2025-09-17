@@ -796,8 +796,9 @@ void getOptimalValues()
                           └────────────────────┘
 ```
 
-### 6.8. Main ROS2 Topics
+### 6.8. ROS2
 
+#### 6.8.1. Topics
 | Topic | Type | Description |
 |--------|------|-------------|
 | `/scan` | LaserScan | LiDAR data |
@@ -807,6 +808,9 @@ void getOptimalValues()
 | `/objects/detection` | Float32MultiArray | Detected objects data |
 | `/objects/status` | Float32 | Number of detected objects |
 
+#### 6.8.2. ROS2 Diagram
+
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/sw-docs/software-diagrams/ros2-diagram.png?raw=true">
 
 ### 6.9. Execution Commands
 
