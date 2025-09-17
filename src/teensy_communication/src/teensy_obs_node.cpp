@@ -354,12 +354,12 @@ private:
         }
       }
     }  
-    else if(static_cast<int>(orientation) > thisSectorUpperLimit + 5) {
+    else if(static_cast<int>(orientation) > thisSectorUpperLimit) {
       thisSector++;
       thisSector > 3 ? thisSector = 0 : thisSector = thisSector;
       actualSector.store(thisSector);
     }
-    else if(static_cast<int>(orientation) < thisSectorLowerLimit - 5) {
+    else if(static_cast<int>(orientation) < thisSectorLowerLimit) {
       thisSector--;
       thisSector < 0 ? thisSector = 3 : thisSector = thisSector;
       actualSector.store(thisSector);
@@ -376,7 +376,7 @@ private:
     float returnCorrection = std::clamp(90.0f + (err * 1.0f), 40.0f, 160.0f);
 
     RCLCPP_INFO(this->get_logger(), "Offset: %f, Target: %f, Error: %f, Correction: %f", offset, target, err, returnCorrection);
-    auto frame = pack(static_cast<int>(returnCorrection), 50, 0);
+    auto frame = pack(static_cast<int>(returnCorrection), 40, 0);
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
   int getDriveDir(){
@@ -464,7 +464,7 @@ private:
       if(turnStep[0].load() == false){
         RCLCPP_INFO(this->get_logger(), "Paso 1");
         mover(90,30,0);
-        if(distanFront < 0.5f){
+        if(distanFront < 0.7f){
           turnStep[0].store(true);
         }
       }
@@ -589,6 +589,7 @@ private:
           cube_target_changued_.store(false);
 
         }
+        RCLCPP_INFO(this->get_logger(), "Cubo detectado: distancia al cubo: %f, orientacion al cubo: %f, color: %d, sector del cubo: %d, sector actual: %d", object_distance, angle, color, cubeSector_.load(), actualSector.load());
         if (color == 0) { // VERDE => pasar SIEMPRE por la IZQUIERDA si está a la izquierda; derecha solo si bloquea
           constexpr float minDis = 30.0f;   // cm
           constexpr float maxDis = 100.0f;  // cm
@@ -609,13 +610,13 @@ private:
           bool must_evade = false;
           float offset    = 0.0f;   // negativo = izquierda
 
-          if (angle > 0.0f) {
+          if (angle < 0.0f) {
             // LADO IZQUIERDO: evadir SIEMPRE (no depende de theta)
             must_evade = true;
             offset     = - OffSetmax * prop;                                // [-OffSetmax, 0]
           } else {
             // LADO DERECHO: evadir SOLO si está dentro del cono frontal (bloquea)
-            if (theta <= safe) {
+            if (theta >= safe) {
               // Peso suave por "qué tan frontal" (cos^2), opcional pero recomendable
               float w_phi = std::pow(std::cos((kPI * 0.5f) * (theta / safe)), 2.0f); // [0..1]
               must_evade  = true;
@@ -627,13 +628,13 @@ private:
             orientar();
           } else {
             // --- Suavizado del mando ---
-            float cmd_raw = 90.0f - offset + wrap_pm180((targetYaw_.load() - heading360_.load()) * inv_prop);                           // servo centrado en 90°
+            float cmd_raw = clampf(90.0f - offset + wrap_pm180((targetYaw_.load() - heading360_.load()) * inv_prop),60,150);                           // servo centrado en 90°
             float delta   = clampf(cmd_raw - servo, -tickMaxChange, tickMaxChange);
             float cmd_deg = servo + delta;
             servo = cmd_deg;
 
             // PWM (puedes escalarlo con w_d y |offset| si quieres)
-            const uint8_t pwm = 45;
+            const uint8_t pwm = 40;
 
             auto frame = pack(static_cast<uint16_t>(std::lround(cmd_deg)), pwm, 0);
             (void)serial_.write_bytes(frame.data(), frame.size());  
@@ -683,12 +684,12 @@ private:
           orientar();
         } else {
           // --- Suavizado del mando ---
-          float cmd_raw = 90.0f + offset + wrap_pm180((targetYaw_.load() - heading360_.load()) * inv_prop);                            // servo centrado en 90°
+          float cmd_raw = clampf(90.0f + offset + wrap_pm180((targetYaw_.load() - heading360_.load()) * inv_prop),60,150);                            // servo centrado en 90°
           float delta   = clampf(cmd_raw - servo, -tickMaxChange, tickMaxChange);
           float cmd_deg = servo + delta;
           servo = cmd_deg;
 
-          const uint8_t pwm = 45; // opcional: escalar con prop y |offset|
+          const uint8_t pwm = 40; // opcional: escalar con prop y |offset|
 
           auto frame = pack(static_cast<uint16_t>(std::lround(cmd_deg)), pwm, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
