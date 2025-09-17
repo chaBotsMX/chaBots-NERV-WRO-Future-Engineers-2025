@@ -1,4 +1,5 @@
 
+
 # ChaBots - WRO Future Engineers 2025
 
 <!--<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/resources/ChaBotsLogo.png?raw=true" width="250">-->
@@ -178,7 +179,7 @@ Using these poles helped us keep the robot as low as possible, allowing the Lida
 
 This is an autonomous robot developed with ROS2 using Python. The robot can navigate autonomously, detect obstacles, and detect colored objects.
 
-## System Architecture
+### 6.1. System Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -186,22 +187,22 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
 │                 │    │                 │    │                 │
 │ • Teensy        │────┤ • teensy_comm   │────┤ • Control       │
 │ • OTOS Sensor   │────┤ • otos_reader   │────┤ • Odometry      │
-│ • RPLiDAR       │────┤ • rplidar_node  │────┤ • Track Map    │
+│ • RPLiDAR       │────┤ • rplidar_node  │────┤ • Track Map     │
 │ • Pi Camera     │────┤ • vision_node   │────┤ • Vision        │
 │ • Motors        │    │                 │    │ • Tracking      │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## Implementations
+### 6.2. Implementations
 
-### 1. Kinetic Obstacle Detection and Hardware Communication
+#### 6.2.1. Kinetic Obstacle Detection and Hardware Communication
 - **File**: `src/teensy_communication/launch/robot.launch.py`
 - **Function**:
 - **Features**:
   - Teensy configuration
   - Odometry and sensor management
 
-### 2. Computer Vision
+#### 6.2.2. Computer Vision
 - **File**: `src/vision_node/vision_node/color_detection_node.py`
 - **Function**: Green, red, and purple object detection
 - **Features**:
@@ -209,7 +210,7 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
   - Distance and angle calculation
   - Noise filtering
 
-### 3. Localization System (OTOS)
+#### 6.2.3. Localization System (OTOS)
 - **File**: `src/otos_reader/otos_reader/otos_node.py`
 - **Function**: Provides precise odometry using OTOS sensor
 - **Features**:
@@ -218,11 +219,11 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
   - ZUPT detection (Zero Velocity Update)
   - Odometry and TF transforms publishing  - Distance and angle calculation
 
-## Data Flow
+### 6.3. Data Flow
 
 ```
 ┌──────────┐     ┌─────────────┐     ┌──────────────┐
-│ Sensors  │────▶│ ROS2 Nodes  │────▶│ Control      │
+│ Sensors  │────▶│ ROS2 Nodes  │────▶│ Control     │
 │          │     │             │     │ Algorithms   │
 │ • OTOS   │     │ • otos_node │     │              │
 │ • LiDAR  │     │ • rplidar   │     │ ┌──────────┐ │
@@ -231,7 +232,7 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
 └──────────┘     └─────────────┘     │ └──────────┘ │
                                      └──────┬───────┘
                                             │
-┌──────────────┐     ┌─────────────┐       │
+┌──────────────┐     ┌─────────────┐       	│
 │   Actuators  │◀────│ Commands    │◀──────┘
 │              │     │             │
 │ • Motors     │     │ /cmd_vel    │
@@ -240,13 +241,13 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
 └──────────────┘     └─────────────┘
 ```
 
-## Implemented Algorithms
+### 6.4. Implemented Algorithms
 
-### 1. Navigation
+#### 6.4.1. Navigation
 
-### 2. Obstacle Avoidance
+#### 6.4.2. Obstacle Avoidance
 
-### 3. Color Detection
+#### 6.4.3. Color Detection
 
 Using OpenCV to detect green, red, and purple objects in the camera feed. The algorithm filters colors in HSV space, finds contours, and calculates distance and angle based on object size and position.
 
@@ -271,22 +272,22 @@ mask_purple = cv2.morphologyEx(mask_purple, cv2.MORPH_OPEN, kernel)
 distance = (KNOWN_WIDTH * FOCAL_LENGTH) / bounding_box_width
 ```
 
-## Control Implementation
+### 6.5. Control Implementation
 
-### 1. Navigation Control
+#### 6.5.1. Navigation Control
 
-## System Configuration
+### 6.6. System Configuration
 
-### Sensors and Calibrations
+#### 6.6.1. Sensors and Calibrations
 - **OTOS**: Units in meters and degrees
 - **LiDAR**: RPLiDAR C1
 - **Camera**: 1280x720, RGB888 format
 - **Focal Length**: 1131 pixels
 
-### Control Parameters
+#### 6.6.2. Control Parameters
 
 
-## Robot States
+### 6.7. Robot States
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
@@ -301,7 +302,7 @@ distance = (KNOWN_WIDTH * FOCAL_LENGTH) / bounding_box_width
                           └───────────────────┘
 ```
 
-## Main ROS2 Topics
+### 6.8. Main ROS2 Topics
 
 | Topic | Type | Description |
 |--------|------|-------------|
@@ -313,7 +314,7 @@ distance = (KNOWN_WIDTH * FOCAL_LENGTH) / bounding_box_width
 | `/objects/status` | Float32 | Number of detected objects |
 
 
-## Execution Commands
+### 6.9. Execution Commands
 
 ```bash
 # Launch complete robot
@@ -326,7 +327,7 @@ ros2 run vision_node color_detection_node
 ros2 run otos_reader otos_node
 ```
 
-## File Structure
+### 6.10. File Structure
 
 ```
 src/
@@ -343,7 +344,7 @@ src/
 
 ```
 
-## Monitoring and Debug
+### 6.11. Monitoring and Debug
 
 - **Foxglove Studio**: Real-time visualization
 - **RViz**: Trajectories and laser maps
@@ -356,12 +357,12 @@ src/
 
 The robot detects and reacts to obstacles in real-time using multiple sensor modalities:
 
-### Detection Methods
+### 7.1. Detection Methods
 - **Primary:** Enhanced color detection via PiCamera2 system
 - **Verification:** LIDAR distance measurements for obstacle confirmation and navigation
 - **Backup:** OTOS position tracking for navigation consistency
 
-### Response Algorithms
+### 7.2. Response Algorithms
 - **Dynamic turning decision system** based on cube color and position
 - **Follow-the-object mode** with PID steering based on cube centroid
 - **Multi-sensor verification** to reduce false positives
@@ -370,28 +371,26 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 ---
 
 ## 8. Construction Guide <a name="construction-guide"></a>
-- in construcction
 
 **STL Files Folder:** `3d-models/`
 
-**Sections to complete:**
-- Step 0: 3D printing
-- Step 1: Steering system
-- Step 2: Powertrain and motor mount
-- Step 3: Electronic layout
-- Step 4: Wiring
-- Step 5: Upload firmware
+### 8.1. Sections to complete
+- Step 1: 3D printing
+- Step 2: Steering system
+- Step 3: Powertrain and motor mount
+- Step 4: Electronic layout
+- Step 5: Wiring
+- Step 6: Upload firmware
 
-## Construction Tools
+### 8.2. Construction Tools
 - 3D Printer (Creality K2 Plus, QIDI Q1 Pro)
 - Mini Electric Soldering Iron Kit TS101
 -
 - Dremel Tool
 - Screwdriver Set Fanttik
 
-## 9. Cost Report <a name="cost-report"></a>
 
-## Cost Report <a name="cost-report"></a>
+## 9. Cost Report <a name="cost-report"></a>
 
 | Item                         | Qty | Unit Cost (MXN) | Total (MXN) |
 |------------------------------|-----|------------------|-------------|
@@ -421,7 +420,7 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 - [Chabots Main Site](https://www.chabots.mx)
 - [WRO Future Engineers Rules PDF](https://wro-association.org/wp-content/uploads/WRO-2024-Future-Engineers-Self-Driving-Cars-General-Rules.pdf)
-- [GitHub Repos](https://github.com/chabotsmx) *(to be added)*
+- [GitHub Repos](https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025)
 
 ---
 
@@ -429,14 +428,12 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 ```
 MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software...
-(Full license text here)
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software.
 ```
 
 ---
 
-> *Document maintained by Chabots | Last updated: June 2025*
+> *Document maintained by Chabots | Last updated: Sept 2025*
 
 <!--stackedit_data:
 eyJoaXN0b3J5IjpbMTcyMzM3ODYxNCwtMzc2NTM2MDM5LDM1ND
