@@ -41,10 +41,15 @@ This repository contains the documentation for **ChaBots** participation in the 
 ---
 
 ## 1. The Team <a name="the-team"></a>
-
+<div align="center">
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/photos/t-photos/t-photo.png?raw=true">
+</div>
+<div align="center">
+    <h2 style="color:#1e90ff; font-size:2.2em; margin-top:0.5em; margin-bottom:0.2em;">
+        <span style="color:#222; background:linear-gradient(90deg,#1e90ff,#00c3ff,#00ffb3,#1e90ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">We are <b>ChaBots NERV</b></span> -[:]
+    </h2>
+</div>
 
----
 ### Roy Iván Barrón Martínez
 **Age:** 20\
 **Role:** Captain, Electronics & Software Designer
