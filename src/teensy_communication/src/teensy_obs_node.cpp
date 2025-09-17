@@ -429,18 +429,18 @@ private:
         if(outWallDistance >= 0.70f){
           turntype_.store(3);
         }
-        else if(outWallDistance < 0.0f && outWallDistance >= 0.0f){
+        else if(outWallDistance < 0.70f && outWallDistance >= 0.30f){
           turntype_.store(2);
         }
-        else if(outWallDistance < 0.7f){
-          turntype_.store(2);
+        else if(outWallDistance < 0.30f){
+          turntype_.store(1);
         }
     }
 
     if(turntype_.load() == 1){
       RCLCPP_INFO(this->get_logger(), "Giro tipo 1"); 
       if(turnStep[0].load() == false){
-        float correction = (targetYaw_.load()) - heading360_.load();
+        float correction = wrap_pm180(targetYaw_.load() - heading360_.load());
         mover(90 + correction, 40, 0);
         if(fabs(correction) < 20.0f){
           turnStep[0].store(true);
@@ -470,16 +470,16 @@ private:
       }
       else if(turnStep[1].load() == false){
         RCLCPP_INFO(this->get_logger(), "Paso 2");
-        float correction = (targetYaw_.load() - 45) - heading360_.load();
+        float correction = wrap_pm180((targetYaw_.load() - 45) - heading360_.load());
         mover(90 + correction, 40, 0);
-        if(correction < 20.0f){
+        if(fabs(correction) < 20.0f){
           turnStep[1].store(true);
         }
       }
       else if(turnStep[2].load() == false){
         float correction = wrap_pm180(targetYaw_.load() - heading360_.load());
         mover(90 - correction, 40, 1);
-        if(correction < 10.0f){
+        if(fabs(correction) < 10.0f){
           turnStep[2].store(true);
         }
       }
@@ -549,7 +549,46 @@ private:
         float angle = object_angle_.load();
         float object_distance = object_distance_.load() /2;
         int color = static_cast<int>(object_color_.load());
+        float cubeSectorAngle = 0;
 
+        if(object_distance < 30.0f){
+          if(!wasClose_.load()){
+            RCLCPP_INFO(this->get_logger(), "Cubo cerca: distancia al cubo: %f, orientacion: %f", object_distance, heading360_.load());
+            wasClose_.store(true);
+          }
+        } 
+        if(color != last_color_.load() || last_Cube_Distance_.load() - object_distance < -10.0f && wasClose_.load()){
+          RCLCPP_INFO(this->get_logger(), "Color del cubo cambiado a: %d", color);
+          cube_target_changued_.store(true);
+          last_color_.store(color);
+          wasClose_.store(false);
+          last_Cube_Distance_.store(object_distance);
+        }
+        else{
+          last_Cube_Distance_.store(object_distance);
+          last_color_.store(color);
+        }
+        if(cube_target_changued_.load()){
+          float cubeAbsAngle = wrap_360(heading360_.load() - angle);
+          if(cubeAbsAngle < 45){
+            cubeSector_.store(0);
+          }
+          else if(cubeAbsAngle >= 45 && cubeAbsAngle < 135){
+            cubeSector_.store(1);
+          }
+          else if(cubeAbsAngle >= 135 && cubeAbsAngle < 225){
+            cubeSector_.store(2);
+          }
+          else if(cubeAbsAngle >= 225 && cubeAbsAngle < 315){
+            cubeSector_.store(3);
+          }
+          else if(cubeAbsAngle >= 315){
+            cubeSector_.store(0);
+          }
+          actualSector.load() != cubeSector_.load() ? actualSector.store(cubeSector_.load()) : actualSector.store(actualSector.load());
+          cube_target_changued_.store(false);
+
+        }
         if (color == 0) { // VERDE => pasar SIEMPRE por la IZQUIERDA si está a la izquierda; derecha solo si bloquea
           constexpr float minDis = 30.0f;   // cm
           constexpr float maxDis = 100.0f;  // cm
@@ -693,6 +732,11 @@ private:
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr objects_detections_sub_;
 
   // atómicos (siempre .load() / .store())
+  std::atomic<bool> wasClose_{false};
+  std::atomic<bool> cube_target_changued_{false};
+  std::atomic<float> last_Cube_Distance_{std::numeric_limits<float>::quiet_NaN()};
+  std::atomic<int> cubeSector_{-1};
+  std::atomic<int> last_color_{-1};
   std::atomic<bool> turnStep[4] = {false, false, false, false};
   std::atomic<int> turntype_{0}; // 1 = close turn, 2 = middle turn , 3 = far turn
   std::atomic<bool> inturn{false};
