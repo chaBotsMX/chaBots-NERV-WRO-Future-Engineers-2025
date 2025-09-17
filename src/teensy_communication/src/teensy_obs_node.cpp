@@ -627,7 +627,7 @@ private:
             orientar();
           } else {
             // --- Suavizado del mando ---
-            float cmd_raw = 90.0f - offset + wrap_pm180((targetYaw_.load() - heading360_.load()) * inv_prop);                           // servo centrado en 90°
+            float cmd_raw = clampf(90.0f - offset + wrap_pm180((targetYaw_.load() - heading360_.load()) * inv_prop), 60.0f, 140.0f);                           // servo centrado en 90°
             float delta   = clampf(cmd_raw - servo, -tickMaxChange, tickMaxChange);
             float cmd_deg = servo + delta;
             servo = cmd_deg;
@@ -683,14 +683,14 @@ private:
           orientar();
         } else {
           // --- Suavizado del mando ---
-          float cmd_raw = 90.0f + offset + wrap_pm180((targetYaw_.load() - heading360_.load()) * inv_prop);                            // servo centrado en 90°
+          float cmd_raw = clampf(90.0f + offset + wrap_pm180((targetYaw_.load() - heading360_.load()) * inv_prop), 60.0f, 140.0f);                            // servo centrado en 90°
           float delta   = clampf(cmd_raw - servo, -tickMaxChange, tickMaxChange);
           float cmd_deg = servo + delta;
           servo = cmd_deg;
 
           const uint8_t pwm = 45; // opcional: escalar con prop y |offset|
 
-          auto frame = pack(static_cast<uint16_t>(std::lround(cmd_deg)), pwm, 0);
+          auto frame = pack(static_cast<uint16_t>(std::lround (cmd_deg)), pwm, 0);
           (void)serial_.write_bytes(frame.data(), frame.size());
           RCLCPP_INFO(this->get_logger(),
             "Evasion DER | d=%.1fcm prop=%.2f | ang=%.1f° lado=%s | off=%.1f° cmd=%.1f°",
