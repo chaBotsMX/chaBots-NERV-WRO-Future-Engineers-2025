@@ -121,6 +121,12 @@ private:
   
   // --------- Utilidades trig/cartesianas ----------
 
+static inline float wrap_deg180(float a){
+  while (a > 180.0f)   a -= 360.0f;
+  while (a <= -180.0f) a += 360.0f;
+  return a;
+}
+
 inline float wrapPi(float a) {
   while (a <= -M_PI) a += 2.0f*M_PI;
   while (a >   M_PI) a -= 2.0f*M_PI;
@@ -269,30 +275,42 @@ inline float wrapPi(float a) {
     float nextSize = getNextSectorSize();
     if(actualSize >= 0.80f){
       if(nextSize >= 0.80f){
-        optimalSpeed.store(3.0f);
-        optimalKp.store(0.40f);
-        optimalSpeedTurn.store(1.5f);
-        optimalKpTurn.store(0.40f);
+        optimalSpeed.store(5.0f);
+        optimalKp.store(0.20f);
+        optimalSpeedTurn.store(4.0f);
+        optimalKpTurn.store(0.30f);
+        yawMult.store(0.125f);
+        turnYawMult.store(0.1f);
+        turnDis.store(1.2f);
       }
       else if(nextSize < 0.80f){
         optimalSpeed.store(1.0f);
         optimalKp.store(0.50f);
-        optimalSpeedTurn.store(0.8f);
-        optimalKpTurn.store(0.80f);
+        optimalSpeedTurn.store(1.8f);
+        optimalKpTurn.store(0.60f);
+        yawMult.store(0.125f);
+        turnYawMult.store(0.125f);
+        turnDis.store(0.7f);
       }
     }
     else if(actualSize < 0.80f){
       if(nextSize >= 0.80f){
-        optimalSpeed.store(1.0f);
+        optimalSpeed.store(1.7f);
         optimalKp.store(0.50f);
-        optimalSpeedTurn.store(1.0f);
+        optimalSpeedTurn.store(1.7f);
         optimalKpTurn.store(0.75f);
+        yawMult.store(0.125f);
+        turnYawMult.store(0.05f);
+        turnDis.store(1.0f);
       }
       else if(nextSize < 0.80f){
-        optimalSpeed.store(1.0f);
+        optimalSpeed.store(3.0f);
         optimalKp.store(0.50f);
-        optimalSpeedTurn.store(0.8f);
-        optimalKpTurn.store(0.70f);
+        optimalSpeedTurn.store(1.5f);
+        optimalKpTurn.store(0.60f);
+        yawMult.store(0.125f);
+        turnYawMult.store(0.125f);
+        turnDis.store(0.8f);
       }
     }
 
@@ -308,12 +326,14 @@ inline float wrapPi(float a) {
 
       if(orientation <  -75){
         actualSector.store(3);
+        inTurn.store(false);
         if(driveDirection.load() == 0){
           driveDirection.store(2);
         }
       }
       else if(orientation  > 75){
         actualSector.store(1);
+        inTurn.store(false);
         if(driveDirection.load() == 0){
           driveDirection.store(1);
         }
@@ -321,11 +341,13 @@ inline float wrapPi(float a) {
     }  
     else if(static_cast<int>(orientation) > thisSectorUpperLimit + 30) {
       thisSector++;
+      inTurn.store(false);
       thisSector > 3 ? thisSector = 0 : thisSector = thisSector;
       actualSector.store(thisSector);
     }
     else if(static_cast<int>(orientation) < thisSectorLowerLimit - 30) {
       thisSector--;
+      inTurn.store(false);
       thisSector < 0 ? thisSector = 3 : thisSector = thisSector;
       actualSector.store(thisSector);
     }
@@ -390,8 +412,16 @@ inline float wrapPi(float a) {
     return static_cast<int>(pwm);
   }
 
-  float angleProccesing(float kpNoLinear = 0.75f, float maxOut = 30.0f, bool yawMode = false){
-    float yawHelpError = heading360.load() - sectoresAbsAng[actualSector.load()];
+  float angleProccesing(float kpNoLinear = 0.75f, float maxOut = 30.0f, bool yawMode = false, float yawKp = 0.025f){
+    float yawHelpError = wrap_deg180(heading360.load() - sectoresAbsAng[actualSector.load()]) * yawKp;
+    if(inTurn.load()){
+      if(driveDirection.load() == 1){ //horario
+        yawHelpError = wrap_deg180(heading360.load() - wrap_360(sectoresAbsAng[actualSector.load()] - 90.0f)) * 0.5;
+      } else if(driveDirection.load() == 2){//antihorario
+        yawHelpError = wrap_deg180(heading360.load() - wrap_360(sectoresAbsAng[actualSector.load()] + 90.0f)) * 0.5;
+      }
+    }
+  
     float angleInput = absolute_angle.load();
     yawMode ? angleInput = angleInput + yawHelpError : angleInput = angleInput;
     float angularError = 90.0f - angleInput;
@@ -461,19 +491,26 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
     float sendAngle = absolute_angle.load();
 
    if(firstLap.load()){
+      if (std::fabs(head) > 360.0f) { // check for NaN
+        for(int i = 0;i<4;i++){
+          if(sectores[i] == 0.0f){
+            sectores[i] = 0.6f;
+          }
+        }
+      }
       if(front > 1.3f && front < 1.7f && absolute_angle.load() > 85.0f && absolute_angle.load() < 95.0f){
         getSectorWidth();
       }
-      if(front <= 0.4f){
-        returnPWM = controlACDA(0.5f);
-        sendAngle = 90 + -angleProccesing( 0.80f, 30.0f);
+      if(front <= 0.8f){
+        returnPWM = controlACDA(1.5f);
+        sendAngle = 90 + -angleProccesing( 1.00f, 50.0f);
       }
-      else if(front > 0.4f && front <= 1.4f){
-        returnPWM = controlACDA(0.8f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
-        sendAngle = 90 + -angleProccesing( 0.70f, 50.0f);
+      else if(front > 0.8f && front <= 1.4f){
+        returnPWM = controlACDA(1.5f) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
+        sendAngle = 90 + -angleProccesing( 0.80f, 50.0f);
       }
       else if(front > 1.4f){
-        returnPWM = controlACDA(1.8f - fabs(objectiveAngleVelPD(0.0f, 1.2f)));
+        returnPWM = controlACDA(3.0f - fabs(objectiveAngleVelPD(0.0f, 1.2f)));
         sendAngle = 90 + -angleProccesing( 0.50f, 60.0f);
    
       }
@@ -495,13 +532,18 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
     }
   else if(ending == false){
     getOptimalValues();
-    if(front <= 1.5f){
+    if(inTurn.load()){
+      returnPWM = controlACDA(optimalSpeedTurn.load()) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
+      sendAngle = 90 + -angleProccesing( optimalKpTurn.load(), 30.0f, true, turnYawMult.load());
+    }
+    else if(front <= turnDis.load()){
       returnPWM = controlACDA(optimalSpeedTurn.load()) - fabs(objectiveAngleVelPD(0.0f, 0.3f));
       sendAngle = 90 + -angleProccesing( optimalKpTurn.load(), 30.0f);
+      inTurn.store(true);
     }
     else{
       returnPWM = controlACDA(optimalSpeed.load() - fabs(objectiveAngleVelPD(0.0f, 0.5f)));
-      sendAngle = 90 + -angleProccesing( optimalKp.load(), 50.0f, true);
+      sendAngle = 90 + -angleProccesing( optimalKp.load(), 50.0f, true, yawMult.load());
     } 
     if (std::fabs(head) > 1076.0f && front < 1.8f) { // check for NaN
       endRound.store(true);
@@ -578,6 +620,10 @@ float objectiveAngleVelPD(float vel_min, float vel_max){
          
 
   // variables persistentes
+  std::atomic<float> turnDis{1.0f};
+  std::atomic<float> turnYawMult{0.125};
+  std::atomic<float> yawMult{0.125};
+  std::atomic<bool> inTurn{false};
   std::atomic<float> optimalSpeedTurn{0.0f};
   std::atomic<float> optimalKpTurn{0.0f};
   std::atomic<float> optimalSpeed{0.0f};
