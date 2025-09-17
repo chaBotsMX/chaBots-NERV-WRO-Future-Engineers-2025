@@ -21,6 +21,9 @@ class HSVCalibrator(Node):
         self.bridge = CvBridge()
         self.current_frame = None
         
+        self.dilate_k = 3
+        self.dilate_iterations = 2
+
         # Valores iniciales para los sliders
         self.h_min = 0
         self.s_min = 50
@@ -43,6 +46,9 @@ class HSVCalibrator(Node):
         cv2.createTrackbar('S Max', 'HSV Controls', self.s_max, 255, self.update_s_max)
         cv2.createTrackbar('V Max', 'HSV Controls', self.v_max, 255, self.update_v_max)
         
+        cv2.createTrackbar('Dilate Kernel', 'HSV Controls', self.dilate_k, 20, lambda x: None)
+        cv2.createTrackbar('Dilate Iterations', 'HSV Controls', self.dilate_iterations, 10, lambda x: None)
+
         # Crear slider para seleccionar color predefinido
         cv2.createTrackbar('Preset', 'HSV Controls', 0, 4, self.load_preset)
         
@@ -69,8 +75,15 @@ class HSVCalibrator(Node):
         """Procesa el frame actual con los valores HSV"""
         if self.current_frame is None:
             return
-            
-        frame = self.current_frame.copy()
+        frame = self.current_frame.copy()        
+        x, y,w, h = 0,200,1920, 740
+        H, W = frame.shape[:2]
+        x = max(0, min(x, W - 1))
+        y = max(0, min(y, H - 1))
+        w = max(1, min(w, W - x))
+        h = max(1, min(h, H - y))
+
+        frame = self.current_frame[y:y+h, x:x+w]
         
         # Redimensionar frame si es muy grande
         height, width = frame.shape[:2]
@@ -88,6 +101,16 @@ class HSVCalibrator(Node):
         upper_bound = np.array([self.h_max, self.s_max, self.v_max])
         mask = cv2.inRange(hsv, lower_bound, upper_bound)
         
+
+        k = max(1, self.dilate_k)  # Kernel no puede ser 0
+        self.dilate_k = k
+        self.dilate_iterations = max(1, self.dilate_iterations)
+
+        # Aplicar dilatación
+        k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.dilate_k, self.dilate_k))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, k)
+        mask = cv2.dilate(mask, k, iterations=self.dilate_iterations)
+
         # Aplicar máscara
         result = cv2.bitwise_and(frame, frame, mask=mask)
         
