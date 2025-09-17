@@ -372,20 +372,21 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 ## 8. Construction Guide <a name="construction-guide"></a>
 
-**STL Files Folder:** `3d-models/`
+**Models file folder:** `models/`
 
-### 8.1. Sections to complete
-- Step 1: 3D printing
-- Step 2: Steering system
-- Step 3: Powertrain and motor mount
-- Step 4: Electronic layout
-- Step 5: Wiring
-- Step 6: Upload firmware
+### 8.1. Steps 
+- Step 1: 3D designing
+- Step 2: 3D printing
+- Step 3: Electronic layout
+- Step 4: Wiring
+- Step 5: Mounting
+- Step 6: Programming
+- Step 7: Testing
 
 ### 8.2. Construction Tools
 - 3D Printer (Creality K2 Plus, QIDI Q1 Pro)
+- Polymaker PTG CF filament
 - Mini Electric Soldering Iron Kit TS101
--
 - Dremel Tool
 - Screwdriver Set Fanttik
 
@@ -394,24 +395,24 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 | Item                         | Qty | Unit Cost (MXN) | Total (MXN) |
 |------------------------------|-----|------------------|-------------|
-| Teensy 4.0                   | 1   | 800              | 800         |
-| Raspberry Pi 5                | 1   | 2800             | 2800        |
-| RPlidar C1                    | 1   | 2500             | 2500        |
-| Raspberry Pi Camera 12mp V3   | 1   | 920              | 920         |
-| Raspberry Pi 5 Camera Cable   | 1   | 64               | 64          |
-| 2.2Ah LiPo 11.1V Battery     | 1   | 600              | 600         |
-| 1Ah LiPo 3.3V Battery     | 1   | 70               | 70          |
-| Maxon Motor DCX19            | 1   | 8500             | 8500        |
-| HS85MG Micro Servo            | 1   | 2000             | 2000        |
-| SparkFun OTOS                 | 1   | 2400             | 2400        |
-| POLYMAKER PLA Filament (prototypes)    | -   | 1kg = 900        | 900         |
-| POLYMAKER PLA-CF Filament (finals)     | -   | 0.5kg = 450       | 450         |
-| Carbon Fiber                  | 1   | 2000             | 2000        |
-| SMD Components & Misc.   | -   |         1500      | 1500        |
-| PCB Manufacturing             | 1   | 800              | 800         |
-| Spike Wheels (LEGO)         | 4   | 150              | 600         |
-| EV3 Wheels (LEGO)          | 2   | 10              | 20         |
-| **Total**                     |     |                  | **26924 MXN**|
+| Teensy 4.0                   | 1   | $800              | 800         |
+| Raspberry Pi 5                | 1   | $2,800             | $2,800        |
+| RPlidar C1                    | 1   | $2,500             | $2,500        |
+| Raspberry Pi Camera 12mp V3   | 1   | $920              | $920         |
+| Raspberry Pi 5 Camera Cable   | 1   | $64               | $64          |
+| 2.2Ah LiPo 11.1V Battery     | 1   | $600              | $600         |
+| 1Ah LiPo 3.3V Battery     | 1   | $70               | $70          |
+| Maxon Motor DCX19            | 1   | $8,500             | $8,500        |
+| HS85MG Micro Servo            | 1   | $2,000             | $2,000        |
+| SparkFun OTOS                 | 1   | $2,400             | $2,400        |
+| POLYMAKER PLA Filament (prototypes)    | 1kg   | $900        | $900         |
+| POLYMAKER PLA-CF Filament (finals)     | 0.5kg   | $450       | $450         |
+| Carbon Fiber                  | 1   | $2,000             | $2,000        |
+| SMD Components & Misc.   | -   |         $1,500      | $1,500        |
+| PCB Manufacturing             | 1   | $800              | $800         |
+| Spike Wheels (LEGO)         | 4   | $150              | $600         |
+| EV3 Wheels (LEGO)          | 2   | $10              | $20         |
+| **Total**                     |     |                  | **$26,924**|
 
 
 ---
