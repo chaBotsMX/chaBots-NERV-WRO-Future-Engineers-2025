@@ -399,6 +399,176 @@ void getActualSector()
 ```
 #### 6.4.2. Obstacle Avoidance
 
+The obstacle avoidance system (`teensy_obs_node.cpp`) implements a multi-sensor approach for autonomous navigation in environments with colored obstacles. This system integrates LIDAR, odometry, and computer vision to provide intelligent obstacle detection and avoidance capabilities.
+
+#### Overview
+
+The obstacle avoidance node operates as a state machine with three primary operational modes:
+- **Normal Navigation**: Wall-following behavior with sector-based movement
+- **Obstacle Avoidance**: Color-based object detection and avoidance maneuvers
+- **Turn Execution**: Multi-step turning algorithms for corner navigation
+
+##### Vision Integration
+```cpp
+// Vision system subscribers
+object_distance_sub_ = create_subscription<std_msgs::msg::Float32>("/object/distance", 10, ...);
+object_angle_sub_ = create_subscription<std_msgs::msg::Float32>("/object/angle", 10, ...);
+object_color_sub_ = create_subscription<std_msgs::msg::Float32>("/object/color", 10, ...);
+object_status_sub_ = create_subscription<std_msgs::msg::Float32>("/object/status", 10, ...);
+```
+
+The system subscribes to vision node outputs providing:
+- **Distance**: Object distance in centimeters
+- **Angle**: Relative angle to object in degrees
+- **Color**: Object classification (0 = green, 1 = red)
+- **Status**: Detection status (0 = no object, 1 = object detected)
+
+#### Sensor Processing
+The node processes LIDAR data to extract directional distance measurements:
+```cpp
+// LIDAR sector analysis
+if(a < -1.3962f && a > -1.7453f) { sumBack += r; ++totalBack; }      // Back sector
+if (a > 1.39 && a < 1.7453f) { sumFront += r; ++totalFront; }        // Front sector
+if( a > 0.0f && a < 0.5235f) { sumLeft += r; ++totalLeft; }          // Left sector
+if( a > 2.79252f && a < 3.141592f) { sumRight += r; ++totalRight; }  // Right sector
+```
+
+### Obstacle Avoidance Algorithm
+#### Color-Based Avoidance Strategy
+
+**Green Obstacle Avoidance:**
+```cpp
+if(color == 0){ // Green obstacle
+    angle = angle - 20;  // Bias left by 20 degrees
+    if(angle < 0){
+        float returnANG = 90 + angle;
+        // Steer away from green obstacle
+        mover(returnANG, 50, 0);
+    }
+}
+```
+
+**Red Obstacle Avoidance:**
+```cpp
+else if(color == 1){ // Red obstacle
+    angle = angle + 20;  // Bias right by 20 degrees
+    if(angle > 0){
+        float returnANG = 90 + angle;
+        // Steer away from red obstacle
+        mover(returnANG, 50, 0);
+    }
+}
+```
+
+#### Decision Making Logic
+The main control loop implements a hierarchical decision structure:
+
+```cpp
+void on_timer() {
+    getActualSector();  // Update sector tracking
+    int isObs = object_status_.load();
+
+    if(inturn.load()){
+        rutinaGirar();  // Execute turn routine
+        return;
+    }
+    else if(isObs == 1){
+        // Object detected - execute avoidance
+        executeObstacleAvoidance();
+    }
+    else{
+        // Normal navigation
+        orientar();  // Maintain heading
+        checkTurnConditions();
+    }
+}
+```
+#### Adaptive Turning System
+The system implements three distinct turning algorithms based on available space:
+##### Turn Type Classification
+```cpp
+if(outWallDistance >= 0.8f){
+    turntype_.store(3);  // Wide turn - standard maneuver
+}
+else if(outWallDistance < 0.8f && outWallDistance >= 0.3f){
+    turntype_.store(2);  // Medium turn - complex multi-step
+}
+else if(outWallDistance < 0.3f){
+    turntype_.store(1);  // Close turn - backup required
+}
+```
+
+##### Turn Execution State Machine
+
+**Type 1 - Close Turn (Backup Required):**
+1. **Step 0**: Align to target heading
+2. **Step 1**: Reverse until sufficient clearance (`distBack < 0.5m`)
+
+**Type 2 - Medium Turn (Complex Maneuver):**
+1. **Step 0**: Approach corner with 45° offset
+2. **Step 1**: Reverse turn with heading correction
+3. **Step 2**: Complete turn in reverse
+
+**Type 3 - Wide Turn (Standard):**
+1. **Step 0**: Forward approach until close to wall
+2. **Step 1**: Execute directional turn (150° left / 30° right)
+3. **Step 2**: Complete turn in reverse
+
+#### Performance Characteristics
+
+##### Real-Time Operation
+- **Control Frequency**: 100 Hz (10ms cycle time)
+- **Serial Communication**: 2 Mbps UART with checksum validation
+- **Thread Safety**: Atomic variables for all shared state
+
+##### Sensor Integration Timing
+- **LIDAR Processing**: Real-time sector analysis
+- **Vision Integration**: Object detection at 30 FPS
+- **Odometry Fusion**: 100 Hz pose updates
+
+#### Navigation Parameters
+```cpp
+// Fixed speed for obstacle round
+const int OBSTACLE_SPEED = 50;  // PWM value
+
+// Distance thresholds
+const float TURN_THRESHOLD = 1.0f;      // Front distance to initiate turn
+const float ALIGNMENT_TOLERANCE = 5.0f; // Heading error tolerance (degrees)
+const float CLOSE_DISTANCE = 0.3f;      // Close turn threshold
+const float WIDE_DISTANCE = 0.8f;       // Wide turn threshold
+```
+
+### Safety Systems
+
+##### Collision Prevention
+- Continuous front distance monitoring
+- Emergency stop capability
+- Multi-sensor validation before maneuvers
+
+##### State Validation
+- Finite state machine prevents invalid transitions
+- Atomic operations ensure thread-safe state updates
+- Timeout mechanisms for stuck conditions
+
+##### Error Recovery
+- Automatic retry for failed turn sequences
+- Fallback to normal navigation if vision system fails
+- Robust serial communication with error detection
+
+##### Vision-LIDAR Fusion
+
+The system combines vision and LIDAR data for enhanced obstacle detection:
+
+1. **Vision System**: Provides precise object classification and angular position
+2. **LIDAR System**: Validates distances and provides environmental context
+3. **Fusion Logic**: Cross-validates detections and selects optimal avoidance strategy
+
+This multi-modal approach ensures robust performance in complex environments with varying lighting conditions and obstacle configurations.
+
+##### Integration with WRO Future Engineers Challenge
+
+The implementation aligns with the WRO Future Engineers challenge requirements by enabling autonomous navigation, obstacle detection, and avoidance in a dynamic environment. The system's modular design allows for easy adaptation to different track layouts and obstacle placements, ensuring compliance with competition rules.
+
 #### 6.4.3. Color Detection
 
 Using OpenCV to detect green, red, and purple objects in the camera feed. The algorithm filters colors in HSV space, finds contours, and calculates distance and angle based on object size and position.
