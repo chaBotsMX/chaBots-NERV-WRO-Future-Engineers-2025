@@ -565,15 +565,9 @@ The system combines vision and LIDAR data for enhanced obstacle detection:
 
 This multi-modal approach ensures robust performance in complex environments with varying lighting conditions and obstacle configurations.
 
-##### Integration with Competition Framework
+##### Integration with WRO Future Engineers Challenge
 
-The obstacle avoidance system is specifically designed for robotics competition scenarios featuring:
-- Colored obstacle navigation (green/red objects)
-- Tight corridor environments requiring precise maneuvering
-- Real-time performance requirements
-- Autonomous operation without human intervention
-
-The implementation demonstrates advanced robotics concepts including sensor fusion, state machine design, and real-time control systems suitable for competitive autonomous navigation challenges.
+The implementation aligns with the WRO Future Engineers challenge requirements by enabling autonomous navigation, obstacle detection, and avoidance in a dynamic environment. The system's modular design allows for easy adaptation to different track layouts and obstacle placements, ensuring compliance with competition rules.
 
 #### 6.4.3. Color Detection
 
