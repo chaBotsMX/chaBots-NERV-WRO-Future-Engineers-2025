@@ -244,7 +244,155 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
 ### 6.4. Implemented Algorithms
 
 #### 6.4.1. Navigation
+Using RPLIDAR C1 Ros2 package we can read the topic from our own node,
+```c++
+void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg)
+{
+    const float angle_min = msg->angle_min;
+    const float angle_inc = msg->angle_increment;
+    const float pi = static_cast<float>(M_PI);
+    lidarMSG.clear();
+    for (size_t i = 0; i < msg->ranges.size(); ++i)
+    {
+        const float ang = angle_min + angle_inc * static_cast<float>(i);
+        if (ang < -0.5235f && ang > -2.6180f || ang > pi)
+            continue; // 0..180°
+        const float r = msg->ranges[i];
+        if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max)
+            continue;
+        lidarMSG.push_back({ang, pointAngX(ang, r), pointAngY(ang, r), r});
+    }
+}
+```
+This call back is called only when a the lidar node post a new message in topic, this piece only storage a cloud of points send by the lidar, the next step is procces this information to get the actual position of the robot in the track, we use the OTOS to update this information every call, because of the lidar only posting at 10hz is to slow, it means it only have new information every 100ms that make imposible to have a smoth move, the OTOS post at 100Hz, meaning we can smoth our trajectory 10 times more using this, we dont use absolute infromation like coordinates in x or y axis, we take the changue in cm betwen the new read and the last read and add it to the cloud of points, also we calculate some infromation to help our robot to not colide with the walls, like the distance in front, left and rigth, this help to calculate optimal PD controller values relative to robots position and speed.
+```c++
 
+void getOffsetsFromLidar()
+{
+    if (new_otos_data.load())
+    {
+        const float yaw_prev = deg2rad(lastYaw.load());
+        const float dx_w = posX_.load() - lastPosX.load();
+        const float dy_w = posY_.load() - lastPosY.load();
+        const float dth = wrapPi(deg2rad(yaw.load() - lastYaw.load()));
+        const float c0 = std::cos(yaw_prev), s0 = std::sin(yaw_prev);
+        const float dx_b = c0 * dx_w + s0 * dy_w;
+        const float dy_b = -s0 * dx_w + c0 * dy_w;
+        const float c = std::cos(-dth), s = std::sin(-dth);
+
+        for (auto &spt : lidarMSG)
+        {
+            float x = spt.x - dx_b;
+            float y = spt.y - dy_b;
+            float xr = c * x - s * y;
+            float yr = s * x + c * y;
+            spt.x = xr;
+            spt.y = yr;
+            spt.angle = wrapPi(std::atan2(yr, xr));
+            spt.mag = std::hypot(xr, yr);
+        }
+        lastPosX.store(posX_.load());
+        lastPosY.store(posY_.load());
+        lastYaw.store(yaw.load());
+        new_otos_data.store(false);
+    }
+
+    float rightDis = 0;
+    float leftDis = 0;
+    float frontDis = 0;
+    int sum_left = 0;
+    int sum_right = 0;
+    int sum_front = 0;
+    float totalDis = 0;
+    float setpoint = 0;
+    const float phi = (90.0f - absolute_angle.load()) * static_cast<float>(M_PI) / 180.0f;
+
+    float sumX = 0, sumY = 0;
+    for (const auto &s : lidarMSG)
+    {
+        const float ang = s.angle;
+        const float ang_eff = ang + phi; // MISMA rotación para todos
+        sumX += s.x;
+        sumY += s.y;
+        if (ang_eff >= 0.0f && ang_eff < 0.78f)
+        { // izquierda ~ 0..45°
+            leftDis += s.mag * std::cos(ang_eff - 0.0f);
+            ++sum_left;
+        }
+        if (ang_eff > 2.35f && ang_eff <= static_cast<float>(M_PI))
+        { // derecha ~ 135..180°
+            rightDis += s.mag * std::cos(ang_eff - static_cast<float>(M_PI));
+
+            ++sum_right;
+        }
+        if (ang_eff >= 1.39f && ang_eff <= 1.74f)
+        { // frente ~ 80..100°
+            frontDis += s.mag * std::cos(ang_eff - M_PI_2);
+            ++sum_front;
+        }
+    }
+    absolute_angle.store(rad2deg(std::atan2(sumY, sumX)));
+    leftDis /= sum_left;
+    rightDis /= sum_right;
+    frontDis /= sum_front;
+    totalDis = std::fabs(leftDis) + std::fabs(rightDis);
+    anchoCorredor.store(totalDis);
+    setpoint = totalDis / 2.0f;
+    frontWallDistance.store(frontDis);
+    centeringOffset.store(setpoint - std::fabs(rightDis));
+}
+
+```
+
+Talking about optimal values, we have a simple track map function to be able to reach max speed in every type of turn, becasue the track isnt symetric, it can struggle with the same valiue if the wall is closer, fo example at 60 cm instead of the standar 100 cm, this function also let us now in what turn it is and know when to stop and to get the drive direction too.
+
+```c++
+void getActualSector()
+{
+    float orientation = heading360.load();
+    int thisSector = actualSector.load();
+    int thisSectorUpperLimit = sectoresAngs[0][thisSector];
+    int thisSectorLowerLimit = sectoresAngs[1][thisSector];
+
+    if (thisSector == 0)
+    {
+        orientation >= 180 ? orientation -= 360 : orientation = orientation;
+        if (orientation < -75)
+        {
+            actualSector.store(3);
+            inTurn.store(false);
+            if (driveDirection.load() == 0)
+            {
+                driveDirection.store(2);
+            }
+        }
+        else if (orientation > 75)
+        {
+            actualSector.store(1);
+            inTurn.store(false);
+            if (driveDirection.load() == 0)
+            {
+                driveDirection.store(1);
+            }
+        }
+    }
+    else if (static_cast<int>(orientation) > thisSectorUpperLimit + 30)
+    {
+        thisSector++;
+        inTurn.store(false);
+        thisSector > 3 ? thisSector = 0 : thisSector = thisSector;
+        actualSector.store(thisSector);
+    }
+    else if (static_cast<int>(orientation) < thisSectorLowerLimit - 30)
+    {
+        thisSector--;
+        inTurn.store(false);
+        thisSector < 0 ? thisSector = 3 : thisSector = thisSector;
+        actualSector.store(thisSector);
+    }
+}
+
+```
 #### 6.4.2. Obstacle Avoidance
 
 #### 6.4.3. Color Detection
@@ -273,9 +421,176 @@ distance = (KNOWN_WIDTH * FOCAL_LENGTH) / bounding_box_width
 ```
 
 ### 6.5. Control Implementation
+Using the sum of every point from the lidar we get a vector that tell us where to go, this for it self isnt optimal cause it tell us where is more space, so we add a vector pointing to the IMU target, this help us to get more smooth and optimal trajectories more than just drive where you can.
+```c++
+float angleProccesing(float kpNoLinear = 0.75f, float maxOut = 30.0f, bool yawMode = false, float yawKp = 0.025f)
+{
+    float yawHelpError = wrap_deg180(heading360.load() - sectoresAbsAng[actualSector.load()]) * yawKp;
+    if (inTurn.load())
+    {
+        if (driveDirection.load() == 1)
+        { // horario
+            yawHelpError = wrap_deg180(heading360.load() - wrap_360(sectoresAbsAng[actualSector.load()] - 90.0f)) * 0.5;
+        }
+        else if (driveDirection.load() == 2)
+        { // antihorario
+            yawHelpError = wrap_deg180(heading360.load() - wrap_360(sectoresAbsAng[actualSector.load()] + 90.0f)) * 0.5;
+        }
+    }
+    float angleInput = absolute_angle.load();
 
+    yawMode ? angleInput = angleInput + yawHelpError : angleInput = angleInput;
+
+    float angularError = 90.0f - angleInput;
+    float beta = kpNoLinear / maxOut;
+
+    return maxOut * std::tanh(angularError / (maxOut / kpNoLinear));
+}
+
+
+```
+With this info now is time to make the robot move to that direction, its not enough with send a simple pwm, because speed have to changue in turns and in corridors, and also is not the same if is in a wide corridor and the next also is, or if its in a wide corridor and the next is narrow, so to go to the max speed we can we use a ACDC controller, this make the robot have the ability to go not only at a constant speed measured in m/s, this make the robot able to activly brake if is needed.
+```c++
+int controlACDA(float targetSpeed)
+{
+    float pwm = 0, jerk = 10;
+    float error = targetSpeed - speed.load();
+    float aproxPwm = 35.0f;
+
+    if (targetSpeed < 0.6f)
+    {
+        aproxPwm = 35.0f;
+    }
+    else if (targetSpeed < 1.2f)
+    {
+        aproxPwm = 40.0f;
+    }
+    else
+    {
+        aproxPwm = 60.0f;
+    }
+
+    float lastPwmLocal = lastPwm.load();
+    float kp = 8.25f; // Valor a determinar
+    float kd = 0.1f;  // Valor a determinar
+
+    pwm = (error * kp) + ((error - lastError.load()) / 0.01) * kd;
+    pwm = clampf(clampf(pwm + aproxPwm, lastPwmLocal - jerk, lastPwmLocal + jerk), 0, 255);
+    lastPwm.store(pwm);
+    lastError.store(error);
+
+    if (error < -0.5f || targetSpeed == 0)
+        return 0;
+
+    if (error < -0.1f)
+        return 1;
+
+    return static_cast<int>(pwm);
+}
+
+```
+This helps a lot but is not the only controller we have, cause the speed isnt the same if is correctly aligned or if is near to collide with the walls.
+
+```c++
+float objectiveAngleVelPD(float vel_min, float vel_max)
+{
+    const float alpha = 0.3f; // suavizado EMA
+    const float dt = 0.01f;   // 10 ms (timer)
+    float a = absolute_angle.load();
+
+    if (!std::isfinite(a))
+        return vel_min; // sin reducción cuando no hay ángulo
+
+    // Error envuelto a [-180, 180]
+    float e = 90.0f - a;
+
+    while (e > 180.0f)
+        e -= 360.0f;
+
+    while (e < -180.0f)
+        e += 360.0f;
+
+    // Derivada cruda con el error previo
+
+    float e_prev = lastVelErr.load();
+    float raw_derivada = (e - e_prev) / dt; // deg/s "amplificado"
+
+    lastVelErr.store(e);
+
+    // EMA correcto: y(k) = y(k-1) + alpha * (x(k) - y(k-1))
+
+    float der_prev = de_f.load();
+    float derivada = der_prev + alpha * (raw_derivada - der_prev);
+
+    de_f.store(derivada);
+
+    const float kp = 0.04f;              // m/s por grado
+    const float kd = 0.005f;             // m/s por (grado/seg filtrado)
+
+    float reduccion = kp * std::fabs(e); /*+ kd * std::fabs(derivada);*/
+
+    return clampf(reduccion, vel_min, vel_max); // p.ej. [0.0f, 0.8f]
+}
+```
 #### 6.5.1. Navigation Control
+For navigation we first map the track, the first lap is made at a lowe speed and we save dara, after this we calculate optimal speed and PD values in every section of the track.
+```c++
+void getOptimalValues()
+{
+    float actualSize = getCurrentSectorSize();
+    float nextSize = getNextSectorSize();
 
+    if (actualSize >= 0.80f)
+    {
+        if (nextSize >= 0.80f)
+        {
+            optimalSpeed.store(5.0f);
+            optimalKp.store(0.20f);
+            optimalSpeedTurn.store(4.0f);
+            optimalKpTurn.store(0.30f);
+            yawMult.store(0.125f);
+            turnYawMult.store(0.1f);
+            turnDis.store(1.2f);
+        }
+
+        else if (nextSize < 0.80f)
+        {
+            optimalSpeed.store(1.0f);
+            optimalKp.store(0.50f);
+            optimalSpeedTurn.store(1.8f);
+            optimalKpTurn.store(0.60f);
+            yawMult.store(0.125f);
+            turnYawMult.store(0.125f);
+            turnDis.store(0.7f);
+        }
+    }
+
+    else if (actualSize < 0.80f)
+    {
+        if (nextSize >= 0.80f)
+        {
+            optimalSpeed.store(1.7f);
+            optimalKp.store(0.50f);
+            optimalSpeedTurn.store(1.7f);
+            optimalKpTurn.store(0.75f);
+            yawMult.store(0.125f);
+            turnYawMult.store(0.05f);
+            turnDis.store(1.0f);
+        }
+
+        else if (nextSize < 0.80f)
+        {
+            optimalSpeed.store(3.0f);
+            optimalKp.store(0.50f);
+            optimalSpeedTurn.store(1.5f);
+            optimalKpTurn.store(0.60f);
+            yawMult.store(0.125f);
+            turnYawMult.store(0.125f);
+            turnDis.store(0.8f);
+        }
+    }
+}
+```
 ### 6.6. System Configuration
 
 #### 6.6.1. Sensors and Calibrations
@@ -290,16 +605,16 @@ distance = (KNOWN_WIDTH * FOCAL_LENGTH) / bounding_box_width
 ### 6.7. Robot States
 
 ```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│  START      │───▶│ NAVIGATION  │───▶│ DETECTION   │
-│             │    │             │    │             │
-│ • Calibrate │    │ • Follow    │    │ • Identify  │
-│ • Reset     │    │   walls     │    │   objects   │
-│ • Wait      │    │ • Avoid     │    │ • Calculate │
-└─────────────┘    │   obstacles │    │   position  │
-                   └─────────────┘    └─────────────┘
-                          ▲                   │
-                          └───────────────────┘
+┌─────────────┐    ┌─────────────┐     ┌─────────────┐
+│  START      │───>│ NAVIGATION  │───> │ DETECTION   │
+│             │    │             │     │             │
+│ • Calibrate │    │ • Simple    │     │ • Identify  │
+│ • Reset     │    │   SLAM      │     │   objects   │
+│ • Wait      │    │ • Avoid     │     │ • Calculate │
+└─────────────┘    │   obstacles │     │   position  │
+                   └─────────────┘     └─────────────┘
+                          ^                    |
+                          └────────────────────┘
 ```
 
 ### 6.8. Main ROS2 Topics
@@ -374,7 +689,7 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 **Models file folder:** `models/`
 
-### 8.1. Steps 
+### 8.1. Steps
 - Step 1: 3D designing
 - Step 2: 3D printing
 - Step 3: Electronic layout
