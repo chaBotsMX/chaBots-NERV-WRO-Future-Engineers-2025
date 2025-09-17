@@ -1,4 +1,5 @@
 
+
 # ChaBots - WRO Future Engineers 2025
 
 <!--<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/resources/ChaBotsLogo.png?raw=true" width="250">-->
@@ -8,17 +9,14 @@
   <a href="https://www.facebook.com/chabotsMX/">
     <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="40" alt="Facebook">
   </a>
-
   <!-- Instagram (con degradado real) -->
   <a href="https://www.instagram.com/chabotsmx/" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="40" alt="Instagram">
   </a>
-
   <!-- YouTube -->
   <a href="https://www.youtube.com/@chabotsmx1956/videos" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="40" alt="YouTube">
   </a>
-
   <!-- Página Web (icono de internet) -->
   <a href="https://www.chabots.mx" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/841/841364.png" width="40" alt="Website">
@@ -32,7 +30,7 @@ This repository contains the documentation for **ChaBots** participation in the 
 1. 🧑‍💻 [The Team](#the-team)
 2. 🎯 [The Challenge](#the-challenge)
 3. 🤖 [Robot Overview](#robot-overview)
-4. 🔋 [Power and Sense Management](#power-and-sense-management)
+4. 🔋 [Sense Overview](#sense-overview)
 5. ⚙️ [Mobility Management](#mobility-management)
 6. 💻 [Code Overview](#code-overview)
 7. 🚧 [Obstacle Management](#obstacle-management)
@@ -118,112 +116,37 @@ For more indo visit: [WRO Official Site](https://wro-association.org/)
 
 ---
 
-## 4. Power and Sense Management <a name="power-and-sense-management"></a>
+## 4. Sense Overview <a name="sense-overview"></a>
 
-### 4.1. Arduino Control System (C++)
-The main control loop runs on the Teensy 4.0, handling:
+### 4.1. RPLiDAR C1
+360° laser scanner for environmental mapping and obstacle detection.
 
-**Core Features:**
-- Real-time motor control with PID feedback
-- State machine for autonomous navigation modes
-- Sensor data fusion from IMU and OTOS
-- UART communication protocol with vision systems
+**Tech specs:**
+- 360° scanning with 0.9° resolution
+- Up to 8m range with 10Hz update rate
+- Quality filtering for reliable data
+- ROS2 integration via `rplidar_ros` package
 
-### 4.2. Pi Camera 3v
-Handles primary computer vision tasks:
+**Link:** [RPLiDAR C1](https://www.slamtec.com/en/C1)
 
-**Features:**
-- Real-time color blob detection for red/green cubes and parking zone
-- Centroid calculation for object following
+### 4.2. Raspberry Pi Camera V3
+High-resolution camera for color object detection.
 
-### 4.3. LIDAR Sector Analysis System (Python)
+**Tech specs:**
+- 12MP IMX708 Quad Bayer sensor and features a High Dynamic Range mode
+- Supports 1080p30, 720p60, and VGA90 video modes
 
-Our LIDAR system provides 360° environmental awareness with sector-based analysis:
+**Link:** [Raspberry Pi Camera V3](https://www.raspberrypi.com/products/camera-module-3/)
 
-```python
-class LidarSectorAnalyzer:
-    def __init__(self):
-        self.target_angles = [0, 90, 180, 270]  # Cardinal directions
-        self.angle_tolerance = 5                 # ±5° sector width
-        self.sector_data = {angle: [] for angle in self.target_angles}
-```
+### 4.3. SparkFun Optical Tracking Odometry Sensor
+High-precision odometry sensor for accurate position tracking.
 
-**Key Features:**
-- Real-time distance measurements at cardinal directions (0°, 90°, 180°, 270°)
-- Statistical analysis with moving averages for noise reduction
-- Quality filtering to exclude unreliable readings
-- Continuous monitoring with configurable reporting intervals
+**Tech specs:**
+- Measures linear and angular displacement
+- High-resolution optical flow sensor
+- ROS2 integration via custom `otos_reader` node
 
-**Applications:**
-- Wall detection for parallel parking
-- Obstacle distance verification
-- Navigation corridor analysis
-- Backup sensor for vision system failures
-
-### 4.4. OTOS Position Tracking (Python)
-
-The Optical Tracking Odometry Sensor provides precise position and heading data:
-
-```python
-def runExample():
-    myOtos = qwiic_otos.QwiicOTOS()
-    myOtos.begin()
-    myOtos.calibrateImu()
-    myOtos.resetTracking()
-
-    while True:
-        myPosition = myOtos.getPosition()
-        # Returns X, Y coordinates in inches and heading in degrees
-```
-
-**Capabilities:**
-- Sub-millimeter position accuracy
-- Real-time heading calculation
-- IMU calibration for drift compensation
-- Continuous tracking with 0.5s update rate
-
-### 4.5. Enhanced Color Detection System (Python)
-
-Advanced color detection using PiCamera2 for improved reliability:
-
-**Features:**
-- HSV color space processing for better color separation
-- Morphological operations for noise reduction
-- Multi-threshold detection for red color (handles hue wraparound)
-- Real-time FPS monitoring and performance optimization
-- Automatic image capture for debugging
-
-**Color Ranges:**
-- **Blue cubes:** HSV(100-130, 80-255, 80-255)
-- **Red cubes:** HSV(0-10, 80-255, 80-255) + HSV(170-180, 80-255, 80-255)
-
-### 4.6. Communication Protocols
-
-#### Data Flow Architecture
-
-**4.6.1. Sensor Acquisition Layer**
-   - LIDAR: 360° distance data at 10Hz
-   - OTOS: Position/heading at 2Hz
-   - Camera: Color blobs at 30Hz
-   - IMU: Orientation at 100Hz
-
-**4.6.2. Processing Layer**
-   - Sensor fusion algorithms
-   - Computer vision processing
-   - Statistical filtering
-   - State estimation
-
-**4.6.3. Control Layer**
-   - PID motor control
-   - Path planning algorithms
-   - Decision state machine
-   - Safety monitoring
-
-**4.6.4. Hardware Interface Layer**
-   - Motor driver commands
-   - Servo positioning
-   - LED indicators
-   - Emergency stop
+**Link:** [SparkFun OTOS](https://www.sparkfun.com/sparkfun-optical-tracking-odometry-sensor-paa5160e1-qwiic.html)
 
 ## 5. Mobility Management <a name="mobility-management"></a>
 
@@ -253,31 +176,180 @@ Using these poles helped us keep the robot as low as possible, allowing the Lida
 
 
 ## 6. Code Overview <a name="code-overview"></a>
+
+This is an autonomous robot developed with ROS2 using Python. The robot can navigate autonomously, detect obstacles, and detect colored objects.
+
+### 6.1. System Architecture
+
 ```
-/code/
-├── arduino/
-│   ├── main.cpp              # Main control loop
-├── vision/
-│   ├── main.py              # Main vision script
-├── raspberry_pi/
-│   ├── lidar_analyzer.py    # LIDAR sector analysis
-│   ├── otos_reader.py       # Position tracking
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Hardware      │    │   ROS2 Nodes    │    │   Algorithms    │
+│                 │    │                 │    │                 │
+│ • Teensy        │────┤ • teensy_comm   │────┤ • Control       │
+│ • OTOS Sensor   │────┤ • otos_reader   │────┤ • Odometry      │
+│ • RPLiDAR       │────┤ • rplidar_node  │────┤ • Track Map     │
+│ • Pi Camera     │────┤ • vision_node   │────┤ • Vision        │
+│ • Motors        │    │                 │    │ • Tracking      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-### Performance Characteristics
+### 6.2. Implementations
 
-- **Vision Processing:** 30 FPS color detection
-- **Control Loop:** 100 Hz motor control updates
-- **LIDAR Refresh:** 10 Hz environmental scanning
-- **Position Update:** 2 Hz absolute positioning
-- **Communication Latency:** <10ms between subsystems
+#### 6.2.1. Kinetic Obstacle Detection and Hardware Communication
+- **File**: `src/teensy_communication/launch/robot.launch.py`
+- **Function**:
+- **Features**:
+  - Teensy configuration
+  - Odometry and sensor management
 
-### Development Tools
+#### 6.2.2. Computer Vision
+- **File**: `src/vision_node/vision_node/color_detection_node.py`
+- **Function**: Green, red, and purple object detection
+- **Features**:
+  - HSV filtering for specific colors
+  - Distance and angle calculation
+  - Noise filtering
 
-- **Debugging:** Real-time data logging and visualization
-- **Calibration:** Automated sensor calibration routines
-- **Testing:** Unit tests for critical algorithms
-- **Simulation:** Virtual environment for algorithm development
+#### 6.2.3. Localization System (OTOS)
+- **File**: `src/otos_reader/otos_reader/otos_node.py`
+- **Function**: Provides precise odometry using OTOS sensor
+- **Features**:
+  - Software bias correction
+  - EMA filtering for smoothing
+  - ZUPT detection (Zero Velocity Update)
+  - Odometry and TF transforms publishing  - Distance and angle calculation
+
+### 6.3. Data Flow
+
+```
+┌──────────┐     ┌─────────────┐     ┌──────────────┐
+│ Sensors  │────▶│ ROS2 Nodes  │────▶│ Control     │
+│          │     │             │     │ Algorithms   │
+│ • OTOS   │     │ • otos_node │     │              │
+│ • LiDAR  │     │ • rplidar   │     │ ┌──────────┐ │
+│ • Camera │     │ • vision    │     │ │ Decision │ │
+│ • IMU    │     │ • teensy    │     │ │ Making   │ │
+└──────────┘     └─────────────┘     │ └──────────┘ │
+                                     └──────┬───────┘
+                                            │
+┌──────────────┐     ┌─────────────┐       	│
+│   Actuators  │◀────│ Commands    │◀──────┘
+│              │     │             │
+│ • Motors     │     │ /cmd_vel    │
+│ • Servo      │     │ /motor_cmd  │
+│              │     │ /servo_cmd  │
+└──────────────┘     └─────────────┘
+```
+
+### 6.4. Implemented Algorithms
+
+#### 6.4.1. Navigation
+
+#### 6.4.2. Obstacle Avoidance
+
+#### 6.4.3. Color Detection
+
+Using OpenCV to detect green, red, and purple objects in the camera feed. The algorithm filters colors in HSV space, finds contours, and calculates distance and angle based on object size and position.
+
+```python
+# HSV filtering for green
+mask_green = cv2.inRange(hsv, lower_green, upper_green)
+
+# HSV filtering for red (two ranges)
+mask_r1 = cv2.inRange(hsv, lower_red1, upper_red1)
+mask_r2 = cv2.inRange(hsv, lower_red2, upper_red2)
+mask_red = cv2.bitwise_or(mask_r1, mask_r2)
+
+# HSV filtering for purple
+mask_purple = cv2.inRange(hsv, lower_purple, upper_purple)
+
+# Noise filtering
+mask_green = cv2.morphologyEx(mask_green, cv2.MORPH_OPEN, kernel)
+mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_OPEN, kernel)
+mask_purple = cv2.morphologyEx(mask_purple, cv2.MORPH_OPEN, kernel)
+
+# Distance calculation
+distance = (KNOWN_WIDTH * FOCAL_LENGTH) / bounding_box_width
+```
+
+### 6.5. Control Implementation
+
+#### 6.5.1. Navigation Control
+
+### 6.6. System Configuration
+
+#### 6.6.1. Sensors and Calibrations
+- **OTOS**: Units in meters and degrees
+- **LiDAR**: RPLiDAR C1
+- **Camera**: 1280x720, RGB888 format
+- **Focal Length**: 1131 pixels
+
+#### 6.6.2. Control Parameters
+
+
+### 6.7. Robot States
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  START      │───▶│ NAVIGATION  │───▶│ DETECTION   │
+│             │    │             │    │             │
+│ • Calibrate │    │ • Follow    │    │ • Identify  │
+│ • Reset     │    │   walls     │    │   objects   │
+│ • Wait      │    │ • Avoid     │    │ • Calculate │
+└─────────────┘    │   obstacles │    │   position  │
+                   └─────────────┘    └─────────────┘
+                          ▲                   │
+                          └───────────────────┘
+```
+
+### 6.8. Main ROS2 Topics
+
+| Topic | Type | Description |
+|--------|------|-------------|
+| `/scan` | LaserScan | LiDAR data |
+| `/odom` | Odometry | OTOS odometry |
+| `/camera/image_raw` | Image | Camera image |
+| `/cmd_vel` | Twist | Velocity commands |
+| `/objects/detection` | Float32MultiArray | Detected objects data |
+| `/objects/status` | Float32 | Number of detected objects |
+
+
+### 6.9. Execution Commands
+
+```bash
+# Launch complete robot
+ros2 launch teensy_communication robot.launch.py
+
+# Object detection only
+ros2 run vision_node color_detection_node
+
+# OTOS odometry only
+ros2 run otos_reader otos_node
+```
+
+### 6.10. File Structure
+
+```
+src/
+├── vision_node/           # Color object detection
+│   └── color_detection_node.py
+├── otos_reader/          # OTOS odometry
+│   └── otos_node.py
+└── teensy_communication/ # General coordination
+    └── launch/
+        └── robot.launch.py
+    └── src/
+        ├── teensy_comm_node.cpp
+        ├── teensy_obs_node.cpp
+
+```
+
+### 6.11. Monitoring and Debug
+
+- **Foxglove Studio**: Real-time visualization
+- **RViz**: Trajectories and laser maps
+- **OpenCV Windows**: Camera view with detections
+- **ROS2 Logs**: Debug information via console
 
 ---
 
@@ -285,12 +357,12 @@ Using these poles helped us keep the robot as low as possible, allowing the Lida
 
 The robot detects and reacts to obstacles in real-time using multiple sensor modalities:
 
-### Detection Methods
+### 7.1. Detection Methods
 - **Primary:** Enhanced color detection via PiCamera2 system
 - **Verification:** LIDAR distance measurements for obstacle confirmation and navigation
 - **Backup:** OTOS position tracking for navigation consistency
 
-### Response Algorithms
+### 7.2. Response Algorithms
 - **Dynamic turning decision system** based on cube color and position
 - **Follow-the-object mode** with PID steering based on cube centroid
 - **Multi-sensor verification** to reduce false positives
@@ -299,49 +371,48 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 ---
 
 ## 8. Construction Guide <a name="construction-guide"></a>
-- in construcction
 
-**STL Files Folder:** `3d-models/`
+**Models file folder:** `models/`
 
-**Sections to complete:**
-- Step 0: 3D printing
-- Step 1: Steering system
-- Step 2: Powertrain and motor mount
+### 8.1. Steps 
+- Step 1: 3D designing
+- Step 2: 3D printing
 - Step 3: Electronic layout
 - Step 4: Wiring
-- Step 5: Upload firmware
+- Step 5: Mounting
+- Step 6: Programming
+- Step 7: Testing
 
-## Construction Tools
+### 8.2. Construction Tools
 - 3D Printer (Creality K2 Plus, QIDI Q1 Pro)
+- Polymaker PTG CF filament
 - Mini Electric Soldering Iron Kit TS101
--
 - Dremel Tool
 - Screwdriver Set Fanttik
 
-## 9. Cost Report <a name="cost-report"></a>
 
-## Cost Report <a name="cost-report"></a>
+## 9. Cost Report <a name="cost-report"></a>
 
 | Item                         | Qty | Unit Cost (MXN) | Total (MXN) |
 |------------------------------|-----|------------------|-------------|
-| Teensy 4.0                   | 1   | 800              | 800         |
-| Raspberry Pi 5                | 1   | 2800             | 2800        |
-| RPlidar C1                    | 1   | 2500             | 2500        |
-| Raspberry Pi Camera 12mp V3   | 1   | 920              | 920         |
-| Raspberry Pi 5 Camera Cable   | 1   | 64               | 64          |
-| 2.2Ah LiPo 11.1V Battery     | 1   | 600              | 600         |
-| 1Ah LiPo 3.3V Battery     | 1   | 70               | 70          |
-| Maxon Motor DCX19            | 1   | 8500             | 8500        |
-| HS85MG Micro Servo            | 1   | 2000             | 2000        |
-| SparkFun OTOS                 | 1   | 2400             | 2400        |
-| POLYMAKER PLA Filament (prototypes)    | -   | 1kg = 900        | 900         |
-| POLYMAKER PLA-CF Filament (finals)     | -   | 0.5kg = 450       | 450         |
-| Carbon Fiber                  | 1   | 2000             | 2000        |
-| SMD Components & Misc.   | -   |         1500      | 1500        |
-| PCB Manufacturing             | 1   | 800              | 800         |
-| Spike Wheels (LEGO)         | 4   | 150              | 600         |
-| EV3 Wheels (LEGO)          | 2   | 10              | 20         |
-| **Total**                     |     |                  | **26924 MXN**|
+| Teensy 4.0                   | 1   | $800              | 800         |
+| Raspberry Pi 5                | 1   | $2,800             | $2,800        |
+| RPlidar C1                    | 1   | $2,500             | $2,500        |
+| Raspberry Pi Camera 12mp V3   | 1   | $920              | $920         |
+| Raspberry Pi 5 Camera Cable   | 1   | $64               | $64          |
+| 2.2Ah LiPo 11.1V Battery     | 1   | $600              | $600         |
+| 1Ah LiPo 3.3V Battery     | 1   | $70               | $70          |
+| Maxon Motor DCX19            | 1   | $8,500             | $8,500        |
+| HS85MG Micro Servo            | 1   | $2,000             | $2,000        |
+| SparkFun OTOS                 | 1   | $2,400             | $2,400        |
+| POLYMAKER PLA Filament (prototypes)    | 1kg   | $900        | $900         |
+| POLYMAKER PLA-CF Filament (finals)     | 0.5kg   | $450       | $450         |
+| Carbon Fiber                  | 1   | $2,000             | $2,000        |
+| SMD Components & Misc.   | -   |         $1,500      | $1,500        |
+| PCB Manufacturing             | 1   | $800              | $800         |
+| Spike Wheels (LEGO)         | 4   | $150              | $600         |
+| EV3 Wheels (LEGO)          | 2   | $10              | $20         |
+| **Total**                     |     |                  | **$26,924**|
 
 
 ---
@@ -350,7 +421,7 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 - [Chabots Main Site](https://www.chabots.mx)
 - [WRO Future Engineers Rules PDF](https://wro-association.org/wp-content/uploads/WRO-2024-Future-Engineers-Self-Driving-Cars-General-Rules.pdf)
-- [GitHub Repos](https://github.com/chabotsmx) *(to be added)*
+- [GitHub Repos](https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025)
 
 ---
 
@@ -358,14 +429,12 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 ```
 MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software...
-(Full license text here)
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software.
 ```
 
 ---
 
-> *Document maintained by Chabots | Last updated: June 2025*
+> *Document maintained by Chabots | Last updated: Sept 2025*
 
 <!--stackedit_data:
 eyJoaXN0b3J5IjpbMTcyMzM3ODYxNCwtMzc2NTM2MDM5LDM1ND
