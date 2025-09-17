@@ -42,13 +42,16 @@ This repository contains the documentation for **ChaBots** participation in the 
 
 ## 1. The Team <a name="the-team"></a>
 
-### Hiram Jalil Castillo Gutierrez
-**Age:** 22\
-**Role:** Software Developer
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/photos/t-photos/t-photo.png?raw=true">
 
-I am a Software Engineer student and I love robotics and programming. I have been a contestant for 8 years, from regional to national competitions, I have participated in 4 Mexico Robocup Soccer and 1 MakeX Robotics Competition, top 3(2019) and runner-up(2019).
+---
+### Roy Iván Barrón Martínez
+**Age:** 20\
+**Role:** Captain, Electronics & Software Designer
 
-> "Anyway, robotics is my passion and I will never forget it."
+I am a self-taught robotics enthusiast with experience in embedded systems, software, and mechanical integration. my team ChaBots Ocelot won Mexico Robocup soccer Open second place and achieved multiple national awards in programming and robotics.
+
+> "I enjoy setting nearly impossible goals to push myself while learning. I believe that learning should always lead to building something real."
 
 ---
 
@@ -60,13 +63,14 @@ I am a Mechatronics Engineering student passionate about technology and innovati
 > "I will take any opportunity to grow"
 
 ---
-### Roy Iván Barrón Martínez
-**Age:** 20\
-**Role:** Captain, Electronics & Software Designer
 
-I am a self-taught robotics enthusiast with experience in embedded systems, software, and mechanical integration. my team ChaBots Ocelot won Mexico Robocup soccer Open second place and achieved multiple national awards in programming and robotics.
+### Hiram Jalil Castillo Gutierrez
+**Age:** 22\
+**Role:** Software Developer
 
-> "I enjoy setting nearly impossible goals to push myself while learning. I believe that learning should always lead to building something real."
+I am a Software Engineer student and I love robotics and programming. I have been a contestant for 8 years, from regional to national competitions, I have participated in 4 Mexico Robocup Soccer and 1 MakeX Robotics Competition, top 3(2019) and runner-up(2019).
+
+> "Anyway, robotics is my passion and I will never forget it."
 
 ---
 
