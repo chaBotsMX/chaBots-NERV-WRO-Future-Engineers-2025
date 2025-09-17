@@ -36,6 +36,7 @@ This repository contains the documentation for **ChaBots** participation in the 
 7. 🚧 [Obstacle Management](#obstacle-management)
 8. 🛠️ [Construction Guide](#construction-guide)
 9. 💰 [Cost Report](#cost-report)
+10. 💭 [Discussion](#discussion)
 - 📚 [Resources](#resources)
 - ©️ [License](#license)
 ---
@@ -912,6 +913,100 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 | EV3 Wheels (LEGO)          | 2   | $10              | $20         |
 | **Total**                     |     |                  | **$26,924**|
 
+
+---
+
+## 10. Discussion <a name="discussion"></a>
+
+### 10.1. Decisions
+
+Throughout this project, we faced numerous critical decisions that shaped our robot's final design. Our approach was driven by the principle of creating a robust, reliable system capable of handling the unpredictable nature of autonomous navigation challenges.
+
+#### Why This Architecture?
+
+We chose a **distributed ROS2 architecture** for several key reasons:
+
+1. **Modularity**: Each sensor and algorithm runs in isolated nodes, making development, testing, and debugging significantly more manageable
+2. **Scalability**: Adding new sensors or algorithms requires minimal changes to existing code
+3. **Real-time Performance**: ROS2's real-time capabilities ensure consistent timing across all systems
+
+#### Hardware Selection Rationale
+
+**RPLiDAR C1**: Despite being expensive, the 360° scanning capability proved essential for complete environmental awareness. Alternative sensors like ultrasonic arrays couldn't provide the same level of detail and accuracy.
+
+**OTOS Sensor**: The optical tracking approach was chosen over traditional wheel encoders due to its immunity to wheel slip and superior accuracy in dynamic environments.
+
+**Raspberry Pi 5**: The increased computational power over previous generations allowed us to run complex computer vision algorithms in real-time while maintaining ROS2 communication overhead.
+
+### 10.2. Regional Experience and Lessons Learned
+
+Our experience at the regional competition was... challenging, to put it mildly. **We didn't perform as expected**, our robot's performance was disappointing during those crucial moments.
+
+#### What Went Wrong at Regionals
+
+- **Sensor calibration issues** under competition lighting conditions
+
+The regional result was a wake-up call that forced us to completely re-evaluate our approach.
+
+### 10.3. Rebuilding the System
+
+**We invested approximately 5,000 hours** into completely rebuilding and refining every aspect of our system:
+
+#### What We Rebuilt
+
+**Complete Software Stack**:
+- Migrated from basic control loops to PID controllers with adaptive parameters
+- Implemented sensor fusion algorithms for robust state estimation
+- Developed multi-modal obstacle avoidance strategies
+- Created comprehensive safety systems with multiple fallback mechanisms
+
+**Hardware Redesign**:
+- Switched from 3D-printed chassis to carbon fiber for improved rigidity
+- Upgraded to precision steel shafts and custom gearboxes
+- Implemented proper electromagnetic interference shielding
+- Redesigned cable management for reliability
+
+**Testing Infrastructure**:
+- Built a complete testing environment that simulates competition conditions
+- Developed automated testing scripts for regression testing
+- Created comprehensive calibration procedures
+
+### 10.4. Technical Achievements
+
+#### Algorithm Innovation
+
+Our **sensor fusion approach** combines OTOS, LiDAR, and vision data using Kalman filtering techniques that provide centimeter-level accuracy in dynamic environments.
+
+The **adaptive control system** automatically adjusts PID parameters based on track geometry, allowing optimal performance in both tight corners and wide corridors.
+
+#### Real-time Performance
+
+Achieving **10Hz control loop frequency** while processing:
+- 360° LiDAR scans at 8Hz
+- Computer vision at 30fps
+- OTOS updates at 100Hz
+- Safety monitoring at 100Hz
+
+#### Robustness Features
+
+- **Multi-sensor validation** prevents single points of failure
+- **Graceful degradation** when sensors malfunction
+- **Emergency stop systems** with sub-20ms response times
+- **Automatic recovery** from most common failure modes
+
+### 10.5. Competition Strategy Evolution
+
+Our approach to the WRO Future Engineers challenge evolved significantly:
+
+**Initial Strategy (Regional)**: Focus on basic navigation with simple obstacle avoidance
+**Current Strategy (National/International)**: Comprehensive autonomous system with advanced AI-driven decision making
+
+#### Key Strategic Insights
+
+1. **Reliability over Speed**: Consistent completion beats occasional fast times
+2. **Sensor Redundancy**: Multiple sensors for the same measurement prevent catastrophic failures
+3. **Adaptive Algorithms**: One-size-fits-all approaches don't work in dynamic environments
+4. **Extensive Testing**: Simulated conditions must exceed competition difficulty
 
 ---
 
