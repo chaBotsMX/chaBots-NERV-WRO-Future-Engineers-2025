@@ -22,17 +22,20 @@ class ObjectTracker(Node):
         self.bridge = CvBridge()
 
         # Rangos HSV para los colores verde, rojo y morado
-        self.lower_green = np.array([38, 57, 30])
+        self.lower_green = np.array([38, 57, 79])
         self.upper_green = np.array([80, 255, 185])
 
         self.lower_red1 = np.array([0, 162, 0])
-        self.upper_red1 = np.array([0, 255, 255])
+        self.upper_red1 = np.array([13, 255, 255])
 
         self.lower_red2 = np.array([152, 162, 0])
         self.upper_red2 = np.array([180, 255, 255])
-
+ 
         self.lower_purple = np.array([119, 43, 150])
         self.upper_purple = np.array([166, 255, 255])
+
+        self.lower_blue = np.array([110,32,79])
+        self.upper_blue = np.array([133,255,154])
 
         # Parámetros de la cámara necesarios para calcular distancia y ángulo
         self.FOCAL_LENGTH = 1131   # píxeles
@@ -81,7 +84,7 @@ class ObjectTracker(Node):
 
         for cnt in contours_red:
             area = cv2.contourArea(cnt)
-            if area > 4000:
+            if area > 6000:
                 x, y, w, h = cv2.boundingRect(cnt)
                 detected_objects.append({
                     'contour': cnt,
@@ -112,6 +115,7 @@ class ObjectTracker(Node):
                     'area': area
                 })
 
+
         return detected_objects
 
     def image_callback(self, msg):
@@ -124,7 +128,7 @@ class ObjectTracker(Node):
         h = min(h, H - y)
 
         frame = frame[y:y+h, x:x+w]
-        
+
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         detected_objects = self.detect_objects(hsv)
