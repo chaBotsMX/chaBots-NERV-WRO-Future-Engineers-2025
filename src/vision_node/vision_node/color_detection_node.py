@@ -120,7 +120,7 @@ class ObjectTracker(Node):
 
     def image_callback(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-        x, y, w, h = 0, 200, 1920, 740
+        x, y, w, h = 0, 200, 1920, 900
         H, W = frame.shape[:2]
         x = max(0, min(x, W - 1))
         y = max(0, min(y, H - 1))
