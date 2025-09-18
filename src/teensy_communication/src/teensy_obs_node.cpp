@@ -71,7 +71,11 @@ private:
 
 static inline float wrap_360(float a) { float x = std::fmod(a, 360.0f); return (x < 0) ? x + 360.0f : x; }
 static inline float wrap_pm180(float a) { float x = std::fmod(a + 180.0f, 360.0f); if (x < 0) x += 360.0f; return x - 180.0f; }
-
+float wrapError(float a){
+  if (a > 180.0f) return a - 360.0f;
+  else if (a < -180.0f) return a + 360.0f;
+  else return a;
+}
 
 class TeensyObsNode : public rclcpp::Node {
 public:
@@ -341,27 +345,27 @@ private:
     if(thisSector == 0){
       orientation >= 180? orientation -= 360 : orientation = orientation;
 
-      if(orientation <  -45){
+      if(orientation <  -70){
         actualSector.store(3);
         if(direction_.load() == 0){
           direction_.store(2);
         }
       }
-      else if(orientation  > 45){
+      else if(orientation  > 70){
         actualSector.store(1);
         if(direction_.load() == 0){
           direction_.store(1);
         }
       }
     }  
-    else if(static_cast<int>(orientation) > thisSectorUpperLimit) {
+    else if(static_cast<int>(orientation) > thisSectorUpperLimit+15) {
       thisSector++;
       thisSector > 3 ? thisSector = 0 : thisSector = thisSector;
       actualSector.store(thisSector);
     }
     else if(static_cast<int>(orientation) < thisSectorLowerLimit) {
       thisSector--;
-      thisSector < 0 ? thisSector = 3 : thisSector = thisSector;
+      thisSector < 0 ? thisSector = 3 : thisSector = thisSector-15;
       actualSector.store(thisSector);
     }
   }  
@@ -420,19 +424,22 @@ private:
     }
     float outWallDistance = 0;
     if(direction_.load() == 1){
+      RCLCPP_INFO(this->get_logger(), "Distancia pared derecha: %f", dist_Right_.load());
       outWallDistance = dist_Right_.load();
     }
     else if(direction_.load() == 2){
+      RCLCPP_INFO(this->get_logger(), "Distancia pared izquierda: %f", dist_Left_.load());
       outWallDistance = dist_Left_.load();
     }
+    RCLCPP_INFO(this->get_logger(), "Distancia pared exterior: %f", outWallDistance);
     if(turntype_.load() == 0){
-        if(outWallDistance >= 0.70f){
+        if(outWallDistance >= 0.60f){
           turntype_.store(3);
         }
-        else if(outWallDistance < 0.70f && outWallDistance >= 0.30f){
+        else if(outWallDistance < 0.60f && outWallDistance >= 0.45f){
           turntype_.store(2);
         }
-        else if(outWallDistance < 0.30f){
+        else if(outWallDistance < 0.45f){
           turntype_.store(1);
         }
     }
@@ -464,7 +471,7 @@ private:
       if(turnStep[0].load() == false){
         RCLCPP_INFO(this->get_logger(), "Paso 1");
         mover(90,30,0);
-        if(distanFront < 0.7f){
+        if(distanFront < 0.4f){
           turnStep[0].store(true);
         }
       }
@@ -589,59 +596,32 @@ private:
           cube_target_changued_.store(false);
 
         }
+
+        if(dist_front_.load() - (object_distance/100) < 0.80f && fabs(angle) > 10.0f  && fabs(wrapError(targetYaw_.load() - heading360_.load())) < 7.0f){
+          RCLCPP_INFO(this->get_logger(), "Obstáculo muy cerca, orientando antes de maniobrar: %f a %f grados", dist_front_.load() - (object_distance/100), angle);
+          orientar();
+          return;
+        }
         RCLCPP_INFO(this->get_logger(), "Cubo detectado: distancia al cubo: %f, orientacion al cubo: %f, color: %d, sector del cubo: %d, sector actual: %d", object_distance, angle, color, cubeSector_.load(), actualSector.load());
         if (color == 0) { // VERDE => pasar SIEMPRE por la IZQUIERDA si está a la izquierda; derecha solo si bloquea
           constexpr float minDis = 30.0f;   // cm
           constexpr float maxDis = 100.0f;  // cm
-          constexpr float OffSetmax   = 20.0f;   // ° de desvío máximo (hacia IZQ)
+          constexpr float OffSetmax   = 30.0f;   // ° de desvío máximo (hacia IZQ)
           constexpr float tickMaxChange = 3.0f;    // °/tick, límite de cambio (anti-jerk)
-          constexpr float safe = 30.0f;   // °, medio ángulo del cono frontal (para "bloquea" en derecha)
+          constexpr float safe = 40.0f;   // °, medio ángulo del cono frontal (para "bloquea" en derecha)
 
-          // --- Estado para suavizado ---
-          static float servo = 90.0f;
+          static float servo = 90.0f;     // estado para suavizado
+          float compX = std::cos(angle);
+          float disX = object_distance * compX;
+          RCLCPP_INFO(this->get_logger(), "Componente X del ángulo del cubo: %f", compX);
 
-          // --- Lecturas y pesos ---
-          float dis     = clampf(object_distance, minDis, maxDis);
-          float prop   = (maxDis - dis) / (maxDis - minDis);            // [0..1] más cerca => mayor
-          float inv_prop = (dis / maxDis) * 0.375f;
-          float theta = std::fabs(angle);                             // magnitud angular (°)
-
-          // --- Decisión: izquierda siempre; derecha solo si bloquea ---
-          bool must_evade = false;
-          float offset    = 0.0f;   // negativo = izquierda
-
-          if (angle < 0.0f) {
-            // LADO IZQUIERDO: evadir SIEMPRE (no depende de theta)
-            must_evade = true;
-            offset     = - OffSetmax * prop;                                // [-OffSetmax, 0]
-          } else {
-            // LADO DERECHO: evadir SOLO si está dentro del cono frontal (bloquea)
-            if (theta >= safe) {
-              // Peso suave por "qué tan frontal" (cos^2), opcional pero recomendable
-              float w_phi = std::pow(std::cos((kPI * 0.5f) * (theta / safe)), 2.0f); // [0..1]
-              must_evade  = true;
-              offset      = - OffSetmax * prop * w_phi;                     // [-OffSetmax, 0]
-            }
-          }
-
-          if (!must_evade || prop <= 0.0f || !std::isfinite(dis) || !std::isfinite(theta)) {
-            orientar();
-          } else {
-            // --- Suavizado del mando ---
-            float cmd_raw = clampf(90.0f - offset + wrap_pm180((targetYaw_.load() - heading360_.load()) * inv_prop),60,150);                           // servo centrado en 90°
-            float delta   = clampf(cmd_raw - servo, -tickMaxChange, tickMaxChange);
-            float cmd_deg = servo + delta;
-            servo = cmd_deg;
-
-            // PWM (puedes escalarlo con w_d y |offset| si quieres)
-            const uint8_t pwm = 40;
-
-            auto frame = pack(static_cast<uint16_t>(std::lround(cmd_deg)), pwm, 0);
+          if(disX < 0.0f){
+            auto frame = pack(static_cast<uint16_t>((cmd_raw)), pwm, 0);
             (void)serial_.write_bytes(frame.data(), frame.size());  
             RCLCPP_INFO(this->get_logger(),
-              "Evasion IZQ | d=%.1fcm w_d=%.2f | ang=%.1f° lado=%s | off=%.1f° cmd=%.1f°",
+              "Evasion IZQ | d=%.1fcm w_d=%.2f | ang=%.1f° lado=%s | off=%.1f° cmd=%.1f° cmd_raw=%.1f° errHelper=%.1f° | distLeft=%.2fcm",
               dis, prop, angle, (angle < 0.0f ? "izq(always)" : (theta <= safe ? "der(block)" : "der(free)")),
-              offset, cmd_deg);
+              offset, cmd_deg, cmd_raw, errHelper, dist_Left_.load());
           }
         }
 
@@ -650,9 +630,9 @@ private:
         // --- Parámetros (usa mismos que en VERDE para tuning coherente) ---
         constexpr float minDis        = 30.0f;   // cm
         constexpr float maxDis        = 100.0f;  // cm
-        constexpr float OffSetmax     = 20.0f;   // ° de desvío máximo (hacia DER)
+        constexpr float OffSetmax     = 30.0f;   // ° de desvío máximo (hacia DER)
         constexpr float tickMaxChange = 3.0f;    // °/tick (anti-jerk)
-        constexpr float safe          = 30.0f;   // °, medio ángulo del cono frontal
+        constexpr float safe          = 40.0f;   // °, medio ángulo del cono frontal
 
         // --- Estado para suavizado ---
         static float servo = 90.0f;

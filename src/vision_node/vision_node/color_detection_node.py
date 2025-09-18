@@ -22,13 +22,13 @@ class ObjectTracker(Node):
         self.bridge = CvBridge()
 
         # Rangos HSV para los colores verde, rojo y morado
-        self.lower_green = np.array([38, 57, 40])
+        self.lower_green = np.array([38, 68, 50])
         self.upper_green = np.array([80, 255, 185])
 
-        self.lower_red1 = np.array([0, 162, 0])
-        self.upper_red1 = np.array([13, 255, 255])
+        self.lower_red1 = np.array([0, 150, 100])
+        self.upper_red1 = np.array([15, 255, 255])
 
-        self.lower_red2 = np.array([152, 162, 0])
+        self.lower_red2 = np.array([152, 150, 100])
         self.upper_red2 = np.array([180, 255, 255])
  
         self.lower_purple = np.array([119, 43, 150])
