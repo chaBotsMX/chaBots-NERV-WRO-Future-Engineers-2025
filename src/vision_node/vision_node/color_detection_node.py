@@ -22,20 +22,20 @@ class ObjectTracker(Node):
         self.bridge = CvBridge()
 
         # Rangos HSV para los colores verde, rojo y morado
-        self.lower_green = np.array([38, 68, 50])
-        self.upper_green = np.array([80, 255, 185])
+        self.lower_green = np.array([38, 71, 45])
+        self.upper_green = np.array([82, 255, 181])
 
         self.lower_red1 = np.array([0, 150, 100])
-        self.upper_red1 = np.array([15, 255, 255])
+        self.upper_red1 = np.array([10, 255, 255])
 
-        self.lower_red2 = np.array([152, 150, 100])
+        self.lower_red2 = np.array([170, 150, 100])
         self.upper_red2 = np.array([180, 255, 255])
  
         self.lower_purple = np.array([119, 43, 150])
         self.upper_purple = np.array([166, 255, 255])
 
-        self.lower_blue = np.array([110,32,79])
-        self.upper_blue = np.array([133,255,154])
+        self.lower_blue = np.array([0,0,0])
+        self.upper_blue = np.array([255,255,255])
 
         # Parámetros de la cámara necesarios para calcular distancia y ángulo
         self.FOCAL_LENGTH = 1131   # píxeles
@@ -55,8 +55,8 @@ class ObjectTracker(Node):
         # Detección de objetos verdes
         mask_green = cv2.inRange(hsv, self.lower_green, self.upper_green)
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5,5))
-        mask_green = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
         mask_green = cv2.morphologyEx(mask_green, cv2.MORPH_OPEN, kernel)
+        mask_green = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
         mask_green = cv2.dilate(mask_green, kernel, iterations=2)
         contours_green, _ = cv2.findContours(mask_green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -77,14 +77,14 @@ class ObjectTracker(Node):
         mask_r1 = cv2.inRange(hsv, self.lower_red1, self.upper_red1)
         mask_r2 = cv2.inRange(hsv, self.lower_red2, self.upper_red2)
         mask_red = cv2.bitwise_or(mask_r1, mask_r2)
-        mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_CLOSE, kernel)
         mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_OPEN, kernel)
+        mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_CLOSE, kernel)
         mask_red = cv2.dilate(mask_red, kernel, iterations=2)
         contours_red, _ = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         for cnt in contours_red:
             area = cv2.contourArea(cnt)
-            if area > 6000:
+            if area > 8500:
                 x, y, w, h = cv2.boundingRect(cnt)
                 detected_objects.append({
                     'contour': cnt,
@@ -97,8 +97,8 @@ class ObjectTracker(Node):
 
         # Detección de objetos morados
         mask_purple = cv2.inRange(hsv, self.lower_purple, self.upper_purple)
-        mask_purple = cv2.morphologyEx(mask_purple, cv2.MORPH_CLOSE, kernel)
         mask_purple = cv2.morphologyEx(mask_purple, cv2.MORPH_OPEN, kernel)
+        mask_purple = cv2.morphologyEx(mask_purple, cv2.MORPH_CLOSE, kernel)
         mask_purple = cv2.dilate(mask_purple, kernel, iterations=2)
         contours_purple, _ = cv2.findContours(mask_purple, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -129,6 +129,7 @@ class ObjectTracker(Node):
 
         frame = frame[y:y+h, x:x+w]
 
+        cv2.GaussianBlur(frame, (5, 5), 0)
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         detected_objects = self.detect_objects(hsv)
@@ -137,8 +138,6 @@ class ObjectTracker(Node):
         self.pub_status.publish(Float32(data=find))
 
         objects_msg = Float32MultiArray()
-
-        # Cada objeto tiene: [color_code, distance, angle]
         dim_objects = MultiArrayDimension()
         dim_objects.label = "objects"
         dim_objects.size = len(detected_objects)

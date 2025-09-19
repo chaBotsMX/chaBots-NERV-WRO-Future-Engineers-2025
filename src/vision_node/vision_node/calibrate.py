@@ -93,6 +93,8 @@ class HSVCalibrator(Node):
             new_height = int(height * scale)
             frame = cv2.resize(frame, (new_width, new_height))
         
+
+        frame = cv2.GaussianBlur(frame, (5, 5), 0)
         # Convertir a HSV
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         

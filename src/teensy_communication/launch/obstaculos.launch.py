@@ -139,7 +139,12 @@ def generate_launch_description():
             'width': 1920,
             'height': 1080,
             'controls': {
-                'FrameDurationLimits': [33333, 33333],  # 30 fps        
+                'FrameDurationLimits': [33333, 33333],  # 30 fps
+                "AwbEnable": False,
+                "ColourGains": [1.8, 1.5],     
+
+                "AeEnable": False,
+                "AnalogueGain": 1.0,
             }
             }],
     
