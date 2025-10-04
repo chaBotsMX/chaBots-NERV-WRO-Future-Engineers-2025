@@ -158,7 +158,94 @@ High-precision odometry sensor for accurate position tracking.
 
 **Link:** [SparkFun OTOS](https://www.sparkfun.com/sparkfun-optical-tracking-odometry-sensor-paa5160e1-qwiic.html)
 
-## 5. Mobility Management <a name="mobility-management"></a>
+## 5. Desing Procces <a name="mobility-management"></a>
+### 5.0. general aproach to mobility in WRO FE
+the first thing is notabble about this WRO FE chalñlengue is that is required the robot to not be differtential drive, this is interesting cause make the challengue take an aproach more close to real life applications, but it also make some teams struggle to get a good solutions, our team explore multiple solutions and attempet others but if one thing is clear is that this category is so inmense, lets start with the most obvius problem that will also appear if the differential was not a requeriment
+
+***which motor do we use?***
+
+first lets look what makes a motor be different from others.
+
+* Speed (RPM)
+* Torque (kg/cm or Nm)
+* Current consumption (A)
+* weight  (g)
+* PRICE!!! ($)
+
+The first thing almost every person will think of when chossing a motor is speed, but we cant think in speed alone, is always related to torque when talking about electrical motors, the more torque a motor have the less speed it will have, and the more speed it have the less torque it will have, this is called the torque-speed curve, and is something that is always present in every motor, so if we want a motor with more torque we will have to sacrifice speed,
+//inertar grafico para mostrar graficamente
+
+The only way to avoid this problem is buying a better motor, or getting a  more powerful motor, but this last option implies a higher current consuptiom, lets take a look at some motors, we usually use motor from known brands, we dont relay in generic motors, because they usualy have a bad quality and the specs are not real, so we will take a look at some known brands but also some generic ones.
+
+| Model          | Speed (RPM) | Torque (kg/cm) | Current (A) | Weight (g) |voltage| Price ($) |  
+|----------------|-------------|----------------|-------------|------------|---|-----------|
+| Maxon DCX19    | 600         | 6.5            | 2.0         | 80         |12V| 500       |
+| Pololu 25D HP 20.4:1   | 480 | 4.8            | 6.0         | 107        | 6V|37.95      |
+| Pololu 25D LP 9.7:1     | 630 | 1.3           | 2.0         | 100        | 6V|33.00      |
+| generic (pololu 25D copy)    | 620         | 0.22           | not specified        | 120         |12V|10.00      |
+| lego EV3 (EV3 Medium Motor, 45503) | 240-260 (no-load) |~2.2 kg·cm stalled| no-load ~0.10 A, stall ~0.62 A | 42 g | ~9V (powered by EV3) | low ($) |
+
+Before chossing a motor we have to think what we need from it, in this case, we know that a robot make to participate in FE have to weight a maximum of 1.5 kg, torque not only implies that the robot can move, but also:
+
+- Ability to accelerate quickly
+- Climb small inclines
+- Overcome small obstacles
+- Maintain speed under load
+- Abbility to stop quickly
+- Abbility to reverse quickly (change direction)
+
+so in this case, how much torque do we need?, well, this is a complex question, because it depends on many factors, like the weight of the robot, the friction of the wheels, the surface of the track, the speed we want to reach, etc. but we can make bot, so we need to find a balance between torque and current consumption.
+
+in our case we know for experience that we need at least twice the torque that the robot weight, so if our robot weight 1.5 kg we need at least 3 kg/cm of torque, this is a good starting point, and about RPM, we know that we dont need a very high speed, because the track is small and we need to be able to stop quickly, so we can sacrifice some speed for more torque, for example 400 or even 350 at least are good, but this rates are what the motor have to run, not the rated rpm of a motor, its not a good idea to run a motor at its rated rpm, because the torque will be lower and the current consumption will be higher, so we have to search for a motor with more rpm than we need, so we can run it at a lower speed, for example if we need 400 rpm we can search for a motor with 600 or 700 rpm, this way we can run it at 400 rpm and have more torque and less current consumption, for reference good quality motors usually can run at 70%  or 80% of their rated rpm without problems, so a motor with 600 rpm can be run at 420 rpm without problems.
+
+now that we know how much torque and speed we need, lets talk about power consuption, its not a real diference chossing a motor rated a 6v or 12v, it only depends on the battery we use, if we use a 6v battery we have to choss a motor rated at 6v, if we use a 12v battery we have to choss a motor rated at 12v, but well, not really, lipo batterys works in a way that the voltage is not constant, so if we use a 2s lipo battery (7.4v nominal)  it can be chargued at 8.4v and can drop to 6v when its almost empty, its not a real problem cause most motors can handdle a little overvoltage (just to help someone who wonder if motor can be undervoltage, no, they cant, they will just not work), the real problem is that torque and RPM are directly related to voltage, so it will vary a lot, take this in consideration when you face a problem with your robot, it can be that the battery is almost empty and the motor dont have enough torque to move the robot, or that the motor is running at a lower speed than expected, and a solution to avoid this is simply have feedback from the battery voltage and make a function to keep speed constant, but this is not a real necdesity but help a lot.
+
+finally when we have to talk about price, its not a secret that good quality motors are expensive, but they are worth it, because they will last longer, will have better performance and will be more reliable, so if you can afford it, go for it, but if you cant, there are some good options in the market, like the pololu motors, they are not the best but they are good enough for most applications and are very affordable.
+
+
+also is important to say that this can be calculated, there are many online calculators that can help us with this, but the most important thing is to test the motor in real conditions, because sometimes the theoretical calculations are not accurate, but we wish this help you have a better idea of what to look for when chossing a motor.
+
+after all of this, we chose the Maxon DCX19 motor, because we need a motor with high torque and low current consumption, and this motor is perfect for our needs, we will run it at 400 rpm to have more torque and less current consumption, and we will use a 3s lipo battery to power it.
+
+and now
+
+**what motor use?** *Servo Edition*
+
+Why a servo? Well this is because we need to have a simple and reliable steering system, and a servo is perfect for this, we dont need high speed or high torque, we just need to be able to turn the wheels, we know every team know this, but we want to shre our experience, we will not talk that much as before because is not that complex.
+
+lets start where we finished last time, we chose a HS 85MG, because is a very good quality servo, with metal gears and a good torque.
+
+the only real thing to take in consideration is the **torque**, we need to have enough torque to turn the wheels, if theres a lot of weigth above the stearing system, the servo can struggle to turn the wheels, so we need to have a servo with enough torque to turn the wheels, is easy to get servos with lots of torque, but they are usually big, this is not a real problem for every one but for us is, because we want to keep the robot as low as possible, so we bougth this servo for its small size, and good toque (3.0 kg/cm at 5V), its worth to say this was expensive, so if you want a more affordable option, you can use a generic servo, but be sure to test it, cause there are many bad quality servos in the market.
+
+**what make a good quality servo be?**
+
+is easy to look to what problems a bad quality servo can have, first of all, specs can be just a lie, but this is the start:
+
+- Lack of real control
+- Imprecise movements
+- High backlash
+- low life span
+
+Servos are more easy to choose, good servos are common, like generics servos are really good actually, but there can be some bad quality clones, so be sure to test it before use it in a real project.
+
+### 5.1. Mechanical Design
+
+This is very very important, make robots its actually easy, talking about our context as comunity (WRO comunity), but make a good robot its not easy, and the mechanical design is a big part of this, if you dont have a good mechanical design, your robot will not work as expected, and theres big difference between a robot that work and a robot that work well, theres some considerations that are general in every engineering project, not just robotics, like:
+
+- Simplicity: the more simple the design is, the more reliable it will be, and the easier it will be to manufacture and maintain.
+- Durability: the more durable the design is, the more reliable it will be, and the easier it will be to maintain.
+- Weight: the lighter the design is, the more efficient it will be, and the easier it will be to manufacture and maintain.
+
+and also, theres some considerations that are specific to robotics, like:
+
+- Low CG (center of gravity)
+- Low profile
+- Good weight distribution
+- Easy access to components
+- Good cable management
+- Good heat dissipation
+- reliability (personal opinion {ROY}, this is the MOST important thing in a robot)
+
 
 ### 5.1. Gearbox:
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/models/gearbox/gearbox-assemble.png?raw=true.png">
@@ -1015,6 +1102,12 @@ Our approach to the WRO Future Engineers challenge evolved significantly:
 - [Chabots Main Site](https://www.chabots.mx)
 - [WRO Future Engineers Rules PDF](https://wro-association.org/wp-content/uploads/WRO-2024-Future-Engineers-Self-Driving-Cars-General-Rules.pdf)
 - [GitHub Repos](https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025)
+
+### Referencias técnicas (motor EV3)
+
+- BrickLink — EV3 Medium Servo Motor (Item 45503) (ficha de producto, incluye peso listado): https://www.bricklink.com/v2/catalog/catalogitem.page?S=45503-1
+- Brick Experiment Channel / Philo — comparativas y mediciones (no-load, stall, corrientes, resistencia): https://brickexperimentchannel.wordpress.com/2023/11/15/characteristics-of-lego-parts/  y https://www.philohome.com/motors/motorcomp.htm
+- Manuales EV3 / documentación LEGO (buscar guías de usuario EV3 y hojas técnicas en LEGO Education o archivos PDF del kit EV3).
 
 ---
 
