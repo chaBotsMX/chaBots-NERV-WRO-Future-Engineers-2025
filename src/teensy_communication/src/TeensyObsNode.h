@@ -1,6 +1,39 @@
 #ifndef TEENSY_OBS_NODE_H
 #define TEENSY_OBS_NODE_H
 
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/laser_scan.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+
+#include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/float32_multi_array.hpp>
+
+#include <thread>
+#include <atomic>
+#include <array>
+#include <cmath>
+#include <cstdint>
+#include <cstring>
+#include <limits>
+#include <string>
+#include <unistd.h>
+#include <fcntl.h>
+#include <cerrno>
+#include <functional>
+#include <algorithm>
+
+
+#include "SerialPort.h"
+#include "Utils.h"
+
+struct lidarPoints {
+  float angle;  // rad o deg, tú decides
+  float x;
+  float y;
+  float mag;
+};
+
+
 class TeensyObsNode : public rclcpp::Node {
 public:
   TeensyObsNode() : Node("teensy_obs") {
@@ -175,6 +208,7 @@ inline float wrapPI(float a) {
     auto frame = pack(dir, pwm, direction);
     (void)serial_.write_bytes(frame.data(), frame.size());
   }
+  
   int controlACDA(float targetSpeed){
     float pwm = 0, jerk = 10;
     float error = targetSpeed - speed_.load();
