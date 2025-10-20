@@ -27,11 +27,25 @@
 #include "Utils.h"
 
 struct lidarPoints {
-  float angle;  // rad o deg, tú decides
+  float angle;  
   float x;
   float y;
   float mag;
 };
+
+struct Cluster {
+  int type;  
+  int color;
+  int size;
+  float start_x;
+  float start_y;
+  float end_x;
+  float end_y;
+  float x;
+  float y;
+   
+};
+
 
 
 class TeensyObsNode : public rclcpp::Node {
@@ -104,94 +118,7 @@ private:
       return f;
   }
 
-  bool outOfParkingLot(){
-    const float leftDistance = dist_Left_.load();
-    const float rightDistance = dist_Right_.load();
-    bool reversed = backInParking_.load();
-    float Ypos = poseY_.load();
-    int direction = direction_.load();
-    if(!std::isfinite(leftDistance) && !std::isfinite(rightDistance)) return false;
-    if(direction_.load() == 0){
-      if(rightDistance > 0.5f) direction_.store(2);
-      else if(leftDistance > 0.5f) direction_.store(1);
-      return false;
-    }
-    direction = direction_.load();
-    if(!frontInParking_.load()){
-      if(Ypos < 0.03f){
-        auto frame = pack(90, 30, 0);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-        return false;
-      }
-      else{frontInParking_.store(true);}
-    }
-    else if(!changueDelay_.load()){
-      if(direction == 1){
-        auto frame = pack(150, 0, 0);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-      }
-      else if(direction == 2){
-        auto frame = pack(50, 0, 0);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-      }
-      std::this_thread::sleep_for(1s);
-      changueDelay_.store(true);
-      return false;
-    }
-    else if(reversed == false){
-      if(direction == 2 && Ypos > -0.05f){
-        auto frame = pack(50, 45, 1);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-        return false;
-      }
-      else if(direction == 1 && Ypos > -0.04f){
-        auto frame = pack(150, 45, 1);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-        return false;
-      }
-      else{backInParking_.store(true); return false;}
-    }
-    else if(!repeat_.load()){
-        backInParking_.store(false);
-        frontInParking_.store(false);
-        changueDelay_.store(false);
-        repeat_.store(true);
 
-    }
-    else if(!out_.load()){
-      if(direction ==  1 && Ypos < 0.15f){
-        auto frame = pack(50, 40, 0);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-        return false;
-      }
-      else if(direction ==  2 && Ypos < 0.15f){
-        auto frame = pack(150, 40, 0);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-        return false;
-      }
-      else
-      {
-        out_.store(true);
-        return false;
-      }
-    }
-    else if(!initCorrection_.load()){
-      if(direction == 1){
-        auto frame = pack(150, 0, 0);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-      }
-      else if(direction == 2){
-        auto frame = pack(50, 0, 0);
-        (void)serial_.write_bytes(frame.data(), frame.size());
-      }
-      std::this_thread::sleep_for(1s);
-      initCorrection_.store(true);
-      return true;
-    }
-    else{
-      return false;
-    }
-  }
 
   static inline float clampf(float v, float lo, float hi) {
     return std::max(lo, std::min(v, hi));
@@ -382,152 +309,6 @@ inline float wrapPI(float a) {
 
   }
 
-  void rutinaGirar(){
-    float distanFront = dist_front_.load();
-    float distBack = dist_back_.load();
-    if(!std::isfinite(distanFront)) {
-      distanFront = 0.0f;
-    }
-    if(!std::isfinite(distBack)) {
-      distBack = 0.0f;
-    }
-    float outWallDistance = 0;
-    if(backed == false){
-      if(distBack < 0.6f){
-        mover(90, 30, 1);
-        return;
-      }
-      else{
-        backed = true;
-      }
-    }
-    if(direction_.load() == 0){
-      mover(90, 30, 0);
-      RCLCPP_INFO(this->get_logger(), "Decidiendo dirección de giro, direccion actual: %d", direction_.load());
-      direction_.store(getDriveDir());
-      lastdirection_ = direction_.load();
-    }
-    else if(direction_.load() == 1){  
-      RCLCPP_INFO(this->get_logger(), "Distancia pared derecha: %f", dist_Right_.load());
-      outWallDistance = dist_Right_.load();
-      if (lastdirection_ != direction_.load()){
-        backed = false;
-        lastdirection_ = direction_.load();
-      }
-    }
-    else if(direction_.load() == 2){
-      if (lastdirection_ != direction_.load()){
-        backed = false;
-        lastdirection_ = direction_.load();
-      }
-      RCLCPP_INFO(this->get_logger(), "Distancia pared izquierda: %f", dist_Left_.load());
-      outWallDistance = dist_Left_.load();
-    }
-    RCLCPP_INFO(this->get_logger(), "Distancia pared exterior: %f", outWallDistance);
-    if(turntype_.load() == 0){
-
-        if(outWallDistance >= 0.60f){
-          turntype_.store(3);
-        }
-        else if(outWallDistance < 0.60f && outWallDistance >= 0.45f){
-          turntype_.store(2);
-        }
-        else if(outWallDistance < 0.45f){
-          turntype_.store(1);
-        }
-    }
-
-    if(turntype_.load() == 1){
-      RCLCPP_INFO(this->get_logger(), "Giro tipo 1");
-      if(turnStep[0].load() == false){
-        float correction = wrap_pm180(targetYaw_.load() - heading360_.load());
-        mover(90 + correction, 40, 0);
-        if(fabs(correction) < 20.0f){
-          turnStep[0].store(true);
-        }
-      }
-      else if(turnStep[1].load() == false){
-        mover(90, 40, 1);
-        if(distBack < 0.5f){
-          turnStep[1].store(true);
-          inturn.store(false);
-          turntype_.store(0);
-          for(int i = 0; i < 4; i++){
-            turnStep[i].store(false);
-          }
-        }
-      }
-    }
-    else if(turntype_.load() == 2){
-      const char* prompt = (turnStep[0].load() ? "Giro tipo 2 yes" : "Giro tipo 2 no");
-      RCLCPP_INFO(this->get_logger(), prompt);
-      if(turnStep[0].load() == false){
-        RCLCPP_INFO(this->get_logger(), "Paso 1");
-        float correction = wrapError(targetYaw_.load() - heading360_.load());
-        mover(90,30,0);
-        if(distanFront < 0.55f){
-          turnStep[0].store(true);
-        }
-      }
-      else if(turnStep[1].load() == false){
-        RCLCPP_INFO(this->get_logger(), "Paso 2");
-        float correction = wrapError((targetYaw_.load() - 45) - heading360_.load());
-        mover(90 + correction, 40, 0);
-        if(fabs(correction) < 20.0f){
-          turnStep[1].store(true);
-        }
-      }
-      else if(turnStep[2].load() == false){
-        float correction = wrap_pm180(targetYaw_.load() - heading360_.load());
-        mover(90 - correction, 40, 1);
-        if(fabs(correction) < 10.0f){
-          turnStep[2].store(true);
-        }
-      }
-      else if(turnStep[3].load() == false){ 
-        mover(90, 40, 1); //giro parte 2
-        if(distBack < 0.5f){
-          turnStep[3].store(true);
-          inturn.store(false);
-          turntype_.store(0);
-          for(int i = 0; i < 4; i++){
-            turnStep[i].store(false);
-          }
-        }
-      }
-    } 
-
-
-  else if(turntype_.load() == 3){
-      RCLCPP_INFO(this->get_logger(), "Giro tipo 3");
-      if(turnStep[0].load() == false){
-        RCLCPP_INFO(this->get_logger(), "Paso 1");
-        mover(90, 40, 0); //giro parte 1
-        if(distanFront < 0.30f){
-          turnStep[0].store(true);
-        }
-      }
-      else if(turnStep[1].load() == false){
-        RCLCPP_INFO(this->get_logger(), "Paso 2");
-        if(direction_.load() == 1) mover(150, 50, 1);
-        else if(direction_.load() == 2) mover(30, 40, 1);
-        if(fabs(targetYaw_.load() - heading360_.load()) < 5.0f){
-          turnStep[1].store(true);
-        }
-      }
-      else if(turnStep[2].load() == false){
-        mover(150, 50, 1);
-        if(distBack < 0.3f){
-          turnStep[2].store(true);
-          inturn.store(false);
-          turntype_.store(0);
-          for(int i = 0; i < 4; i++){
-            turnStep[i].store(false);
-          }
-        }
-      }
-    }
-  }
 
   void updateObwithOtos(){
         const float yaw_prev = grad2rad(lastYaw.load());
@@ -589,7 +370,7 @@ inline float wrapPI(float a) {
         lastPosY.store(posY_.load());
         lastYaw.store(yaw.load());
   }
-  int turnCounter = 0;
+
   void on_timer() {
     if (!std::isfinite(heading360_.load())) return;
     if(new_otos_data.load()){
