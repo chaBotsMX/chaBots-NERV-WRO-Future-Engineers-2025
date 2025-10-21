@@ -64,3 +64,5 @@ private:
   int fd_;
   std::string last_error_;
 };
+
+#endif
