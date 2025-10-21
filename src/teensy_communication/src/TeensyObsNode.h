@@ -23,6 +23,8 @@
 #include <algorithm>
 
 
+
+
 #include "SerialPort.h"
 #include "Utils.h"
 
@@ -47,7 +49,6 @@ struct Cluster {
 };
 
 
-
 class TeensyObsNode : public rclcpp::Node {
 public:
   TeensyObsNode() : Node("teensy_obs") {
@@ -70,36 +71,14 @@ public:
     last_blocked_.store(false);
 
     timer_ = create_wall_timer(10ms, std::bind(&TeensyObsNode::on_timer, this));
+
+
   }
 
-  void on_objects_detections(const std_msgs::msg::Float32MultiArray::SharedPtr msg) {
-    const auto& data = msg->data;
-    size_t n = data.size() / 3;
-    if (n == 0) {
-      object_status_.store(0.0f);
-      return;
-    }
 
-    float min_dist = std::numeric_limits<float>::max();
-    int idx_min = -1;
-    for (size_t i = 0; i < n; ++i) {
-      float dist = data[i * 3 + 1];
-      if (dist < min_dist) {
-        min_dist = dist;
-        idx_min = static_cast<int>(i);
-      }
-    }
-    if (idx_min >= 0) {
-      object_color_.store(data[idx_min * 3 + 0]);
-      object_distance_.store(data[idx_min * 3 + 1]);
-      object_angle_.store(data[idx_min * 3 + 2]);
-      object_status_.store(1.0f);
-    } else {
-      object_status_.store(0.0f);
-    }
-  }
 
 private:
+  std::vector<Cluster> g_clusters;
   std::vector<lidarPoints> lidarMSG;
 
   float sectores[4] = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -123,7 +102,7 @@ private:
   static inline float clampf(float v, float lo, float hi) {
     return std::max(lo, std::min(v, hi));
   }
-
+  const float CLUSTER_JUMP_THRESHOLD = 0.15f; 
   const float kPI = 3.14159265358979323846f;
 
 inline float wrapPI(float a) {
@@ -157,38 +136,186 @@ inline float wrapPI(float a) {
     if (error < -0.1f) return 1;                        
     return static_cast<int>(pwm);
   }
+
+
+  // ---- Orientation and position update with OTOS ----
+  void getActualSector(){
+    float orientation = heading360_.load();
+    int thisSector = actualSector.load();
+    int thisSectorUpperLimit = sectoresAngs[0][thisSector];
+    int thisSectorLowerLimit = sectoresAngs[1][thisSector];
+    if(thisSector == 0){
+      orientation >= 180? orientation -= 360 : orientation = orientation;
+
+      if(orientation <  -50){
+        actualSector.store(3);
+        if(direction_.load() == 0){
+          direction_.store(2);
+        }
+      }
+      else if(orientation  > 50){
+        actualSector.store(1);
+        if(direction_.load() == 0){
+          direction_.store(1);
+        }
+      }
+    }  
+    else if(static_cast<int>(orientation) > thisSectorUpperLimit+5) {
+      thisSector++;
+      thisSector > 3 ? thisSector = 0 : thisSector = thisSector;
+      actualSector.store(thisSector);
+    }
+    else if(static_cast<int>(orientation) < thisSectorLowerLimit -5) {
+      thisSector--;
+      thisSector < 0 ? thisSector = 3 : thisSector = thisSector;
+      actualSector.store(thisSector);
+    }
+  }  
+
+  int getDriveDir(){
+    if(absolute_angle_.load() < 90.0f && dist_front_.load() < 0.35f){
+      return 1; // izquierda
+    }
+    else if(absolute_angle_.load() > 90.0f && dist_front_.load() < 0.35f){
+      return 2; // derecha
+    }
+    else{
+      return 0; 
+    }
+  }
+
+  // ---- LIDAR procesing ---
+    void updateLidarwithOtos(){
+        const float yaw_prev = grad2rad(lastYaw.load());
+        const float dx_w = posX_.load() - lastPosX.load();
+        const float dy_w = posY_.load() - lastPosY.load();
+        const float dth  = wrapPI(grad2rad(yaw.load() - lastYaw.load()));
+
+        const float c0 = std::cos(yaw_prev), s0 = std::sin(yaw_prev);
+        const float dx_b =  c0*dx_w + s0*dy_w;
+        const float dy_b = -s0*dx_w + c0*dy_w;
+
+        const float c = std::cos(-dth), s = std::sin(-dth);
+
+        for (auto& spt : lidarMSG) {
+          float x = spt.x - dx_b;
+          float y = spt.y - dy_b;
+
+          float xr = c*x - s*y;
+          float yr = s*x + c*y;
+
+          spt.x = xr;
+          spt.y = yr;
+          spt.angle = wrapPI(std::atan2(yr, xr));   
+          spt.mag   = std::hypot(xr, yr);
+        }
+
+        lastPosX.store(posX_.load());
+        lastPosY.store(posY_.load());
+        lastYaw.store(yaw.load());
+  }
+  // ---- Clustering LIDAR points ----
+void find_clusters() {
+  g_clusters.clear();
+  const int n = static_cast<int>(lidarMSG.size());
+  if (n == 0) return;
+
+  int start = 0;                      // índice de inicio del clúster actual
+  double sumx = lidarMSG[0].x;        // acumuladores para centroide
+  double sumy = lidarMSG[0].y;
+  int count   = 1;
+
+  for (int i = 1; i < n; ++i) {
+    // salto euclidiano entre puntos consecutivos (usando tus ángulos y magnitudes)
+    float jump = Utils::getEuclideanDistance(
+      lidarMSG[i-1].angle, lidarMSG[i-1].mag,
+      lidarMSG[i].angle,   lidarMSG[i].mag
+    );
+
+    if (jump > CLUSTER_JUMP_THRESHOLD) {
+      // cerramos clúster [start .. i-1]
+      Cluster c{};
+      c.type = 0; c.color = 0;
+      c.size = count;
+      c.start_x = lidarMSG[start].x; c.start_y = lidarMSG[start].y;
+      c.end_x   = lidarMSG[i-1].x;  c.end_y   = lidarMSG[i-1].y;
+      c.x = static_cast<float>(sumx / count);
+      c.y = static_cast<float>(sumy / count);
+      g_clusters.push_back(c);
+
+      // comenzamos nuevo clúster en i
+      start = i;
+      sumx  = lidarMSG[i].x;
+      sumy  = lidarMSG[i].y;
+      count = 1;
+    } else {
+      // seguimos en el mismo clúster
+      sumx += lidarMSG[i].x;
+      sumy += lidarMSG[i].y;
+      ++count;
+    }
+  }
+
+  // cerrar el último clúster (hasta n-1)
+  if (count > 0) {
+    Cluster c{};
+    c.type = 0; c.color = 0;
+    c.size = count;
+    c.start_x = lidarMSG[start].x; c.start_y = lidarMSG[start].y;
+    c.end_x   = lidarMSG.back().x; c.end_y   = lidarMSG.back().y;
+    c.x = static_cast<float>(sumx / count);
+    c.y = static_cast<float>(sumy / count);
+    g_clusters.push_back(c);
+  }
+}
+
+
+  void classify_clusters() {
+    int size = static_cast<int>(g_clusters.size());
+    for (int i = 0; i < size; ++i) {
+      float cluster_size = getEuclideanDistance(g_clusters[i].start_x, g_clusters[i].start_y,
+                                               g_clusters[i].end_x, g_clusters[i].end_y);
+      if (cluster_size < 0.07f) {
+            g_clusters[i].type = 1; // bloque               
+    }
+    else {
+            g_clusters[i].type = 0; // pared
+      }
+    }
+
+  }
+    void take_measures() {
+      // inicializa a “muy lejos”
+      float best_front = std::numeric_limits<float>::infinity();
+      float best_side  = std::numeric_limits<float>::infinity();
+
+      float best_block = std::numeric_limits<float>::infinity();
+      float bx = 0.0f, by = 0.0f;
+
+      for (const auto& c : g_clusters) {
+        if (c.type == 0) { // pared
+          // frente = distancia sobre eje X (tu 0 rad mira al +X)
+          best_front = std::min(best_front, std::fabs(c.x));
+          // lateral (pared exterior) = distancia sobre eje Y
+          best_side  = std::min(best_side,  std::fabs(c.y));
+        } else { // bloque
+          float d = std::hypot(c.x, c.y);   // distancia cartesiana correcta
+          if (d < best_block) { best_block = d; bx = c.x; by = c.y; }
+        }
+      }
+
+      if (std::isfinite(best_front)) distance_to_front_wall.store(best_front);
+      if (std::isfinite(best_side))  distance_to_out_wall.store(best_side);
+      if (std::isfinite(best_block)) {
+        obj_avoid_dis.store(best_block);
+        obj_avoid_x.store(bx);
+        obj_avoid_y.store(by);
+      }
+    }
+
   // ---- callbacks ----
 
-  void getOffSetsFromLidar(){
 
-    float sumX = 0.0f; float sumY = 0.0f;
-    float sumFront = 0.0f; size_t totalFront = 0;
-    float sumLeft = 0.0f; size_t totalLeft = 0;
-    float sumRight = 0.0f; size_t totalRight = 0;
-    float sumBack = 0.0f; size_t totalBack = 0;
-    for (const auto& pt : lidarMSG) {
-      const float a = pt.angle;
-      const float r = pt.mag;
-      if(a > -0.50f && a < 3.1415f ||  a < -2.75f) {
-        sumX += r * std::cos(a);
-        sumY += r * std::sin(a);
-      }
-      if(a < -1.3962f && a > -1.7453f) { sumBack += r; ++totalBack; }
-      if (a > 1.39 && a < 1.7453f) { sumFront += r; ++totalFront; }
-      if( a > 0.0f && a < 0.5235f) { sumLeft += r; ++totalLeft; }
-      if( a > 2.79252f && a < 3.141592f) { sumRight += r; ++totalRight; }
-    }
-    absolute_angle_.store(std::atan2(sumY, sumX) * 180.0f / kPI);
-    const float backmean = (totalBack ? (sumBack / static_cast<float>(totalBack)) : std::numeric_limits<float>::quiet_NaN());
-    dist_back_.store(backmean);
-     float frontmean = (totalFront ? (sumFront / static_cast<float>(totalFront)) : std::numeric_limits<float>::quiet_NaN());
-    if(std::isnan(frontmean)){frontmean = 0.0f;}
-    dist_front_.store(frontmean);
-    const float leftmean = (totalLeft ? (sumLeft / static_cast<float>(totalLeft)) : std::numeric_limits<float>::quiet_NaN());
-    dist_Left_.store(leftmean);
-    const float rightmean = (totalRight ? (sumRight / static_cast<float>(totalRight)) : std::numeric_limits<float>::quiet_NaN());
-    dist_Right_.store(rightmean);
-  }
   void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
     const float angle_min = msg->angle_min;
     const float angle_inc = msg->angle_increment;
@@ -202,8 +329,8 @@ inline float wrapPI(float a) {
       if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) continue;
       lidarMSG.push_back({ang, pointAngX(ang, r), pointAngY(ang, r), r});
     }
+    find_clusters();
   }
-
 
   void on_odom(const nav_msgs::msg::Odometry::SharedPtr msg) {
   const auto& q = msg->pose.pose.orientation;
@@ -242,147 +369,45 @@ inline float wrapPI(float a) {
     new_otos_data.store(true);  
   }
 
-
-  void getActualSector(){
-    float orientation = heading360_.load();
-    int thisSector = actualSector.load();
-    int thisSectorUpperLimit = sectoresAngs[0][thisSector];
-    int thisSectorLowerLimit = sectoresAngs[1][thisSector];
-    if(thisSector == 0){
-      orientation >= 180? orientation -= 360 : orientation = orientation;
-
-      if(orientation <  -50){
-        actualSector.store(3);
-        if(direction_.load() == 0){
-          direction_.store(2);
-        }
-      }
-      else if(orientation  > 50){
-        actualSector.store(1);
-        if(direction_.load() == 0){
-          direction_.store(1);
-        }
-      }
-    }  
-    else if(static_cast<int>(orientation) > thisSectorUpperLimit+5) {
-      thisSector++;
-      thisSector > 3 ? thisSector = 0 : thisSector = thisSector;
-      actualSector.store(thisSector);
-    }
-    else if(static_cast<int>(orientation) < thisSectorLowerLimit -5) {
-      thisSector--;
-      thisSector < 0 ? thisSector = 3 : thisSector = thisSector;
-      actualSector.store(thisSector);
-    }
-  }  
-
-
-  
-
-  int getDriveDir(){
-    if(absolute_angle_.load() < 90.0f && dist_front_.load() < 0.35f){
-      return 1; // izquierda
-    }
-    else if(absolute_angle_.load() > 90.0f && dist_front_.load() < 0.35f){
-      return 2; // derecha
-    }
-    else{
-      return 0; 
-    }
-  }
-  void girar(){
-    if(direction_.load() == 0 ){
-      RCLCPP_INFO(this->get_logger(), "Decidiendo dirección de giro, direccion actual: %d", direction_.load());
-      direction_.store(getDriveDir());
-    }
-    if(direction_.load() == 2 && turnAllowed_.load()){
-      targetYaw_.store(wrap_360(targetYaw_.load() + 90.0f));
-      turnAllowed_.store(false);
-      inturn.store(true);
-      for(auto &i : turnStep) i.store(false); 
-    }
-    else if(direction_.load() == 1 && turnAllowed_.load()){
-      targetYaw_.store(wrap_360(targetYaw_.load() - 90.0f));
-      turnAllowed_.store(false);
-      inturn.store(true);
-    }
-
-  }
-
-
-  void updateObwithOtos(){
-        const float yaw_prev = grad2rad(lastYaw.load());
-        const float dx_w = posX_.load() - lastPosX.load();
-        const float dy_w = posY_.load() - lastPosY.load();
-        const float dth  = wrapPI(grad2rad(yaw.load() - lastYaw.load()));
-
-        const float c0 = std::cos(yaw_prev), s0 = std::sin(yaw_prev);
-        const float dx_b =  c0*dx_w + s0*dy_w;
-        const float dy_b = -s0*dx_w + c0*dy_w;
-
-        const float c = std::cos(-dth), s = std::sin(-dth);
-        float r = object_distance_.load() / 100.0f; // convertir a metros
-
-        float x = r * std::sin(grad2rad(object_angle_.load())) - dx_b;
-        float y = r * std::cos(grad2rad(object_angle_.load())) - dy_b;
-
-        float xr = c*x - s*y;
-        float yr = s*x + c*y;
-
-        object_angle_.store(rad2grad(wrapPI(std::atan2(yr, xr))));   
-        // ang_x: ángulo estándar (respecto a X)
-        float ang_x_deg = rad2grad(wrapPI(std::atan2(yr, xr)));
-
-        // Convierte a tu convención (respecto a Y): ?_y = 90° - ?_x
-        float ang_y_deg = wrap_pm180(90.0f - ang_x_deg);
-
-        // Guarda SIEMPRE el ángulo del objeto en referencia Y (la que usa tu control)
-        object_angle_.store(ang_y_deg);
-
-
-  }
-  void updateLidarwithOtos(){
-        const float yaw_prev = grad2rad(lastYaw.load());
-        const float dx_w = posX_.load() - lastPosX.load();
-        const float dy_w = posY_.load() - lastPosY.load();
-        const float dth  = wrapPI(grad2rad(yaw.load() - lastYaw.load()));
-
-        const float c0 = std::cos(yaw_prev), s0 = std::sin(yaw_prev);
-        const float dx_b =  c0*dx_w + s0*dy_w;
-        const float dy_b = -s0*dx_w + c0*dy_w;
-
-        const float c = std::cos(-dth), s = std::sin(-dth);
-
-        for (auto& spt : lidarMSG) {
-          float x = spt.x - dx_b;
-          float y = spt.y - dy_b;
-
-          float xr = c*x - s*y;
-          float yr = s*x + c*y;
-
-          spt.x = xr;
-          spt.y = yr;
-          spt.angle = wrapPI(std::atan2(yr, xr));   
-          spt.mag   = std::hypot(xr, yr);
-        }
-
-        lastPosX.store(posX_.load());
-        lastPosY.store(posY_.load());
-        lastYaw.store(yaw.load());
-  }
-
   void on_timer() {
     if (!std::isfinite(heading360_.load())) return;
     if(new_otos_data.load()){
-      updateObwithOtos();
       updateLidarwithOtos();
       new_otos_data.store(false);
     } 
-    getOffSetsFromLidar();
+  //  getOffSetsFromLidar();
     getActualSector();
-        
+    int numberClusters = static_cast<int>(g_clusters.size());
+    RCLCPP_INFO(this->get_logger(), "Numero de clusters: %d", numberClusters);
+    
     }
 
+  void on_objects_detections(const std_msgs::msg::Float32MultiArray::SharedPtr msg) {
+    const auto& data = msg->data;
+    size_t n = data.size() / 3;
+    if (n == 0) {
+      object_status_.store(0.0f);
+      return;
+    }
+
+    float min_dist = std::numeric_limits<float>::max();
+    int idx_min = -1;
+    for (size_t i = 0; i < n; ++i) {
+      float dist = data[i * 3 + 1];
+      if (dist < min_dist) {
+        min_dist = dist;
+        idx_min = static_cast<int>(i);
+      }
+    }
+    if (idx_min >= 0) {
+      object_color_.store(data[idx_min * 3 + 0]);
+      object_distance_.store(data[idx_min * 3 + 1]);
+      object_angle_.store(data[idx_min * 3 + 2]);
+      object_status_.store(1.0f);
+    } else {
+      object_status_.store(0.0f);
+    }
+  }
   
 
 
@@ -395,6 +420,11 @@ inline float wrapPI(float a) {
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr objects_detections_sub_;
 
   // atómicos (siempre .load() / .store())
+  std::atomic<float> obj_avoid_dis{0.0f};
+  std::atomic<float> obj_avoid_x{0.0f};
+  std::atomic<float> obj_avoid_y{0.0f};
+  std::atomic<float> distance_to_front_wall{0.0f};
+  std::atomic<float> distance_to_out_wall{0.0f};
   std::atomic<float> lastYaw{0.0f};
   std::atomic<float> yaw{0.0f};
   std::atomic<bool> new_otos_data{false};
