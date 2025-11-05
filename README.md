@@ -221,8 +221,8 @@ For the steering system, the goal was to simplify the mechanism as much as possi
     <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
       As mentioned above, we used two connectors, one per wheel, so they rotated independently. These connectors aren't straight, as this shape allows us to more clearly define the angle differences between the wheels. However, we arrived at this shape experimentally, as if the shape were more pronounced, we reached a point where the wheel wouldn't return to its original position.
     </td>
-    <td style="width: 40%; vertical-align: top;">
-      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketconnector.png?raw=true">
+     <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketconnector.png?raw=true" alt="Wheel Support" style="width: 80%;">
     </td>
   </tr>
 </table>
@@ -234,7 +234,7 @@ For the steering system, the goal was to simplify the mechanism as much as possi
      We designed the L-shaped wheel mount so that the wheels could rotate more easily and not collide with the robot's chassis.
     </td>
     <td style="width: 40%; vertical-align: top;">
-      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketwheel.png?raw=true">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketwheel.png?raw=true" style="width: 80%;">
     </td>
   </tr>
 </table>
