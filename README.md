@@ -174,27 +174,70 @@ The steel shafts were manually sized from steel rod. These were cut to the requi
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-assembly.png?raw=true">
 For the steering system, the goal was to simplify the mechanism as much as possible, as this would allow for quick and easy manufacturing. However, we decided to make this an Ackermann system, allowing the inner wheel to have a larger angle than the outer wheel. Thanks to this, we were able to prevent the front wheels from slipping when turning, something that occurred with the previous non-Ackermann model.
 
+
+
+
 #### 5.2.1. Servo HiTEC HS-85MG
-  <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-HS-85MG.png?raw=true">
-We selected the HiTEC HS-85MG for our robot's Ackermann steering system, primarily due to its robust metal gears (MG). Unlike many standard or smaller servos that use plastic gears, the metal gearing provides the significantly enhanced durability and resistance to stripping that our steering mechanism requires. This is crucial for us to handle the mechanical loads, vibrations, and potential impacts inherent in the system's operation. We also find that this servo packs considerable torque and good precision into a compact "mighty mini" form factor, supported by a top ball bearing. This ensures it provides the strength we need to turn the wheels effectively while maintaining accurate steering angles, minimizing the excessive "slop" or backlash we might see in less robust options. For our application, this blend of power, durability, and reliable accuracy in a small package makes it a superior choice over servos that could fail or wear quickly under the demands of steering.
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+      We selected the HiTEC HS-85MG for our robot's Ackermann steering system, primarily due to its robust metal gears (MG). Unlike many standard or smaller servos that use plastic gears, the metal gearing provides the significantly enhanced durability and resistance to stripping that our steering mechanism requires. This is crucial for us to handle the mechanical loads, vibrations, and potential impacts inherent in the system's operation. We also find that this servo packs considerable torque and good precision into a compact "mighty mini" form factor, supported by a top ball bearing. This ensures it provides the strength we need to turn the wheels effectively while maintaining accurate steering angles, minimizing the excessive "slop" or backlash we might see in less robust options. For application, this blend of power, durability, and reliable accuracy in a small package makes it a superior choice over servos that could fail or wear quickly under the demands of steering.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-HS-85MG.png?raw=true" alt="Servo HiTEC HS-85MG" style="width: 100%;">
+    </td>
+  </tr>
+</table>
 
 #### 5.2.2. Base
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-base.png?raw=true">
-We designed the base around the servo, so that everything was symmetrical. We also designed the base to be modular and easily attach to the robot's chassis for easy repairs. We 3D printed the base using carbon fiber filament, as we did all the other robot parts, to increase strength.
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+      We designed the base around the servo, so that everything was symmetrical. We also designed the base to be modular and easily attach to the robot's chassis for easy repairs. We 3D printed the base using carbon fiber filament, as we did all the other robot parts, to increase strength.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-base.png?raw=true">
+    </td>
+  </tr>
+</table>
 
 #### 5.2.3. Connectors
 
 ##### 5.2.3.1. Servo Connector
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-servoconnector.png?raw=true">
-We designed the servo connector this way because, as an Ackermann system, the wheels needed to be connected independently of each other. If we used a single connector for the wheels, both would have the same turning angle, but by splitting it, each wheel would turn at a different angle.
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+      We designed the servo connector this way because, as an Ackermann system, the wheels needed to be connected independently of each other. If we used a single connector for the wheels, both would have the same turning angle, but by splitting it, each wheel would turn at a different angle.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-servoconnector.png?raw=true">
+    </td>
+  </tr>
+</table>
 
 ##### 5.2.3.2. Wheel Connectors
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketconnector.png?raw=true">
-As mentioned above, we used two connectors, one per wheel, so they rotated independently. These connectors aren't straight, as this shape allows us to more clearly define the angle differences between the wheels. However, we arrived at this shape experimentally, as if the shape were more pronounced, we reached a point where the wheel wouldn't return to its original position.
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+      As mentioned above, we used two connectors, one per wheel, so they rotated independently. These connectors aren't straight, as this shape allows us to more clearly define the angle differences between the wheels. However, we arrived at this shape experimentally, as if the shape were more pronounced, we reached a point where the wheel wouldn't return to its original position.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketconnector.png?raw=true">
+    </td>
+  </tr>
+</table>
 
 #### 5.2.4. Wheel Supports
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketwheel.png?raw=true">
-We designed the L-shaped wheel mount so that the wheels could rotate more easily and not collide with the robot's chassis.
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     We designed the L-shaped wheel mount so that the wheels could rotate more easily and not collide with the robot's chassis.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketwheel.png?raw=true">
+    </td>
+  </tr>
+</table>
 
 #### 5.2.5. Wheels
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-rhine.png?raw=true">
