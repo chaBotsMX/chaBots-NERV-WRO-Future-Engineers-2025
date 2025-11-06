@@ -162,20 +162,62 @@ High-precision odometry sensor for accurate position tracking.
 ## 5. Mobility Management <a name="mobility-management"></a>
 
 ### 5.1. Gearbox:
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/models/gearbox/gearbox-assemble.png?raw=true.png">
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-assembly.png?raw=true">
+The robot's transmission features a custom-designed gearbox, with the base and gears developed in CAD software and manufactured in-house. For fabrication, the team used a Creality K2 Plus Combo printer, chosen for its reliability in handling engineering-grade materials. The material selected was Polymaker PETG-CF (a carbon-fiber-infused PETG), prized for its high stiffness, dimensional stability, and excellent wear resistance, which are critical for durable mechanical components.
+A key design feature is the use of double helical gears. This geometry was chosen over standard spur gears to ensure smoother, quieter power transmission with reduced vibration and superior load distribution. This significantly improves mechanical efficiency and component lifespan.
+The drive axle consists of 4 mm steel shafts, which were custom-cut from rod stock. To ensure positive torque transfer from the gearbox to the wheels, the ends of the shafts were manually modified using a Dremel tool to create a "D" shape. This profile prevents slippage between the shaft and the wheel hub, a common failure point in high-torque applications.
 
-**Motor Model:** Maxon DCX19
-The team opted for custom steel shafts with a 4 mm diameter, which were connected to a Maxon DCX19 motor. This motor provided sufficient power and torque to meet the project's performance requirements, with a maximum speed of 600 RPM. The gear ratio between the motor and the output gear is 1:1, as higher speeds were not required at the time.
-The transmission base and gears were designed and manufactured by the team. To maximize strength and durability, Polymaker PTG CF filament was used on a Creality K2 Plus Combo printer. To improve efficiency and reduce mechanical wear, double helical gears were designed and printed.
-The steel shafts were manually sized from steel rod. These were cut to the required length and, using a Dremel tool, shaped into a D-shape to ensure a firm grip with the wheel hubs. The rear wheels were also custom-made with a 3D-printed D-shaped axle for secure fit.
+#### 5.1.1. Maxon DCX19
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The powerhouse for the gearbox is the Maxon DCX19, a 19 mm brushed DC motor equipped with an integrated planetary gearhead. This motor was selected for its high power density, precision, and proven reliability. The integrated gearhead is the primary source of torque multiplication, providing a final output speed of 600 RPM. This combination delivers the high torque and controlled speed necessary to meet the robot's performance requirements for acceleration and payload handling.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-MaxonDCX19.png?raw=true" alt="Servo HiTEC HS-85MG">
+    </td>
+  </tr>
+</table>
 
+#### 5.1.2. Base
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+	We designed the base of the gearbox so that the wheel axle is as close as possible to the steering axis in order to make tighter turns.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-base.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 5.1.3. Gears
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The custom-printed double helical gears transfer power from the motor's gearhead output to the wheel axle. This external gear stage was designed with a 1:1 gear ratio. This configuration was chosen because the Maxon motor's integrated gearhead already provided the ideal speed reduction (down to 600 RPM) and torque multiplication. The 1:1 external gears, therefore, act as a direct power transmission, simplifying the design while perfectly matching the motor's output speed to the drive wheels.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-gear.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 5.1.4. Wheels
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The rear wheel hubs (rims) were also custom-designed and 3D-printed to integrate perfectly with the transmission. The central feature of the hub is a D-shaped bore (hole). This profile is precisely matched to the D-shaped 4 mm steel shafts, ensuring a secure, non-slip mechanical lock. This method guarantees that all torque generated by the motor is effectively transferred from the axle directly to the wheel.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-rim.png?raw=true">
+    </td>
+  </tr>
+</table>
 
 ### 5.2. Steering System
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-assembly.png?raw=true">
 For the steering system, the goal was to simplify the mechanism as much as possible, as this would allow for quick and easy manufacturing. However, we decided to make this an Ackermann system, allowing the inner wheel to have a larger angle than the outer wheel. Thanks to this, we were able to prevent the front wheels from slipping when turning, something that occurred with the previous non-Ackermann model.
-
-
-
 
 #### 5.2.1. Servo HiTEC HS-85MG
 <table style="width: 100%;">
@@ -184,7 +226,7 @@ For the steering system, the goal was to simplify the mechanism as much as possi
       We selected the HiTEC HS-85MG for our robot's Ackermann steering system, primarily due to its robust metal gears (MG). Unlike many standard or smaller servos that use plastic gears, the metal gearing provides the significantly enhanced durability and resistance to stripping that our steering mechanism requires. This is crucial for us to handle the mechanical loads, vibrations, and potential impacts inherent in the system's operation. We also find that this servo packs considerable torque and good precision into a compact "mighty mini" form factor, supported by a top ball bearing. This ensures it provides the strength we need to turn the wheels effectively while maintaining accurate steering angles, minimizing the excessive "slop" or backlash we might see in less robust options. For application, this blend of power, durability, and reliable accuracy in a small package makes it a superior choice over servos that could fail or wear quickly under the demands of steering.
     </td>
     <td style="width: 40%; vertical-align: top;">
-      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-HS-85MG.png?raw=true" alt="Servo HiTEC HS-85MG" style="width: 100%;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-HS-85MG.png?raw=true">
     </td>
   </tr>
 </table>
@@ -222,7 +264,7 @@ For the steering system, the goal was to simplify the mechanism as much as possi
       As mentioned above, we used two connectors, one per wheel, so they rotated independently. These connectors aren't straight, as this shape allows us to more clearly define the angle differences between the wheels. However, we arrived at this shape experimentally, as if the shape were more pronounced, we reached a point where the wheel wouldn't return to its original position.
     </td>
      <td style="width: 40%; vertical-align: top;">
-      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketconnector.png?raw=true" alt="Wheel Support" style="width: 80%;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketconnector.png?raw=true">
     </td>
   </tr>
 </table>
@@ -234,20 +276,65 @@ For the steering system, the goal was to simplify the mechanism as much as possi
      We designed the L-shaped wheel mount so that the wheels could rotate more easily and not collide with the robot's chassis.
     </td>
     <td style="width: 40%; vertical-align: top;">
-      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketwheel.png?raw=true" style="width: 80%;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketwheel.png?raw=true">
     </td>
   </tr>
 </table>
 
 #### 5.2.5. Wheels
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-rhine.png?raw=true">
-We decided to make our own wheels because we couldn't find any commercial wheels that fit our robot. We previously used the Lego Spike wheels, but they had very little contact surface area, so we decided to create our own wheels using the measurements of Spike's wheels. To do this, we created a rim and 3D printed it. We then used a mold and polyurethane resin to make the rubber. This process is shown in the following video: [AQUÍ VA EL VIDEO XD todavía no está]
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     We decided to make our own wheels because we couldn't find any commercial wheels that fit our robot. We previously used the Lego Spike wheels, but they had very little contact surface area, so we decided to create our own wheels using the measurements of Spike's wheels. To do this, we created a rim and 3D printed it. We then used a mold and polyurethane resin to make the rubber. This process is shown in the following video: [AQUÍ VA EL VIDEO XD todavía no está]
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-rhine.png?raw=true">
+    </td>
+  </tr>
+</table>
 
-### 5.3. Chasis
+### 5.3. Bases
+
+#### 5.3.1. Lidar Base
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     The base for the lidar was designed in the simplest way possible, with eight holes, four for screwing the lidar in and the rest for fixing the base.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/chassis/lidar-base.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 5.3.2. Camera Base
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     The camera mount is a copy-paste of the lidar mount, modified to support the camera. We experimentally set the angle of this mount to give the camera the widest possible field of view without it looking outside the track.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/chassis/camera-base.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 5.3.3. Chasis
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     The chassis is the robot's main structure, as all other systems are mounted on it. A modular design was chosen to facilitate assembly and maintenance. The chassis is made of carbon fiber, which was cut in China.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/chassis/chassis-base.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+### 5.4. Assembly
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly.png?raw=true">
-The chassis is the robot's main structure, as all other systems are mounted on it. A modular design was chosen to facilitate assembly and maintenance. The chassis is made of carbon fiber, which was cut in China.
-The steering system is mounted on the chassis using 20mm-high M3 posts. The odometer PCB is anchored below the steering system, as this makes better use of space. The gearbox is mounted directly to the rear of the chassis, and the Raspberry Pi 5 is mounted on it using 20mm-high M2.5 posts. The main PCB is mounted in the middle, and the Lidar base is mounted on 20mm-high M3 posts. The Raspberry Pi camera v2 base is mounted on the Lidar base using 40mm-high M3 posts.
-Using these poles helped us keep the robot as low as possible, allowing the Lidar sensor to be level with the runway walls.
+
+The steering system is mounted on the chassis using 20mm-high M3 posts. The odometer PCB is anchored below the steering system, as this makes better use of space. The gearbox is mounted directly to the rear of the chassis, and the Raspberry Pi 5 is mounted on it using 20mm-high M2.5 posts. The main PCB is mounted in the middle, and the Lidar base is mounted on 20mm-high M3 posts. The Raspberry Pi camera v2 base is mounted on the Lidar base using 40mm-high M3 posts. Using these poles helped us keep the robot as low as possible, allowing the Lidar sensor to be level with the runway walls.
 
 ---
 
