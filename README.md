@@ -349,7 +349,7 @@ For the steering system, the goal was to simplify the mechanism as much as possi
 ### 5.4. Assembly
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly.png?raw=true">
 
-The steering system is mounted on the chassis using 20mm-high M3 posts. The odometer PCB is anchored below the steering system, as this makes better use of space. The gearbox is mounted directly to the rear of the chassis, and the Raspberry Pi 5 is mounted on it using 20mm-high M2.5 posts. The main PCB is mounted in the middle, and the Lidar base is mounted on 20mm-high M3 posts. The Raspberry Pi camera v2 base is mounted on the Lidar base using 40mm-high M3 posts. Using these poles helped us keep the robot as low as possible, allowing the Lidar sensor to be level with the runway walls.
+The steering system is mounted on the chassis using 20mm-high M3 posts. The odometer PCB is anchored below the steering system, as this makes better use of space. The gearbox is mounted directly to the rear of the chassis, and the Raspberry Pi 5 is mounted on it using 20mm-high M2.5 posts. The main PCB is mounted in the middle, and the Lidar base is mounted on 20mm-high M3 posts. The Raspberry Pi camera v2 base is mounted on the Lidar base using 40mm-high M3 posts. Using these poles helped us keep the robot as low as possible, allowing the Lidar sensor to be leveled with the runway walls.
 
 <table style="width: 100%;">
   <tbody>
@@ -373,7 +373,7 @@ The steering system is mounted on the chassis using 20mm-high M3 posts. The odom
 
 ## 6. Code Overview <a name="code-overview"></a>
 
-This is an autonomous robot developed with ROS2 using Python. The robot can navigate autonomously, detect obstacles, and detect colored objects.
+This is an autonomous robot developed with ROS2 using Python. The robot can navigate autonomously, detect obstacles, and detect colored objects. We decided on using ROS2 since it allows us to develop the different features of our robot modularly, which also makes each component and feature more manageable.
 
 ### 6.1. System Architecture
 
@@ -393,7 +393,7 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
 
 #### 6.2.1. Kinetic Obstacle Detection and Hardware Communication
 - **File**: `src/teensy_communication/launch/robot.launch.py`
-- **Function**:
+- **Function**: Process sensor data and send the desired direction of the Ackermann and the speed of the motors.
 - **Features**:
   - Teensy configuration
   - Odometry and sensor management
@@ -460,7 +460,7 @@ void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg)
     }
 }
 ```
-This call back is called only when a the lidar node post a new message in topic, this piece only storage a cloud of points send by the lidar, the next step is procces this information to get the actual position of the robot in the track, we use the OTOS to update this information every call, because of the lidar only posting at 10hz is to slow, it means it only have new information every 100ms that make imposible to have a smoth move, the OTOS post at 100Hz, meaning we can smoth our trajectory 10 times more using this, we dont use absolute infromation like coordinates in x or y axis, we take the changue in cm betwen the new read and the last read and add it to the cloud of points, also we calculate some infromation to help our robot to not colide with the walls, like the distance in front, left and rigth, this help to calculate optimal PD controller values relative to robots position and speed.
+This callback is called only when a the lidar node post a new message in topic, this module only stores a cloud of points sent by the lidar, the next step is procces this information to get the actual position of the robot in the track, we use the OTOS to update this information every call, because of the lidar only posting at 10hz is to slow, it means it only have new information every 100ms that make imposible to have a smoth move, the OTOS post at 100Hz, meaning we can smoth our trajectory 10 times more using this, we dont use absolute infromation like coordinates in x or y axis, we take the changue in cm betwen the new read and the last read and add it to the cloud of points, also we calculate some infromation to help our robot to not colide with the walls, like the distance in front, left and rigth, this help to calculate optimal PD controller values relative to robots position and speed.
 ```c++
 
 void getOffsetsFromLidar()
