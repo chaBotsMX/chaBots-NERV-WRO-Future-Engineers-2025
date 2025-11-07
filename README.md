@@ -309,9 +309,7 @@ For the steering system, the goal was to simplify the mechanism as much as possi
   </tr>
 </table>
 
-<br>
-
-<iframe width="100%" height="550" src="https://www.youtube.com/embed/8JH6QCOU_B0" title="WRO FutureEngineers Custom Wheels - chaBots NERV" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[WRO FutureEngineers Custom Wheels - chaBots NERV](https://youtu.be/8JH6QCOU_B0)
 
 ### 5.3. Bases
 
