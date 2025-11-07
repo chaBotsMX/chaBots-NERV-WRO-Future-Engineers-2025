@@ -1,5 +1,3 @@
-
-
 # ChaBots - WRO Future Engineers 2025
 
 <!--<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/resources/ChaBotsLogo.png?raw=true" width="250">-->
@@ -29,16 +27,17 @@ This repository contains the documentation for **ChaBots** participation in the 
 
 1. 🧑‍💻 [The Team](#the-team)
 2. 🎯 [The Challenge](#the-challenge)
-3. 🤖 [Robot Overview](#robot-overview)
-4. 🔋 [Sense Overview](#sense-overview)
-5. ⚙️ [Mobility Management](#mobility-management)
-6. 💻 [Code Overview](#code-overview)
-7. 🚧 [Obstacle Management](#obstacle-management)
-8. 🛠️ [Construction Guide](#construction-guide)
-9. 💰 [Cost Report](#cost-report)
-10. 💭 [Discussion](#discussion)
-- 📚 [Resources](#resources)
-- ©️ [License](#license)
+3. 💭 [Discussion](#discussion)
+4. 🤖 [Robot Overview](#robot-overview)
+5. 🔋 [Sense Overview](#sense-overview)
+6. ⚙️ [Mobility Management](#mobility-management)
+7. 💡 [Electronics](#electronics)
+8. 💻 [Code Overview](#code-overview)
+9. 🚧 [Obstacle Management](#obstacle-management)
+10. 🛠️ [Construction Guide](#construction-guide)
+11. 💰 [Cost Report](#cost-report)
+12. 📚 [Resources](#resources)
+13. ©️ [License](#license)
 ---
 
 ## 1. The Team <a name="the-team"></a>
@@ -108,27 +107,134 @@ For more indo visit: [WRO Official Site](https://wro-association.org/)
 
 ---
 
-## 3. Robot Overview <a name="robot-overview"></a>
+## 3. Discussion <a name="discussion"></a>
 
- **Name:** Eva
+### 3.1. Decisions
 
-| Front | Back |
-|-------|------|
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-front.jpeg?raw=true" width="250">| <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-back.jpeg?raw=true" width="250">|
+Throughout this project, we faced numerous critical decisions that shaped our robot's final design. Our approach was driven by the principle of creating a robust, reliable system capable of handling the unpredictable nature of autonomous navigation challenges.
 
-| Left | Right |
-|------|-------|
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-left.jpeg?raw=true" width="250">| <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-right.jpeg?raw=true" width="250">|
+#### Why This Architecture?
 
-| Top | Bottom |
-|------|--------|
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-top.jpeg?raw=true" width="250">| <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-bottom.jpeg?raw=true" width="190">
+We chose a **distributed ROS2 architecture** for several key reasons:
+
+1. **Modularity**: Each sensor and algorithm runs in isolated nodes, making development, testing, and debugging significantly more manageable
+2. **Scalability**: Adding new sensors or algorithms requires minimal changes to existing code
+3. **Real-time Performance**: ROS2's real-time capabilities ensure consistent timing across all systems
+
+#### Hardware Selection Rationale
+
+**RPLiDAR C1**: Despite being expensive, the 360° scanning capability proved essential for complete environmental awareness. Alternative sensors like ultrasonic arrays couldn't provide the same level of detail and accuracy.
+
+**OTOS Sensor**: The optical tracking approach was chosen over traditional wheel encoders due to its immunity to wheel slip and superior accuracy in dynamic environments.
+
+**Raspberry Pi 5**: The increased computational power over previous generations allowed us to run complex computer vision algorithms in real-time while maintaining ROS2 communication overhead.
+
+### 3.2. Regional Experience and Lessons Learned
+
+Our experience at the regional competition was... challenging, to put it mildly. **We didn't perform as expected**, our robot's performance was disappointing during those crucial moments.
+
+#### What Went Wrong at Regionals
+
+- **Sensor calibration issues** under competition lighting conditions
+
+The regional result was a wake-up call that forced us to completely re-evaluate our approach.
+
+### 3.3. Rebuilding the System
+
+**We invested approximately 500 hours** into completely rebuilding and refining every aspect of our system:
+
+#### What We Rebuilt
+
+**Complete Software Stack**:
+- Migrated from basic control loops to PID controllers with adaptive parameters
+- Implemented sensor fusion algorithms for robust state estimation
+- Developed multi-modal obstacle avoidance strategies
+- Created comprehensive safety systems with multiple fallback mechanisms
+
+**Hardware Redesign**:
+- Switched from 3D-printed chassis to carbon fiber for improved rigidity
+- Upgraded to precision steel shafts and custom gearboxes
+- Implemented proper electromagnetic interference shielding
+- Redesigned cable management for reliability
+
+**Testing Infrastructure**:
+- Built a complete testing environment that simulates competition conditions
+- Developed automated testing scripts for regression testing
+- Created comprehensive calibration procedures
+
+### 3.4. Technical Achievements
+
+#### Algorithm Innovation
+
+Our **sensor fusion approach** combines OTOS, LiDAR, and vision data using Kalman filtering techniques that provide centimeter-level accuracy in dynamic environments.
+
+The **adaptive control system** automatically adjusts PID parameters based on track geometry, allowing optimal performance in both tight corners and wide corridors.
+
+#### Real-time Performance
+
+Achieving **10Hz control loop frequency** while processing:
+- 360° LiDAR scans at 8Hz
+- Computer vision at 30fps
+- OTOS updates at 100Hz
+- Safety monitoring at 100Hz
+
+#### Robustness Features
+
+- **Multi-sensor validation** prevents single points of failure
+- **Graceful degradation** when sensors malfunction
+- **Emergency stop systems** with sub-20ms response times
+- **Automatic recovery** from most common failure modes
+
+### 3.5. Competition Strategy Evolution
+
+Our approach to the WRO Future Engineers challenge evolved significantly:
+
+**Initial Strategy (Regional)**: Focus on basic navigation with simple obstacle avoidance
+**Current Strategy (National/International)**: Comprehensive autonomous system with advanced AI-driven decision making
+
+#### Key Strategic Insights
+
+1. **Reliability over Speed**: Consistent completion beats occasional fast times
+2. **Sensor Redundancy**: Multiple sensors for the same measurement prevent catastrophic failures
+3. **Adaptive Algorithms**: One-size-fits-all approaches don't work in dynamic environments
+4. **Extensive Testing**: Simulated conditions must exceed competition difficulty
 
 ---
 
-## 4. Sense Overview <a name="sense-overview"></a>
+## 4. Robot Overview <a name="robot-overview"></a>
 
-### 4.1. RPLiDAR C1
+ **Name:** Eva
+
+<table style="width: 100%;">
+  <tbody>
+    <tr>
+      <td>
+        <center><h4>Front</h4></center>
+        <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-front.jpeg?raw=true" style="width: 100%;">
+      </td>
+      <td>
+        <center><h4>Back</h4></center>
+        <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-back.jpeg?raw=true" style="width: 100%;">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <center><h4>Left</h4></center>
+        <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-left.jpeg?raw=true" style="width: 100%;">
+      </td>
+      <td>
+        <center><h4>Right</h4></center>
+        <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-right.jpeg?raw=true" style="width: 100%;">
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 5. Sense Overview <a name="sense-overview"></a>
+
+### 5.1. RPLiDAR C1
 360° laser scanner for environmental mapping and obstacle detection.
 
 **Tech specs:**
@@ -139,7 +245,7 @@ For more indo visit: [WRO Official Site](https://wro-association.org/)
 
 **Link:** [RPLiDAR C1](https://www.slamtec.com/en/C1)
 
-### 4.2. Raspberry Pi Camera V3
+### 5.2. Raspberry Pi Camera V3
 High-resolution camera for color object detection.
 
 **Tech specs:**
@@ -148,7 +254,7 @@ High-resolution camera for color object detection.
 
 **Link:** [Raspberry Pi Camera V3](https://www.raspberrypi.com/products/camera-module-3/)
 
-### 4.3. SparkFun Optical Tracking Odometry Sensor
+### 5.3. SparkFun Optical Tracking Odometry Sensor
 High-precision odometry sensor for accurate position tracking.
 
 **Tech specs:**
@@ -158,38 +264,380 @@ High-precision odometry sensor for accurate position tracking.
 
 **Link:** [SparkFun OTOS](https://www.sparkfun.com/sparkfun-optical-tracking-odometry-sensor-paa5160e1-qwiic.html)
 
-## 5. Mobility Management <a name="mobility-management"></a>
+---
 
-### 5.1. Gearbox:
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/models/gearbox/gearbox-assemble.png?raw=true.png">
+## 6. Mobility Management <a name="mobility-management"></a>
 
-**Motor Model:** Maxon DCX19
-The team opted for custom steel shafts with a 4 mm diameter, which were connected to a Maxon DCX19 motor. This motor provided sufficient power and torque to meet the project's performance requirements, with a maximum speed of 600 RPM. The gear ratio between the motor and the output gear is 1:1, as higher speeds were not required at the time.
-The transmission base and gears were designed and manufactured by the team. To maximize strength and durability, Polymaker PTG CF filament was used on a Creality K2 Plus Combo printer. To improve efficiency and reduce mechanical wear, double helical gears were designed and printed.
-The steel shafts were manually sized from steel rod. These were cut to the required length and, using a Dremel tool, shaped into a D-shape to ensure a firm grip with the wheel hubs. The rear wheels were also custom-made with a 3D-printed D-shaped axle for secure fit.
+### 6.1. Gearbox:
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-assembly.png?raw=true">
+The robot's transmission features a custom-designed gearbox, with the base and gears developed in CAD software and manufactured in-house. For fabrication, the team used a Creality K2 Plus Combo printer, chosen for its reliability in handling engineering-grade materials. The material selected was Polymaker PETG-CF (a carbon-fiber-infused PETG), prized for its high stiffness, dimensional stability, and excellent wear resistance, which are critical for durable mechanical components.
+A key design feature is the use of double helical gears. This geometry was chosen over standard spur gears to ensure smoother, quieter power transmission with reduced vibration and superior load distribution. This significantly improves mechanical efficiency and component lifespan.
+The drive axle consists of 4 mm steel shafts, which were custom-cut from rod stock. To ensure positive torque transfer from the gearbox to the wheels, the ends of the shafts were manually modified using a Dremel tool to create a "D" shape. This profile prevents slippage between the shaft and the wheel hub, a common failure point in high-torque applications.
 
+#### 6.1.1. Maxon DCX19
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The powerhouse for the gearbox is the Maxon DCX19, a 19 mm brushed DC motor equipped with an integrated planetary gearhead. This motor was selected for its high power density, precision, and proven reliability. The integrated gearhead is the primary source of torque multiplication, providing a final output speed of 600 RPM. This combination delivers the high torque and controlled speed necessary to meet the robot's performance requirements for acceleration and payload handling.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-MaxonDCX19.png?raw=true" alt="Servo HiTEC HS-85MG">
+    </td>
+  </tr>
+</table>
 
-### 5.2. Steering System
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/models/steering-system/steering-system-assembly.png?raw=true">
+#### 6.1.2. Base
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+	We designed the base of the gearbox so that the wheel axle is as close as possible to the steering axis in order to make tighter turns.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-base.png?raw=true">
+    </td>
+  </tr>
+</table>
 
-**Servo Model:** HS 85mg
-For the steering system, the goal was to make the mechanism as simple as possible, as this would allow for quick and easy manufacturing. It was decided to mount the HS 85mg servo on a 3D-designed and printed base, just like all the other components. The servo is connected to the beam that connects to the wheel mounts. These mounts are made to fit a LEGO axle without slipping.
-For the front wheels, the team used LEGO Spike rubber tires after determining that manufacturing them in-house was not feasible.
+#### 6.1.3. Gears
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The custom-printed double helical gears transfer power from the motor's gearhead output to the wheel axle. This external gear stage was designed with a 1:1 gear ratio. This configuration was chosen because the Maxon motor's integrated gearhead already provided the ideal speed reduction (down to 600 RPM) and torque multiplication. The 1:1 external gears, therefore, act as a direct power transmission, simplifying the design while perfectly matching the motor's output speed to the drive wheels.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-gear.png?raw=true">
+    </td>
+  </tr>
+</table>
 
-### 5.3. Chasis
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/models/v-assembly.png?raw=true">
-The chassis is the robot's main structure, as all other systems are mounted on it. A modular design was chosen to facilitate assembly and maintenance. The chassis is made of carbon fiber, which was cut in China.
-The steering system is mounted on the chassis using 20mm-high M3 posts. The odometer PCB is anchored below the steering system, as this makes better use of space. The gearbox is mounted directly to the rear of the chassis, and the Raspberry Pi 5 is mounted on it using 20mm-high M2.5 posts. The main PCB is mounted in the middle, and the Lidar base is mounted on 20mm-high M3 posts. The Raspberry Pi camera v2 base is mounted on the Lidar base using 40mm-high M3 posts.
-Using these poles helped us keep the robot as low as possible, allowing the Lidar sensor to be level with the runway walls.
+#### 6.1.4. Wheels
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The rear wheel hubs (rims) were also custom-designed and 3D-printed to integrate perfectly with the transmission. The central feature of the hub is a D-shaped bore (hole). This profile is precisely matched to the D-shaped 4 mm steel shafts, ensuring a secure, non-slip mechanical lock. This method guarantees that all torque generated by the motor is effectively transferred from the axle directly to the wheel.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-rim.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+### 6.2. Steering System
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-assembly.png?raw=true">
+For the steering system, the goal was to simplify the mechanism as much as possible, as this would allow for quick and easy manufacturing. However, we decided to make this an Ackermann system, allowing the inner wheel to have a larger angle than the outer wheel. Thanks to this, we were able to prevent the front wheels from slipping when turning, something that occurred with the previous non-Ackermann model.
+
+#### 6.2.1. Servo HiTEC HS-85MG
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+      We selected the HiTEC HS-85MG for our robot's Ackermann steering system, primarily due to its robust metal gears (MG). Unlike many standard or smaller servos that use plastic gears, the metal gearing provides the significantly enhanced durability and resistance to stripping that our steering mechanism requires. This is crucial for us to handle the mechanical loads, vibrations, and potential impacts inherent in the system's operation. We also find that this servo packs considerable torque and good precision into a compact "mighty mini" form factor, supported by a top ball bearing. This ensures it provides the strength we need to turn the wheels effectively while maintaining accurate steering angles, minimizing the excessive "slop" or backlash we might see in less robust options. For application, this blend of power, durability, and reliable accuracy in a small package makes it a superior choice over servos that could fail or wear quickly under the demands of steering.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-HS-85MG.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 6.2.2. Base
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+      We designed the base around the servo, so that everything was symmetrical. We also designed the base to be modular and easily attach to the robot's chassis for easy repairs. We 3D printed the base using carbon fiber filament, as we did all the other robot parts, to increase strength.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-base.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 6.2.3. Connectors
+
+##### 6.2.3.1. Servo Connector
+<table style="width: 100%;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+      We designed the servo connector this way because, as an Ackermann system, the wheels needed to be connected independently of each other. If we used a single connector for the wheels, both would have the same turning angle, but by splitting it, each wheel would turn at a different angle.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-servoconnector.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+##### 6.2.3.2. Wheel Connectors
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+      As mentioned above, we used two connectors, one per wheel, so they rotated independently. These connectors aren't straight, as this shape allows us to more clearly define the angle differences between the wheels. However, we arrived at this shape experimentally, as if the shape were more pronounced, we reached a point where the wheel wouldn't return to its original position.
+    </td>
+     <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketconnector.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 6.2.4. Wheel Supports
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     We designed the L-shaped wheel mount so that the wheels could rotate more easily and not collide with the robot's chassis.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-bracketwheel.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 6.2.5. Wheels
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     We decided to make our own wheels because we couldn't find any commercial wheels that fit our robot. We previously used the Lego Spike wheels, but they had very little contact surface area, so we decided to create our own wheels using the measurements of Spike's wheels. To do this, we created a rim and 3D printed it. We then used a mold and polyurethane resin to make the rubber. This process is shown in the following video:
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-rhine.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+[WRO FutureEngineers Custom Wheels - chaBots NERV](https://youtu.be/8JH6QCOU_B0)
+
+### 6.3. Bases
+
+#### 6.3.1. Lidar Base
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     The base for the lidar was designed in the simplest way possible, with eight holes, four for screwing the lidar in and the rest for fixing the base.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/chassis/lidar-base.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 6.3.2. Camera Base
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     The camera mount is a copy-paste of the lidar mount, modified to support the camera. We experimentally set the angle of this mount to give the camera the widest possible field of view without it looking outside the track.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/chassis/camera-base.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+#### 6.3.3. Chasis
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+     The chassis is the robot's main structure, as all other systems are mounted on it. A modular design was chosen to facilitate assembly and maintenance. The chassis is made of carbon fiber, which was cut in China.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/chassis/chassis-base.png?raw=true">
+    </td>
+  </tr>
+</table>
+
+### 6.4. Assembly
+<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly.png?raw=true">
+
+The steering system is mounted on the chassis using 20mm-high M3 posts. The odometer PCB is anchored below the steering system, as this makes better use of space. The gearbox is mounted directly to the rear of the chassis, and the Raspberry Pi 5 is mounted on it using 20mm-high M2.5 posts. The main PCB is mounted in the middle, and the Lidar base is mounted on 20mm-high M3 posts. The Raspberry Pi camera v2 base is mounted on the Lidar base using 40mm-high M3 posts. Using these poles helped us keep the robot as low as possible, allowing the Lidar sensor to be leveled with the runway walls.
+
+<table style="width: 100%;">
+  <tbody>
+    <tr>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-front.png?raw=true" style="width: 100%;"></td>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-back.png?raw=true" style="width: 100%;"></td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-left.png?raw=true" style="width: 100%;"></td>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-right.png?raw=true" style="width: 100%;"></td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-top.png?raw=true" style="width: 100%;"></td>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-bottom.png?raw=true" style="width: 100%;"></td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
+## 8. Electronics <a name="electronics"></a>
 
-## 6. Code Overview <a name="code-overview"></a>
+All of the electronics in our robot are designed to be as fast and reliable as possible. This led us to use higher‑end components and a clear division of responsibilities between processors. For instance, it is not a good idea to use a Raspberry Pi 5 directly to control a servo and a DC motor—the OS and user processes introduce latency and consume CPU time. To address this, we use a dedicated microcontroller for time‑critical I/O and control loops: the *Teensy 4.0*.
 
-This is an autonomous robot developed with ROS2 using Python. The robot can navigate autonomously, detect obstacles, and detect colored objects.
+Before choosing, we considered both performance and the strict space constraints of our mechanical design. Everything must fit within our allotted envelope without compromising serviceability.
 
-### 6.1. System Architecture
+## Microcontroller comparison
+
+
+|MCU  |Clock speed |  Observed PWM behavior*
+|--|--| -|
+| Teensy 4.0 | 600 MHz |Excellent|
+|Arduino Nano|16 MHz|Good
+|Raspberry Pi Pico|133 MHz|Inconsistent at low duty
+*Notes on PWM behavior: Using the same nominal PWM frequency across all three MCUs, we observed different motor responses. On the Teensy 4.0, the motor starts smoothly and can deliver more torque at lower duty cycles. The Raspberry Pi Pico struggled at very low speeds and required careful tuning. The Arduino Nano behaved as expected for an AVR‑based board. We could not find definitive documentation explaining these differences; our working theory is that PWM implementation details (SDK, drivers, timer resolution, and library quality) play a role. Teensy and Arduino platforms are primarily C/C++ with mature vendor‑maintained timer libraries, while typical Pico workflows often lean on MicroPython or community libraries, which may trade convenience for timing granularity.
+
+## Power architecture
+
+-   *Main battery:* 3S (11.1 V) *LiPo, ~2200 mAh*.
+
+-   *Regulation:* Pololu *D42V55F5* step‑down regulator (5 V, up to 6 A) feeding the Raspberry Pi 5 and the servo.
+
+-   *Isolation:* The Teensy 4.0 is powered from an *isolated supply* to protect it from motor/EMI transients; all other subsystems draw from the main rail via appropriate regulators and filtering.
+
+
+## Motor driver
+
+We use the *VNH7070AS* full‑bridge driver. It comfortably handles the required current (≈8 A continuous in our use case) and supports supply voltages above 20 V, providing generous headroom. Because there is no widely available off‑the‑shelf module for this device, we integrated it directly onto our PCB. This raises the bar for assembly, but the result is more reliable and, in practice, more cost‑effective.
+
+## PCB design
+
+Our PCB uses *6 layers*:
+|Layer  |Type  |
+|--|--|
+| 1 |Signal  |
+|2|GND
+|3|Signal
+|4|Signal
+|5|GND
+|6|GND
+
+This stack‑up, combined with stitching vias, short return paths, and careful placement, yielded a robust, fully integrated board with *low EMI emissions. Despite having the motor as close as **5 cm* to sensitive wiring, we can communicate at high baud rates reliably.
+
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+   The main PCB controls the motors and the servo. It includes a built-in full-bridge motor driver (VNH7070ASTR), an XT60 connector for direct battery input, and protection against overcurrent, overvoltage, surges, and reverse polarity. It also provides UART connections between the Teensy 4.0 and Raspberry Pi 5, plus a header for the servo pins.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/schemes/pcb-main.jpeg?raw=true" style="width: 100%;">
+    </td>
+  </tr>
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The odometry PCB provides a better mounting solution for our OTOS sensor. Because the sensor doesn’t have space for JST headers, this board serves as an intermediate adapter and offers a secure mechanical mount.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/schemes/pcb-odometry.jpeg?raw=true" style="width: 100%;">
+    </td>
+  </tr>
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The Raspberry Pi PCB is designed as a HAT. It offers a more robust way to manage connections than using loose DuPont leads: you can solder jumper wires to it, making the setup more reliable than DuPont jumpers alone.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/schemes/pcb-rasp.jpeg?raw=true" style="width: 100%;">
+    </td>
+  </tr>
+</table>
+
+---
+
+*Summary:* Separating real‑time control (Teensy 4.0) from high‑level compute (Raspberry Pi 5), providing clean power (isolated Teensy rail + regulated 5 V), and integrating an automotive‑grade driver (VNH7070AS) on a 6‑layer PCB gives us the responsiveness and robustness demanded by the challenge.
+
+## Schematic details
+
+### 1) Battery input & primary protection
+
+-   *Connector:* XT30 (U14/U19) for main power.
+
+-   *Transient suppression:* TVS diodes on the input and 5 V rails (e.g., *SMBJ18* class at the battery side and *SMAJ5.0CA* on the 5 V rail) clamp surges from motor commutation and cable hot‑plugging.
+
+-   *Input filtering:* Bulk electrolytic (≈*470 µF) plus local ceramics (100 nF*) provide low‑ and high‑frequency decoupling. Keep the electrolytic close to the power switch/step‑down input and sprinkle 100 nF near every IC supply pin.
+
+-   *(Recommended)* Add a resettable fuse (polyfuse) sized for your continuous draw and an ideal‑diode OR high‑side FET for reverse‑polarity protection if you expect frequent battery swaps.
+
+
+### 2) Latching power switch (high‑side)
+
+-   *Function:* A soft‑latching high‑side switch drives a low‑RDS(on) P‑channel MOSFET (*TPH1R712MDL*) to connect/disconnect the main rail.
+
+-   *Control:* A momentary/toggle switch (*SW3*) biases a small driver network (Q3 + resistors) that pulls the MOSFET’s gate. The RC on the gate provides gentle inrush and reduces connector arcing.
+
+-   *Why high‑side:* Keeps grounds common and only switches the positive rail, avoiding ground‑bounce issues with USB/UART connections to the PC.
+
+
+### 3) 5 V regulation rail (Raspberry Pi + servo)
+
+-   *Module:* Pololu *D42V55F5* (5 V @ up to 6 A). Place it so that current from the battery flows battery → switch → regulator → loads.
+
+-   *Post‑filtering:* An *LC section* (e.g., *L1 = 22 µH, **C9 ≈ 470 µF, plus **100 nF* ceramics) reduces switching ripple seen by the Pi and the servo.
+
+-   *Surge/ESD:* A *SMAJ5.0CA* across the 5 V rail provides additional protection. Keep diode and bulk cap leads short and wide.
+
+-   *Grounding:* Return the regulator ground straight to the *GND plane* and keep the high‑di/dt loop (switch → inductor → diode/cap → switch) as tight as possible.
+
+
+### 4) Teensy 4.0 section
+
+-   *Role:* Real‑time control (PWM generation, sensor timing, safety interlocks). The Pi handles high‑level logic/vision.
+
+-   *Supply isolation:* The Teensy is fed from a *clean/isolated input* to protect it from motor noise. Decouple 3.3 V with multiple *0.1 µF* and a *10 µF* bulk close to VIN/3V3.
+
+-   *I/O mapping:* Dedicated pins for *PWM* to the motor driver and for *servo. A **UART header (H3)* exposes *TX/RX/GND* for diagnostics.
+
+-   *Signal integrity:* If runs exceed ~10–15 cm, add *33–100 Ω* series resistors on digital lines (IN1/IN2/PWM) to damp edges and reduce ringing into the VNH driver.
+
+
+### 5) Motor driver stage (VNH7070AS)
+
+-   *Device:*  *VNH7070AS* integrated H‑bridge; internal MOSFETs handle current spikes and integrate flyback paths.
+
+-   *Interface:* Pins *INA/INB/PWM/EN/CS* (nomenclature varies per package) connect to the Teensy. Keep logic ground common with power ground at a single low‑impedance point.
+
+-   *Decoupling:* Place *≥ 470 µF* bulk right at *VCC* of the driver and multiple *100 nF* ceramics. Add an input *TVS (SMBJ18 class)* across motor supply near the driver.
+
+-   *Snubbing:* For very noisy motors, an *RC snubber* (e.g., 100 nF + 1–2 Ω, tuned empirically) across the motor terminals can reduce EMI. Keep motor leads twisted and short.
+
+-   *Thermal:* Provide a solid copper pour under the thermal pad with many *thermal vias* to GND to spread heat to inner planes.
+
+
+### 6) Connectors & peripherals
+
+-   *Servo header:* Powered from the regulated 5 V rail; keep return path next to the 5 V trace.
+
+-   *Battery sense / telemetry (optional):* If you expose the pack to the MCU, use a *divider* + *RC* and consider *TVS/small **series resistor* to protect the ADC.
+
+-   *NeoPixel header (P1):* Decouple with *100 nF* at the connector and, if long strips are used, a *large electrolytic* (≥1000 µF) at the first LED.
+
+
+### 7) Layout guidance (applied)
+
+-   *Stack‑up:* 6‑layer with *three GND planes* (L2/L5/L6) provides low impedance return and shields signals.
+
+-   *Star power:* Route battery → switch → regulator → loads with *star‑like branching*; do not daisy‑chain sensitive logic behind motor currents.
+
+-   *Keep loops tight:* Especially the driver’s *switching loop* and the regulator loop. Use wide pours for battery and motor paths.
+
+-   *Segregate zones:* Physically separate *power* (battery, driver, regulator) from *logic* (Teensy, level‑signals). Cross at right angles if they must cross.
+
+-   *Stitching vias:* Surround the driver and the high‑current paths with plenty of GND stitching vias to contain fields and lower EMI (already used here).
+
+
+### 8) Bring‑up & test checklist
+
+1.  Power the board with a *current‑limited bench supply* (e.g., 0.5–1 A) and verify no abnormal draw.
+
+2.  Measure *5 V* rail at the Pi and servo connector under light load.
+
+3.  With the motor disconnected, toggle the power switch—check gate voltage of the high‑side MOSFET for clean transitions.
+
+4.  Connect a small DC motor and run *10–20% PWM; scope **VCC* and *GND* near the driver for spikes.
+
+5.  Increase load gradually; verify the driver’s *thermal pad* stays below spec and that bulk caps do not heat.
+
+6.  Verify UART debug works; confirm CS/FAULT lines (if used) change as expected under stall or overcurrent tests.
+
+
+----------
+## 7. Code Overview <a name="code-overview"></a>
+
+This is an autonomous robot developed with ROS2 using Python. The robot can navigate autonomously, detect obstacles, and detect colored objects. We decided on using ROS2 since it allows us to develop the different features of our robot modularly, which also makes each component and feature more manageable.
+
+### 7.1. System Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -203,16 +651,16 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-### 6.2. Implementations
+### 7.2. Implementations
 
-#### 6.2.1. Kinetic Obstacle Detection and Hardware Communication
+#### 7.2.1. Kinetic Obstacle Detection and Hardware Communication
 - **File**: `src/teensy_communication/launch/robot.launch.py`
-- **Function**:
+- **Function**: Process sensor data and send the desired direction of the Ackermann and the speed of the motors.
 - **Features**:
   - Teensy configuration
   - Odometry and sensor management
 
-#### 6.2.2. Computer Vision
+#### 7.2.2. Computer Vision
 - **File**: `src/vision_node/vision_node/color_detection_node.py`
 - **Function**: Green, red, and purple object detection
 - **Features**:
@@ -220,7 +668,7 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
   - Distance and angle calculation
   - Noise filtering
 
-#### 6.2.3. Localization System (OTOS)
+#### 7.2.3. Localization System (OTOS)
 - **File**: `src/otos_reader/otos_reader/otos_node.py`
 - **Function**: Provides precise odometry using OTOS sensor
 - **Features**:
@@ -229,7 +677,7 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
   - ZUPT detection (Zero Velocity Update)
   - Odometry and TF transforms publishing  - Distance and angle calculation
 
-### 6.3. Data Flow
+### 7.3. Data Flow
 
 ```
 ┌──────────┐     ┌─────────────┐     ┌──────────────┐
@@ -251,9 +699,9 @@ This is an autonomous robot developed with ROS2 using Python. The robot can navi
 └──────────────┘     └─────────────┘
 ```
 
-### 6.4. Implemented Algorithms
+### 7.4. Implemented Algorithms
 
-#### 6.4.1. Navigation
+#### 7.4.1. Navigation
 Using RPLIDAR C1 Ros2 package we can read the topic from our own node,
 ```c++
 void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg)
@@ -274,7 +722,7 @@ void on_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg)
     }
 }
 ```
-This call back is called only when a the lidar node post a new message in topic, this piece only storage a cloud of points send by the lidar, the next step is procces this information to get the actual position of the robot in the track, we use the OTOS to update this information every call, because of the lidar only posting at 10hz is to slow, it means it only have new information every 100ms that make imposible to have a smoth move, the OTOS post at 100Hz, meaning we can smoth our trajectory 10 times more using this, we dont use absolute infromation like coordinates in x or y axis, we take the changue in cm betwen the new read and the last read and add it to the cloud of points, also we calculate some infromation to help our robot to not colide with the walls, like the distance in front, left and rigth, this help to calculate optimal PD controller values relative to robots position and speed.
+This callback is called only when a the lidar node post a new message in topic, this module only stores a cloud of points sent by the lidar, the next step is procces this information to get the actual position of the robot in the track, we use the OTOS to update this information every call, because of the lidar only posting at 10hz is to slow, it means it only have new information every 100ms that make imposible to have a smoth move, the OTOS post at 100Hz, meaning we can smoth our trajectory 10 times more using this, we dont use absolute infromation like coordinates in x or y axis, we take the changue in cm betwen the new read and the last read and add it to the cloud of points, also we calculate some infromation to help our robot to not colide with the walls, like the distance in front, left and rigth, this help to calculate optimal PD controller values relative to robots position and speed.
 ```c++
 
 void getOffsetsFromLidar()
@@ -403,7 +851,7 @@ void getActualSector()
 }
 
 ```
-#### 6.4.2. Obstacle Avoidance
+#### 7.4.2. Obstacle Avoidance
 
 The obstacle avoidance system (`teensy_obs_node.cpp`) implements a multi-sensor approach for autonomous navigation in environments with colored obstacles. This system integrates LIDAR, odometry, and computer vision to provide intelligent obstacle detection and avoidance capabilities.
 
@@ -575,7 +1023,7 @@ This multi-modal approach ensures robust performance in complex environments wit
 
 The implementation aligns with the WRO Future Engineers challenge requirements by enabling autonomous navigation, obstacle detection, and avoidance in a dynamic environment. The system's modular design allows for easy adaptation to different track layouts and obstacle placements, ensuring compliance with competition rules.
 
-#### 6.4.3. Color Detection
+#### 7.4.3. Color Detection
 
 Using OpenCV to detect green, red, and purple objects in the camera feed. The algorithm filters colors in HSV space, finds contours, and calculates distance and angle based on object size and position.
 
@@ -600,7 +1048,7 @@ mask_purple = cv2.morphologyEx(mask_purple, cv2.MORPH_OPEN, kernel)
 distance = (KNOWN_WIDTH * FOCAL_LENGTH) / bounding_box_width
 ```
 
-### 6.5. Control Implementation
+### 7.5. Control Implementation
 Using the sum of every point from the lidar we get a vector that tell us where to go, this for it self isnt optimal cause it tell us where is more space, so we add a vector pointing to the IMU target, this help us to get more smooth and optimal trajectories more than just drive where you can.
 ```c++
 float angleProccesing(float kpNoLinear = 0.75f, float maxOut = 30.0f, bool yawMode = false, float yawKp = 0.025f)
@@ -771,18 +1219,18 @@ void getOptimalValues()
     }
 }
 ```
-### 6.6. System Configuration
+### 7.6. System Configuration
 
-#### 6.6.1. Sensors and Calibrations
+#### 7.6.1. Sensors and Calibrations
 - **OTOS**: Units in meters and degrees
 - **LiDAR**: RPLiDAR C1
 - **Camera**: 1280x720, RGB888 format
 - **Focal Length**: 1131 pixels
 
-#### 6.6.2. Control Parameters
+#### 7.6.2. Control Parameters
 
 
-### 6.7. Robot States
+### 7.7. Robot States
 
 ```
 ┌─────────────┐    ┌─────────────┐     ┌─────────────┐
@@ -797,9 +1245,9 @@ void getOptimalValues()
                           └────────────────────┘
 ```
 
-### 6.8. ROS2
+### 7.8. ROS2
 
-#### 6.8.1. Topics
+#### 7.8.1. Topics
 | Topic | Type | Description |
 |--------|------|-------------|
 | `/scan` | LaserScan | LiDAR data |
@@ -809,11 +1257,11 @@ void getOptimalValues()
 | `/objects/detection` | Float32MultiArray | Detected objects data |
 | `/objects/status` | Float32 | Number of detected objects |
 
-#### 6.8.2. ROS2 Diagram
+#### 7.8.2. ROS2 Diagram
 
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/sw-docs/software-diagrams/ros2-diagram.png?raw=true">
 
-### 6.9. Execution Commands
+### 7.9. Execution Commands
 
 ```bash
 # Launch complete robot
@@ -826,7 +1274,7 @@ ros2 run vision_node color_detection_node
 ros2 run otos_reader otos_node
 ```
 
-### 6.10. File Structure
+### 7.10. File Structure
 
 ```
 src/
@@ -843,7 +1291,7 @@ src/
 
 ```
 
-### 6.11. Monitoring and Debug
+### 7.11. Monitoring and Debug
 
 - **Foxglove Studio**: Real-time visualization
 - **RViz**: Trajectories and laser maps
@@ -852,16 +1300,16 @@ src/
 
 ---
 
-## 7. Obstacle Management <a name="obstacle-management"></a>
+## 8. Obstacle Management <a name="obstacle-management"></a>
 
 The robot detects and reacts to obstacles in real-time using multiple sensor modalities:
 
-### 7.1. Detection Methods
+### 8.1. Detection Methods
 - **Primary:** Enhanced color detection via PiCamera2 system
 - **Verification:** LIDAR distance measurements for obstacle confirmation and navigation
 - **Backup:** OTOS position tracking for navigation consistency
 
-### 7.2. Response Algorithms
+### 8.2. Response Algorithms
 - **Dynamic turning decision system** based on cube color and position
 - **Follow-the-object mode** with PID steering based on cube centroid
 - **Multi-sensor verification** to reduce false positives
@@ -869,11 +1317,11 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 
 ---
 
-## 8. Construction Guide <a name="construction-guide"></a>
+## 9. Construction Guide <a name="construction-guide"></a>
 
 **Models file folder:** `models/`
 
-### 8.1. Steps
+### 9.1. Steps
 - Step 1: 3D designing
 - Step 2: 3D printing
 - Step 3: Electronic layout
@@ -882,7 +1330,7 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 - Step 6: Programming
 - Step 7: Testing
 
-### 8.2. Construction Tools
+### 9.2. Construction Tools
 - 3D Printer (Creality K2 Plus, QIDI Q1 Pro)
 - Polymaker PTG CF filament
 - Mini Electric Soldering Iron Kit TS101
@@ -890,7 +1338,7 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 - Screwdriver Set Fanttik
 
 
-## 9. Cost Report <a name="cost-report"></a>
+## 10. Cost Report <a name="cost-report"></a>
 
 | Item                         | Qty | Unit Cost (MXN) | Total (MXN) |
 |------------------------------|-----|------------------|-------------|
@@ -913,100 +1361,6 @@ The robot detects and reacts to obstacles in real-time using multiple sensor mod
 | EV3 Wheels (LEGO)          | 2   | $10              | $20         |
 | **Total**                     |     |                  | **$26,924**|
 
-
----
-
-## 10. Discussion <a name="discussion"></a>
-
-### 10.1. Decisions
-
-Throughout this project, we faced numerous critical decisions that shaped our robot's final design. Our approach was driven by the principle of creating a robust, reliable system capable of handling the unpredictable nature of autonomous navigation challenges.
-
-#### Why This Architecture?
-
-We chose a **distributed ROS2 architecture** for several key reasons:
-
-1. **Modularity**: Each sensor and algorithm runs in isolated nodes, making development, testing, and debugging significantly more manageable
-2. **Scalability**: Adding new sensors or algorithms requires minimal changes to existing code
-3. **Real-time Performance**: ROS2's real-time capabilities ensure consistent timing across all systems
-
-#### Hardware Selection Rationale
-
-**RPLiDAR C1**: Despite being expensive, the 360° scanning capability proved essential for complete environmental awareness. Alternative sensors like ultrasonic arrays couldn't provide the same level of detail and accuracy.
-
-**OTOS Sensor**: The optical tracking approach was chosen over traditional wheel encoders due to its immunity to wheel slip and superior accuracy in dynamic environments.
-
-**Raspberry Pi 5**: The increased computational power over previous generations allowed us to run complex computer vision algorithms in real-time while maintaining ROS2 communication overhead.
-
-### 10.2. Regional Experience and Lessons Learned
-
-Our experience at the regional competition was... challenging, to put it mildly. **We didn't perform as expected**, our robot's performance was disappointing during those crucial moments.
-
-#### What Went Wrong at Regionals
-
-- **Sensor calibration issues** under competition lighting conditions
-
-The regional result was a wake-up call that forced us to completely re-evaluate our approach.
-
-### 10.3. Rebuilding the System
-
-**We invested approximately 5,000 hours** into completely rebuilding and refining every aspect of our system:
-
-#### What We Rebuilt
-
-**Complete Software Stack**:
-- Migrated from basic control loops to PID controllers with adaptive parameters
-- Implemented sensor fusion algorithms for robust state estimation
-- Developed multi-modal obstacle avoidance strategies
-- Created comprehensive safety systems with multiple fallback mechanisms
-
-**Hardware Redesign**:
-- Switched from 3D-printed chassis to carbon fiber for improved rigidity
-- Upgraded to precision steel shafts and custom gearboxes
-- Implemented proper electromagnetic interference shielding
-- Redesigned cable management for reliability
-
-**Testing Infrastructure**:
-- Built a complete testing environment that simulates competition conditions
-- Developed automated testing scripts for regression testing
-- Created comprehensive calibration procedures
-
-### 10.4. Technical Achievements
-
-#### Algorithm Innovation
-
-Our **sensor fusion approach** combines OTOS, LiDAR, and vision data using Kalman filtering techniques that provide centimeter-level accuracy in dynamic environments.
-
-The **adaptive control system** automatically adjusts PID parameters based on track geometry, allowing optimal performance in both tight corners and wide corridors.
-
-#### Real-time Performance
-
-Achieving **10Hz control loop frequency** while processing:
-- 360° LiDAR scans at 8Hz
-- Computer vision at 30fps
-- OTOS updates at 100Hz
-- Safety monitoring at 100Hz
-
-#### Robustness Features
-
-- **Multi-sensor validation** prevents single points of failure
-- **Graceful degradation** when sensors malfunction
-- **Emergency stop systems** with sub-20ms response times
-- **Automatic recovery** from most common failure modes
-
-### 10.5. Competition Strategy Evolution
-
-Our approach to the WRO Future Engineers challenge evolved significantly:
-
-**Initial Strategy (Regional)**: Focus on basic navigation with simple obstacle avoidance
-**Current Strategy (National/International)**: Comprehensive autonomous system with advanced AI-driven decision making
-
-#### Key Strategic Insights
-
-1. **Reliability over Speed**: Consistent completion beats occasional fast times
-2. **Sensor Redundancy**: Multiple sensors for the same measurement prevent catastrophic failures
-3. **Adaptive Algorithms**: One-size-fits-all approaches don't work in dynamic environments
-4. **Extensive Testing**: Simulated conditions must exceed competition difficulty
 
 ---
 
