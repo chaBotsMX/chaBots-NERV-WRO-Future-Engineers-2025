@@ -113,17 +113,30 @@ For more indo visit: [WRO Official Site](https://wro-association.org/)
 
  **Name:** Eva
 
-| Front | Back |
-|-------|------|
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-front.jpeg?raw=true" width="250">| <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-back.jpeg?raw=true" width="250">|
-
-| Left | Right |
-|------|-------|
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-left.jpeg?raw=true" width="250">| <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-right.jpeg?raw=true" width="250">|
-
-| Top | Bottom |
-|------|--------|
-<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-top.jpeg?raw=true" width="250">| <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-bottom.jpeg?raw=true" width="190">
+<table style="width: 100%;">
+  <tbody>
+    <tr>
+      <td>
+        <center><h4>Front</h4></center>
+        <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-front.jpeg?raw=true" style="width: 100%;">
+      </td>
+      <td>
+        <center><h4>Back</h4></center>
+        <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-back.jpeg?raw=true" style="width: 100%;">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <center><h4>Left</h4></center>
+        <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-left.jpeg?raw=true" style="width: 100%;">
+      </td>
+      <td>
+        <center><h4>Right</h4></center>
+        <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/national/v-right.jpeg?raw=true" style="width: 100%;">
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -158,6 +171,8 @@ High-precision odometry sensor for accurate position tracking.
 - ROS2 integration via custom `otos_reader` node
 
 **Link:** [SparkFun OTOS](https://www.sparkfun.com/sparkfun-optical-tracking-odometry-sensor-paa5160e1-qwiic.html)
+
+---
 
 ## 5. Mobility Management <a name="mobility-management"></a>
 
@@ -335,6 +350,23 @@ For the steering system, the goal was to simplify the mechanism as much as possi
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly.png?raw=true">
 
 The steering system is mounted on the chassis using 20mm-high M3 posts. The odometer PCB is anchored below the steering system, as this makes better use of space. The gearbox is mounted directly to the rear of the chassis, and the Raspberry Pi 5 is mounted on it using 20mm-high M2.5 posts. The main PCB is mounted in the middle, and the Lidar base is mounted on 20mm-high M3 posts. The Raspberry Pi camera v2 base is mounted on the Lidar base using 40mm-high M3 posts. Using these poles helped us keep the robot as low as possible, allowing the Lidar sensor to be level with the runway walls.
+
+<table style="width: 100%;">
+  <tbody>
+    <tr>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-front.png?raw=true" style="width: 100%;"></td>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-back.png?raw=true" style="width: 100%;"></td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-left.png?raw=true" style="width: 100%;"></td>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-right.png?raw=true" style="width: 100%;"></td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-top.png?raw=true" style="width: 100%;"></td>
+      <td><img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/v-assembly-bottom.png?raw=true" style="width: 100%;"></td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
