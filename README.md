@@ -1,7 +1,3 @@
-
-
-
-
 # ChaBots - WRO Future Engineers 2025
 
 <!--<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/resources/ChaBotsLogo.png?raw=true" width="250">-->
@@ -35,12 +31,13 @@ This repository contains the documentation for **ChaBots** participation in the 
 4. 🤖 [Robot Overview](#robot-overview)
 5. 🔋 [Sense Overview](#sense-overview)
 6. ⚙️ [Mobility Management](#mobility-management)
-7. 💻 [Code Overview](#code-overview)
-8. 🚧 [Obstacle Management](#obstacle-management)
-9. 🛠️ [Construction Guide](#construction-guide)
-10. 💰 [Cost Report](#cost-report)
-- 📚 [Resources](#resources)
-- ©️ [License](#license)
+7. 💡 [Electronics](#electronics)
+8. 💻 [Code Overview](#code-overview)
+9. 🚧 [Obstacle Management](#obstacle-management)
+10. 🛠️ [Construction Guide](#construction-guide)
+11. 💰 [Cost Report](#cost-report)
+12. 📚 [Resources](#resources)
+13. ©️ [License](#license)
 ---
 
 ## 1. The Team <a name="the-team"></a>
@@ -144,7 +141,7 @@ The regional result was a wake-up call that forced us to completely re-evaluate 
 
 ### 3.3. Rebuilding the System
 
-**We invested approximately 5,000 hours** into completely rebuilding and refining every aspect of our system:
+**We invested approximately 500 hours** into completely rebuilding and refining every aspect of our system:
 
 #### What We Rebuilt
 
@@ -395,7 +392,7 @@ For the steering system, the goal was to simplify the mechanism as much as possi
 <table style="width: 100%; table-layout: fixed;">
   <tr>
     <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
-     We decided to make our own wheels because we couldn't find any commercial wheels that fit our robot. We previously used the Lego Spike wheels, but they had very little contact surface area, so we decided to create our own wheels using the measurements of Spike's wheels. To do this, we created a rim and 3D printed it. We then used a mold and polyurethane resin to make the rubber. This process is shown in the following video: 
+     We decided to make our own wheels because we couldn't find any commercial wheels that fit our robot. We previously used the Lego Spike wheels, but they had very little contact surface area, so we decided to create our own wheels using the measurements of Spike's wheels. To do this, we created a rim and 3D printed it. We then used a mold and polyurethane resin to make the rubber. This process is shown in the following video:
     </td>
     <td style="width: 40%; vertical-align: top;">
       <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-rhine.png?raw=true">
@@ -467,6 +464,175 @@ The steering system is mounted on the chassis using 20mm-high M3 posts. The odom
 
 ---
 
+## 8. Electronics <a name="electronics"></a>
+
+All of the electronics in our robot are designed to be as fast and reliable as possible. This led us to use higher‑end components and a clear division of responsibilities between processors. For instance, it is not a good idea to use a Raspberry Pi 5 directly to control a servo and a DC motor—the OS and user processes introduce latency and consume CPU time. To address this, we use a dedicated microcontroller for time‑critical I/O and control loops: the *Teensy 4.0*.
+
+Before choosing, we considered both performance and the strict space constraints of our mechanical design. Everything must fit within our allotted envelope without compromising serviceability.
+
+## Microcontroller comparison
+
+
+|MCU  |Clock speed |  Observed PWM behavior*
+|--|--| -|
+| Teensy 4.0 | 600 MHz |Excellent|
+|Arduino Nano|16 MHz|Good
+|Raspberry Pi Pico|133 MHz|Inconsistent at low duty
+*Notes on PWM behavior: Using the same nominal PWM frequency across all three MCUs, we observed different motor responses. On the Teensy 4.0, the motor starts smoothly and can deliver more torque at lower duty cycles. The Raspberry Pi Pico struggled at very low speeds and required careful tuning. The Arduino Nano behaved as expected for an AVR‑based board. We could not find definitive documentation explaining these differences; our working theory is that PWM implementation details (SDK, drivers, timer resolution, and library quality) play a role. Teensy and Arduino platforms are primarily C/C++ with mature vendor‑maintained timer libraries, while typical Pico workflows often lean on MicroPython or community libraries, which may trade convenience for timing granularity.
+
+## Power architecture
+
+-   *Main battery:* 3S (11.1 V) *LiPo, ~2200 mAh*.
+
+-   *Regulation:* Pololu *D42V55F5* step‑down regulator (5 V, up to 6 A) feeding the Raspberry Pi 5 and the servo.
+
+-   *Isolation:* The Teensy 4.0 is powered from an *isolated supply* to protect it from motor/EMI transients; all other subsystems draw from the main rail via appropriate regulators and filtering.
+
+
+## Motor driver
+
+We use the *VNH7070AS* full‑bridge driver. It comfortably handles the required current (≈8 A continuous in our use case) and supports supply voltages above 20 V, providing generous headroom. Because there is no widely available off‑the‑shelf module for this device, we integrated it directly onto our PCB. This raises the bar for assembly, but the result is more reliable and, in practice, more cost‑effective.
+
+## PCB design
+
+Our PCB uses *6 layers*:
+|Layer  |Type  |
+|--|--|
+| 1 |Signal  |
+|2|GND
+|3|Signal
+|4|Signal
+|5|GND
+|6|GND
+
+This stack‑up, combined with stitching vias, short return paths, and careful placement, yielded a robust, fully integrated board with *low EMI emissions. Despite having the motor as close as **5 cm* to sensitive wiring, we can communicate at high baud rates reliably.
+
+<table style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+   The main PCB controls the motors and the servo. It includes a built-in full-bridge motor driver (VNH7070ASTR), an XT60 connector for direct battery input, and protection against overcurrent, overvoltage, surges, and reverse polarity. It also provides UART connections between the Teensy 4.0 and Raspberry Pi 5, plus a header for the servo pins.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/schemes/pcb-main.jpeg?raw=true" style="width: 100%;">
+    </td>
+  </tr>
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The odometry PCB provides a better mounting solution for our OTOS sensor. Because the sensor doesn’t have space for JST headers, this board serves as an intermediate adapter and offers a secure mechanical mount.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/schemes/pcb-odometry.jpeg?raw=true" style="width: 100%;">
+    </td>
+  </tr>
+  <tr>
+    <td style="width: 60%; vertical-align: top; padding-right: 15px; text-align: justify;">
+The Raspberry Pi PCB is designed as a HAT. It offers a more robust way to manage connections than using loose DuPont leads: you can solder jumper wires to it, making the setup more reliable than DuPont jumpers alone.
+    </td>
+    <td style="width: 40%; vertical-align: top;">
+      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/schemes/pcb-rasp.jpeg?raw=true" style="width: 100%;">
+    </td>
+  </tr>
+</table>
+
+---
+
+*Summary:* Separating real‑time control (Teensy 4.0) from high‑level compute (Raspberry Pi 5), providing clean power (isolated Teensy rail + regulated 5 V), and integrating an automotive‑grade driver (VNH7070AS) on a 6‑layer PCB gives us the responsiveness and robustness demanded by the challenge.
+
+## Schematic details
+
+### 1) Battery input & primary protection
+
+-   *Connector:* XT30 (U14/U19) for main power.
+
+-   *Transient suppression:* TVS diodes on the input and 5 V rails (e.g., *SMBJ18* class at the battery side and *SMAJ5.0CA* on the 5 V rail) clamp surges from motor commutation and cable hot‑plugging.
+
+-   *Input filtering:* Bulk electrolytic (≈*470 µF) plus local ceramics (100 nF*) provide low‑ and high‑frequency decoupling. Keep the electrolytic close to the power switch/step‑down input and sprinkle 100 nF near every IC supply pin.
+
+-   *(Recommended)* Add a resettable fuse (polyfuse) sized for your continuous draw and an ideal‑diode OR high‑side FET for reverse‑polarity protection if you expect frequent battery swaps.
+
+
+### 2) Latching power switch (high‑side)
+
+-   *Function:* A soft‑latching high‑side switch drives a low‑RDS(on) P‑channel MOSFET (*TPH1R712MDL*) to connect/disconnect the main rail.
+
+-   *Control:* A momentary/toggle switch (*SW3*) biases a small driver network (Q3 + resistors) that pulls the MOSFET’s gate. The RC on the gate provides gentle inrush and reduces connector arcing.
+
+-   *Why high‑side:* Keeps grounds common and only switches the positive rail, avoiding ground‑bounce issues with USB/UART connections to the PC.
+
+
+### 3) 5 V regulation rail (Raspberry Pi + servo)
+
+-   *Module:* Pololu *D42V55F5* (5 V @ up to 6 A). Place it so that current from the battery flows battery → switch → regulator → loads.
+
+-   *Post‑filtering:* An *LC section* (e.g., *L1 = 22 µH, **C9 ≈ 470 µF, plus **100 nF* ceramics) reduces switching ripple seen by the Pi and the servo.
+
+-   *Surge/ESD:* A *SMAJ5.0CA* across the 5 V rail provides additional protection. Keep diode and bulk cap leads short and wide.
+
+-   *Grounding:* Return the regulator ground straight to the *GND plane* and keep the high‑di/dt loop (switch → inductor → diode/cap → switch) as tight as possible.
+
+
+### 4) Teensy 4.0 section
+
+-   *Role:* Real‑time control (PWM generation, sensor timing, safety interlocks). The Pi handles high‑level logic/vision.
+
+-   *Supply isolation:* The Teensy is fed from a *clean/isolated input* to protect it from motor noise. Decouple 3.3 V with multiple *0.1 µF* and a *10 µF* bulk close to VIN/3V3.
+
+-   *I/O mapping:* Dedicated pins for *PWM* to the motor driver and for *servo. A **UART header (H3)* exposes *TX/RX/GND* for diagnostics.
+
+-   *Signal integrity:* If runs exceed ~10–15 cm, add *33–100 Ω* series resistors on digital lines (IN1/IN2/PWM) to damp edges and reduce ringing into the VNH driver.
+
+
+### 5) Motor driver stage (VNH7070AS)
+
+-   *Device:*  *VNH7070AS* integrated H‑bridge; internal MOSFETs handle current spikes and integrate flyback paths.
+
+-   *Interface:* Pins *INA/INB/PWM/EN/CS* (nomenclature varies per package) connect to the Teensy. Keep logic ground common with power ground at a single low‑impedance point.
+
+-   *Decoupling:* Place *≥ 470 µF* bulk right at *VCC* of the driver and multiple *100 nF* ceramics. Add an input *TVS (SMBJ18 class)* across motor supply near the driver.
+
+-   *Snubbing:* For very noisy motors, an *RC snubber* (e.g., 100 nF + 1–2 Ω, tuned empirically) across the motor terminals can reduce EMI. Keep motor leads twisted and short.
+
+-   *Thermal:* Provide a solid copper pour under the thermal pad with many *thermal vias* to GND to spread heat to inner planes.
+
+
+### 6) Connectors & peripherals
+
+-   *Servo header:* Powered from the regulated 5 V rail; keep return path next to the 5 V trace.
+
+-   *Battery sense / telemetry (optional):* If you expose the pack to the MCU, use a *divider* + *RC* and consider *TVS/small **series resistor* to protect the ADC.
+
+-   *NeoPixel header (P1):* Decouple with *100 nF* at the connector and, if long strips are used, a *large electrolytic* (≥1000 µF) at the first LED.
+
+
+### 7) Layout guidance (applied)
+
+-   *Stack‑up:* 6‑layer with *three GND planes* (L2/L5/L6) provides low impedance return and shields signals.
+
+-   *Star power:* Route battery → switch → regulator → loads with *star‑like branching*; do not daisy‑chain sensitive logic behind motor currents.
+
+-   *Keep loops tight:* Especially the driver’s *switching loop* and the regulator loop. Use wide pours for battery and motor paths.
+
+-   *Segregate zones:* Physically separate *power* (battery, driver, regulator) from *logic* (Teensy, level‑signals). Cross at right angles if they must cross.
+
+-   *Stitching vias:* Surround the driver and the high‑current paths with plenty of GND stitching vias to contain fields and lower EMI (already used here).
+
+
+### 8) Bring‑up & test checklist
+
+1.  Power the board with a *current‑limited bench supply* (e.g., 0.5–1 A) and verify no abnormal draw.
+
+2.  Measure *5 V* rail at the Pi and servo connector under light load.
+
+3.  With the motor disconnected, toggle the power switch—check gate voltage of the high‑side MOSFET for clean transitions.
+
+4.  Connect a small DC motor and run *10–20% PWM; scope **VCC* and *GND* near the driver for spikes.
+
+5.  Increase load gradually; verify the driver’s *thermal pad* stays below spec and that bulk caps do not heat.
+
+6.  Verify UART debug works; confirm CS/FAULT lines (if used) change as expected under stall or overcurrent tests.
+
+
+----------
 ## 7. Code Overview <a name="code-overview"></a>
 
 This is an autonomous robot developed with ROS2 using Python. The robot can navigate autonomously, detect obstacles, and detect colored objects. We decided on using ROS2 since it allows us to develop the different features of our robot modularly, which also makes each component and feature more manageable.
