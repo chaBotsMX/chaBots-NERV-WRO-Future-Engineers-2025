@@ -2,6 +2,7 @@
 
 <!--<img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-nacional/v-photos/resources/ChaBotsLogo.png?raw=true" width="250">-->
 
+
 ## Follow us!
   <!-- Facebook -->
   <a href="https://www.facebook.com/chabotsMX/">
@@ -539,18 +540,97 @@ Our PCB design is implemented across three specialized boards to maximize reliab
 
 This is an autonomous robot developed with ROS2 using Python. The robot can navigate autonomously, detect obstacles, and detect colored objects. We decided on using ROS2 since it allows us to develop the different features of our robot modularly, which also makes each component and feature more manageable.
 
-### 7.1. System Architecture
+### 7.1. System Architecture Diagram
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Hardware      │    │   ROS2 Nodes    │    │   Algorithms    │
-│                 │    │                 │    │                 │
-│ • Teensy        │────┤ • teensy_comm   │────┤ • Control       │
-│ • OTOS Sensor   │────┤ • otos_reader   │────┤ • Odometry      │
-│ • RPLiDAR       │────┤ • rplidar_node  │────┤ • Track Map     │
-│ • Pi Camera     │────┤ • vision_node   │────┤ • Vision        │
-│ • Motors        │    │                 │    │ • Tracking      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+```mermaid
+graph TB
+    subgraph "Hardware Layer"
+        HW1[RPLIDAR A1/A2/A3]
+        HW2[SparkFun OTOS Sensor]
+        HW3[Camera Module]
+        HW4[Teensy Microcontroller]
+        HW5[Motors & Actuators]
+    end
+
+    subgraph "ROS2 Driver Layer"
+        D1[rplidar_ros]
+        D2[otos_reader]
+        D3[Camera Driver]
+    end
+
+    subgraph "Processing Layer"
+        P1[vision_node]
+        P2[wall_follower]
+        P3[laser_filters]
+    end
+
+    subgraph "Control Layer"
+        C1[teensy_comm_node]
+        C2[teensy_obs_node]
+    end
+
+    subgraph "Middleware"
+        MW1[ROS2 Topics]
+        MW2[Transform Tree]
+        MW3[Foxglove Bridge]
+    end
+
+    subgraph "Visualization & Debug"
+        V1[RViz2]
+        V2[Foxglove Studio]
+        V3[Trajectory Markers]
+    end
+
+    %% Hardware to Drivers
+    HW1 --> D1
+    HW2 --> D2
+    HW3 --> D3
+
+    %% Drivers to Processing
+    D1 --> P3
+    D3 --> P1
+    P3 --> P2
+
+    %% Processing to Control
+    D1 --> C1
+    D1 --> C2
+    D2 --> C1
+    D2 --> C2
+    P1 --> C2
+
+    %% Control to Hardware
+    C1 --> HW4
+    C2 --> HW4
+    HW4 --> HW5
+
+    %% Middleware connections
+    D1 --> MW1
+    D2 --> MW1
+    D2 --> MW2
+    P1 --> MW1
+    P2 --> MW1
+    C1 --> MW1
+    C2 --> MW1
+    MW3 --> MW1
+
+    %% Visualization
+    MW1 --> V1
+    MW3 --> V2
+    P2 --> V3
+
+    classDef hardware fill:#ff9999
+    classDef driver fill:#99ccff
+    classDef processing fill:#99ff99
+    classDef control fill:#ffcc99
+    classDef middleware fill:#cc99ff
+    classDef visualization fill:#ffff99
+
+    class HW1,HW2,HW3,HW4,HW5 hardware
+    class D1,D2,D3 driver
+    class P1,P2,P3 processing
+    class C1,C2 control
+    class MW1,MW2,MW3 middleware
+    class V1,V2,V3 visualization
 ```
 
 ### 7.2. Implementations
