@@ -522,10 +522,6 @@ Our PCB design is implemented across three specialized boards to maximize reliab
 5.  Increase load gradually; verify the driver’s *thermal pad* stays below spec and that bulk caps do not heat.
 
 6.  Verify UART debug works; confirm CS/FAULT lines (if used) change as expected under stall or overcurrent tests.
-    
-<img width="943" height="599" alt="sch-main" src="https://github.com/user-attachments/assets/37cf531e-884b-4197-9f4b-ac8e0524a3e2" />
-<img width="848" height="599" alt="sch-odometry" src="https://github.com/user-attachments/assets/a57949cb-582a-4894-92e9-1005c59148ba" />
-<img width="848" height="599" alt="sch-rasp" src="https://github.com/user-attachments/assets/09b86430-3fb3-458e-897e-d7f9e89d459a" />
 
 ----------
 ## 7. Code Overview <a name="code-overview"></a>
