@@ -1,6 +1,5 @@
 log/*
 install/*
-<<<<<<< Updated upstream
 
 */__pycache__/*
 
@@ -34,7 +33,6 @@ qtcreator-*
 # Colcon custom files
 COLCON_IGNORE
 AMENT_IGNORE
-=======
-build/*
-*/__pycache__/*
->>>>>>> Stashed changes
+
+# Ignore .DS_Store files created by macOS
+.DS_Store
