@@ -306,7 +306,7 @@ For the steering system, the goal was to simplify the mechanism as much as possi
 #### 6.2.2. Base
 | Description  | Image |
 | ------------- | ------------- |
-| We designed the base around the servo, so that everything was symmetrical. We also designed the base to be modular and easily attach to the robot's chassis for easy repairs. We 3D printed the base using carbon fiber filament, as we did all the other robot parts, to increase strength. | ![Steering System Base](https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-base.png)#id .class width=30 height=20px |
+| We designed the base around the servo, so that everything was symmetrical. We also designed the base to be modular and easily attach to the robot's chassis for easy repairs. We 3D printed the base using carbon fiber filament, as we did all the other robot parts, to increase strength. | ![Steering System Base](https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-base.png){#id .class width=30 height=20px} |
 
 #### 6.2.3. Connectors
 
