@@ -1021,7 +1021,7 @@ flowchart TD
 
     FIRST_LAP{First Lap?}
 
-    SECTOR_MAPPING[Sector Width Mapping<br/>• Record corridor width<br/>• Store in sectors[4] array<br/>• Complete first lap when all filled]
+    SECTOR_MAPPING["Sector Width Mapping<br/>• Record corridor width<br/>• Store in sectors[4] array<br/>• Complete first lap when all filled"]
 
     OPTIMAL_PARAMS[Calculate Optimal Parameters<br/>• Speed based on current/next sector<br/>• Kp tuning for corridor width<br/>• Turn parameters optimization]
 
