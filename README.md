@@ -1021,8 +1021,7 @@ flowchart TD
 
     FIRST_LAP{First Lap?}
 
-    %% Esta es la línea corregida con comillas
-    SECTOR_MAPPING["Sector Width Mapping<br/>• Record corridor width<br/>• Store in sectors[4] array<br/>• Complete first lap when all filled"]
+    SECTOR_MAPPING[Sector Width Mapping<br/>• Record corridor width<br/>• Store in sectors[4] array<br/>• Complete first lap when all filled]
 
     OPTIMAL_PARAMS[Calculate Optimal Parameters<br/>• Speed based on current/next sector<br/>• Kp tuning for corridor width<br/>• Turn parameters optimization]
 
@@ -1789,18 +1788,217 @@ src/
 
 ## 8. Obstacle Management <a name="obstacle-management"></a>
 
-The robot detects and reacts to obstacles in real-time using multiple sensor modalities:
+The robot's obstacle management system (`teensy_obs_node`) implements a sophisticated multi-sensor approach for autonomous navigation in environments with colored obstacles. This system integrates LIDAR, odometry, and computer vision to provide intelligent obstacle detection and avoidance capabilities operating at 100 Hz (10ms cycle).
 
 ### 8.1. Detection Methods
-- **Primary:** Enhanced color detection via PiCamera2 system
-- **Verification:** LIDAR distance measurements for obstacle confirmation and navigation
-- **Backup:** OTOS position tracking for navigation consistency
+- **Primary:** Enhanced color detection via PiCamera2 system (30 FPS)
+- **Verification:** LIDAR distance measurements for obstacle confirmation and multi-directional navigation
+- **Backup:** OTOS position tracking for navigation consistency and heading maintenance
 
-### 8.2. Response Algorithms
-- **Dynamic turning decision system** based on cube color and position
-- **Follow-the-object mode** with PID steering based on cube centroid
-- **Multi-sensor verification** to reduce false positives
-- **Adaptive speed control** based on obstacle proximity
+### 8.2. Multi-Sensor Data Processing
+
+#### Vision Integration
+The system processes object detection outputs containing:
+- **Distance:** Object distance in centimeters (color-based detection)
+- **Angle:** Relative angle to object in degrees (-180° to 180°)
+- **Color Classification:** 0 = GREEN, 1 = RED
+- **Status:** Detection flag (0 = no object, 1 = detected)
+
+#### LIDAR Sector Analysis
+The LIDAR processes real-time distance measurements across four directional sectors:
+```
+Front Sector:   1.39 to 1.74 radians (79-100°)
+Back Sector:    -1.74 to -1.39 radians (-100 to -79°)
+Left Sector:    0.0 to 0.52 radians (0-30°)
+Right Sector:   2.79 to 3.14 radians (160-180°)
+```
+
+### 8.3. Navigation States
+
+The system operates as a state machine with three primary modes:
+
+#### 8.3.1. Normal Navigation (No Obstacle Detected)
+- **Sector-based movement:** Robot maintains orientation within four 90° sectors
+- **Heading correction:** PID-based orientation control to maintain target yaw
+- **Turn initiation:** Triggers when front distance < 1.0m AND heading error < 7°
+- **Speed:** Constant PWM of 40 for controlled movement
+
+#### 8.3.2. Obstacle Avoidance (Object Detected)
+The system implements **color-specific evasion strategies**:
+
+**GREEN OBSTACLE - Pass Always by Left Side:**
+```
+Decision Logic:
+├─ If angle < 0° (object on left):
+│  └─ Always evade LEFT (maximum offset: -20°)
+│
+└─ If angle ≥ 0° (object on right):
+   ├─ If within "safe cone" (30° threshold):
+   │  └─ Evade LEFT (reduced by angular weighting)
+   │
+   └─ If outside safe cone:
+      └─ No evasion required (maintain heading)
+
+Distance Weighting:
+├─ Min Distance: 30cm (full avoidance)
+├─ Max Distance: 100cm (no avoidance)
+└─ Proportional weight: (maxDis - distance) / (maxDis - minDis)
+```
+
+**RED OBSTACLE - Pass Always by Right Side:**
+```
+Decision Logic (inverse of green):
+├─ If angle ≥ 0° (object on right):
+│  └─ Always evade RIGHT (maximum offset: +20°)
+│
+└─ If angle < 0° (object on left):
+   ├─ If within "safe cone" (30° threshold):
+   │  └─ Evade RIGHT (reduced by angular weighting)
+   │
+   └─ If outside safe cone:
+      └─ No evasion required (maintain heading)
+```
+
+**Evasion Control:**
+- **Servo command smoothing:** ±3°/tick (anti-jerk limiting)
+- **Angular correction:** Proportional to heading error
+- **Speed:** Constant PWM of 40
+- **Steering range:** 60° to 150° (servo centered at 90°)
+
+#### 8.3.3. Turn Execution (Obstacle Round Phase)
+The system dynamically selects turning strategy based on available space:
+
+**Turn Type Classification:**
+```
+Lateral Distance Measurement:
+├─ ≥ 0.70m  → Type 3: Wide Turn (Standard 90° maneuver)
+├─ 0.30-0.70m → Type 2: Medium Turn (Complex multi-step)
+└─ < 0.30m  → Type 1: Close Turn (Backup required)
+```
+
+**Type 1 - Close Turn (Backup Maneuver):**
+1. **Step 0:** Align to target heading (90° center, PWM 40)
+   - Condition: `|correction| < 20°`
+2. **Step 1:** Reverse in place (PWM 40, reverse direction)
+   - Condition: `back_distance < 0.5m`
+
+**Type 2 - Medium Turn (Complex Multi-Step):**
+1. **Step 0:** Forward approach with 45° offset (PWM 30)
+   - Condition: `front_distance < 0.7m`
+2. **Step 1:** Reverse turn with heading correction (PWM 40)
+   - Condition: `|correction| < 20°`
+3. **Step 2:** Secondary reverse maneuver (PWM 40)
+   - Condition: `|correction| < 10°`
+4. **Step 3:** Final reverse phase (PWM 40)
+   - Condition: `back_distance < 0.5m`
+
+**Type 3 - Wide Turn (Standard Maneuver):**
+1. **Step 0:** Forward approach to corner (PWM 40)
+   - Condition: `front_distance < 0.30m`
+2. **Step 1:** Directional turn based on side
+   - Left turn: 150° (PWM 40, reverse)
+   - Right turn: 30° (PWM 40, reverse)
+   - Condition: Heading aligned to target (< 5° error)
+3. **Step 2:** Final reverse phase (PWM 40)
+   - Condition: `back_distance < 0.5m`
+
+### 8.4. Sector-Based Navigation
+
+The robot organizes space into four 90° sectors with defined movement targets:
+
+```
+Sector Layout:
+       Front (0°)
+          ↑
+    Sector 0
+  315°        45°
+    Sector 3    Sector 1
+  225°        135°
+    Sector 2
+          ↓
+       Back (180°)
+
+Target Orientations:
+├─ Sector 0: 0° (Forward)
+├─ Sector 1: 90° (Right)
+├─ Sector 2: 180° (Backward)
+└─ Sector 3: 270° (Left)
+```
+
+**Sector Transitions:**
+- Robot tracks current sector based on heading accumulator
+- Automatic sector transitions at boundary angles (45°, 135°, 225°, 315°)
+- Direction preference system (left/right) initialized on first turn
+- Turn allowed flag resets upon sector entry
+
+### 8.5. Adaptive Speed Control
+
+The system implements dynamic PWM adjustment based on error:
+
+```
+Speed Control Algorithm (controlACDA):
+├─ Base PWM Selection:
+│  ├─ Target < 0.6 m/s → 35 PWM
+│  ├─ 0.6-1.2 m/s → 40 PWM
+│  └─ > 1.2 m/s → 60 PWM
+│
+├─ PID Correction:
+│  ├─ Kp = 8.25 (proportional gain)
+│  ├─ Kd = 0.1 (derivative gain)
+│  └─ Jerk limit = 10 PWM/cycle
+│
+└─ Speed Protection:
+   ├─ Zero command: |error| ≤ -0.5 m/s
+   ├─ Reduced command: -0.1 < error ≤ -0.5 m/s
+   └─ Full control: error > -0.1 m/s
+```
+
+### 8.6. Safety Systems
+
+#### Collision Prevention
+- Continuous front distance monitoring (1.0m threshold)
+- Immediate turn initiation upon obstacle detection
+- Multi-sensor validation before maneuvers
+
+#### State Validation
+- Finite state machine prevents invalid state transitions
+- Atomic operations ensure thread-safe state updates across threads
+- Timeout mechanisms prevent stuck conditions
+
+#### Error Recovery
+- Automatic retry for failed turn sequences
+- Fallback to normal navigation if vision system fails
+- Robust UART communication with XOR checksum validation (2 Mbps baud)
+
+### 8.7. Communication Protocol
+
+**Serial Frame Format (6 bytes):**
+```
+[Header] [Error_High] [Error_Low] [PWM] [Direction] [Checksum]
+  0xAB       uint8_t     uint8_t   uint8_t  uint8_t   uint8_t
+```
+- **Error:** 16-bit steering command (40-160 degrees)
+- **PWM:** Motor speed (0-255)
+- **Direction:** 0 = Forward, 1 = Reverse
+- **Checksum:** XOR of all previous bytes
+
+### 8.8. Key Advantages of This Implementation
+
+**Deterministic Color-Based Strategy**
+- Predefined passing rules (green left, red right) ensure consistent navigation patterns
+- Eliminates ambiguity in obstacle avoidance decisions
+- Makes behavior predictable and reproducible for competition scoring
+
+**Adaptive Turn Mechanism**
+- Three-level turn selection (close, medium, wide) optimizes maneuver efficiency
+- Reduces time wasted on inappropriate turning strategies
+- Handles variable corridor widths without manual recalibration
+
+**Multi-Sensor Fusion**
+- Vision provides precise object classification and angular position
+- LIDAR validates distances and supplies environmental context
+- Cross-validation of detections reduces false positives
+- Heading accumulator maintains orientation memory across sensor failures
 
 ---
 
