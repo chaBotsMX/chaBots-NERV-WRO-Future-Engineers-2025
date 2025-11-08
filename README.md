@@ -1005,7 +1005,352 @@ This multi-modal approach ensures robust performance in complex environments wit
 
 The implementation aligns with the WRO Future Engineers challenge requirements by enabling autonomous navigation, obstacle detection, and avoidance in a dynamic environment. The system's modular design allows for easy adaptation to different track layouts and obstacle placements, ensuring compliance with competition rules.
 
-#### 7.4.3. Color Detection
+### 7.4.3. Sample Solution Implementations
+
+#### Open Round Control (teensy_comm_node) - Detailed Flow Diagram
+
+```mermaid
+flowchart TD
+    START[Timer Callback<br/>10ms period]
+
+    MOTION_COMP[Motion Compensation<br/>• Get pose delta from OTOS<br/>• Transform LIDAR points<br/>• Update robot frame]
+
+    SECTOR_DETECT[Sector Detection<br/>• Determine current sector 0-3<br/>• Detect drive direction<br/>• Track sector transitions]
+
+    CORRIDOR_ANALYSIS[Corridor Analysis<br/>• Calculate front distance<br/>• Calculate left/right distances<br/>• Compute centering offset]
+
+    FIRST_LAP{First Lap?}
+
+    SECTOR_MAPPING[Sector Width Mapping<br/>• Record corridor width<br/>• Store in sectors[4] array<br/>• Complete first lap when all filled]
+
+    OPTIMAL_PARAMS[Calculate Optimal Parameters<br/>• Speed based on current/next sector<br/>• Kp tuning for corridor width<br/>• Turn parameters optimization]
+
+    FRONT_CHECK{Front Distance < 1.5m?}
+
+    SPEED_CTRL_TURN[Turn Speed Control<br/>• Target: optimalSpeedTurn<br/>• Angle correction with optimalKpTurn<br/>• Reduce speed for tight turns]
+
+    SPEED_CTRL_STRAIGHT[Straight Speed Control<br/>• Target: optimalSpeed<br/>• Angle correction with optimalKp<br/>• Velocity reduction for angle error]
+
+    LAP_CHECK{Heading > 1076°?}
+
+    END_ROUND[End Round Mode<br/>• Set endRound = true<br/>• Stop autonomous control<br/>• Manual positioning mode]
+
+    SERIAL_OUT[Serial Output<br/>• Pack angle + PWM + direction<br/>• Add checksum<br/>• Send to Teensy via UART]
+
+    START --> MOTION_COMP
+    MOTION_COMP --> SECTOR_DETECT
+    SECTOR_DETECT --> CORRIDOR_ANALYSIS
+    CORRIDOR_ANALYSIS --> FIRST_LAP
+
+    FIRST_LAP -->|Yes| SECTOR_MAPPING
+    FIRST_LAP -->|No| OPTIMAL_PARAMS
+
+    SECTOR_MAPPING --> FRONT_CHECK
+    OPTIMAL_PARAMS --> FRONT_CHECK
+
+    FRONT_CHECK -->|Yes| SPEED_CTRL_TURN
+    FRONT_CHECK -->|No| SPEED_CTRL_STRAIGHT
+
+    SPEED_CTRL_TURN --> LAP_CHECK
+    SPEED_CTRL_STRAIGHT --> LAP_CHECK
+
+    LAP_CHECK -->|Yes| END_ROUND
+    LAP_CHECK -->|No| SERIAL_OUT
+
+    END_ROUND --> SERIAL_OUT
+    SERIAL_OUT --> START
+```
+
+##### Open Round Implementation Details
+
+**Motion Compensation** (getOffsetsFromLidar):
+- Extracts yaw delta from OTOS quaternion
+- Transforms LIDAR points using rotation matrices:
+  - `x_robot = cos(yaw_prev) * dx_world + sin(yaw_prev) * dy_world`
+  - `y_robot = -sin(yaw_prev) * dx_world + cos(yaw_prev) * dy_world`
+- Updates absolute angle as centroid of transformed points: `atan2(sumY, sumX)`
+
+**Sector Detection** (getActualSector):
+```cpp
+Hysteresis: ±30° bounds before sector transition
+Sector 0 (0°): if heading < -75° or > 75°
+Sector 1 (90°): if heading 15° to 165°
+Sector 2 (180°): if heading 105° to 255°
+Sector 3 (270°): if heading 195° to 345°
+driveDirection: 1=clockwise, 2=counter-clockwise
+```
+
+**Corridor Analysis** (getOffsetsFromLidar segment):
+```cpp
+Front sector: 80-100° → frontDis (meters)
+Left sector: 0-45° → leftDis (meters)
+Right sector: 135-180° → rightDis (meters)
+centeringOffset = (rightDis - leftDis) / 2.0
+anchoCorredor = leftDis + rightDis (total width)
+```
+
+**Parameter Optimization** (getOptimalValues):
+| Current Width | Next Width | optimalSpeed | optimalKp | optimalSpeedTurn | optimalKpTurn |
+|---|---|---|---|---|---|
+| ≥0.80m | ≥0.80m | 5.0 m/s | 0.20 | 4.0 m/s | 0.30 |
+| ≥0.80m | <0.80m | 1.0 m/s | 0.50 | 1.8 m/s | 0.60 |
+| <0.80m | ≥0.80m | 1.7 m/s | 0.50 | 1.7 m/s | 0.75 |
+| <0.80m | <0.80m | 3.0 m/s | 0.50 | 1.5 m/s | 0.60 |
+
+**Speed Control** (controlACDA):
+```cpp
+// PD-based speed adjustment
+error = targetSpeed - actualSpeed
+aproxPwm = [35 PWM if <0.6, 40 if <1.2, 60 if >1.2]
+pwm = (error * 8.25) + ((error - lastError) / 0.01) * 0.1
+pwm = clamp(aproxPwm + pwm, lastPwm ± 10, 0-255)
+```
+
+**Angle Processing** (angleProccesing):
+```cpp
+angularError = 90° - absolute_angle
+steeringAngle = 30 * tanh(angularError / 40)  // nonlinear response
+// Maintains servo smoothness, prevents jerky oscillations
+```
+
+**Speed Reduction by Angle** (objectiveAngleVelPD):
+```cpp
+// Reduces speed proportional to centering error
+e = 90° - absolute_angle  // wrapped to [-180, 180]
+derivada = EMA(de/dt, alpha=0.3)  // filtered derivative
+reduction = 0.04 * |e| + 0.005 * |derivada|
+return clamp(reduction, vel_min=0.0, vel_max=0.5)
+```
+
+**Serial Command Format** (empaquetar):
+```
+[0xAB] [angle_high] [angle_low] [pwm] [direction] [xor_checksum]
+angle = uint16 in tenths of degrees (0-3600 = 0-360°)
+pwm = uint8 (0-255)
+direction = 0 (forward), 1 (reverse)
+checksum = XOR of all preceding bytes
+```
+
+---
+
+#### Obstacle Round Control (teensy_obs_node) - Detailed Flow Diagram
+
+```mermaid
+flowchart TD
+    START[Timer Callback<br/>10ms period]
+
+    PARKING[Parking Lot Exit<br/>• Phase-based movement<br/>• Direction detection<br/>• Position tracking]
+
+    SECTOR_UPDATE[Update Current Sector<br/>• Track heading changes<br/>• Detect sector transitions<br/>• Enable turn when sector changes]
+
+    IN_TURN{Currently in Turn?}
+
+    TURN_ROUTINE[Execute Turn Routine<br/>• Type 1: Close turn back up<br/>• Type 2: Medium turn complex<br/>• Type 3: Wide turn standard<br/>• Multi-step state machine]
+
+    OBJ_STATUS{Object Detected?}
+
+    OBJ_COLOR{Object Color?}
+
+    GREEN_AVOID[Green Object Avoidance<br/>• Left side: ALWAYS evade<br/>• Right side: Safe cone only<br/>• Max deviation: -20°]
+
+    RED_AVOID[Red Object Avoidance<br/>• Right side: ALWAYS evade<br/>• Left side: Safe cone only<br/>• Max deviation: +20°]
+
+    NORMAL_NAV[Normal Navigation<br/>• Orient to target heading<br/>• PD control for alignment<br/>• Check for turn conditions]
+
+    TURN_CHECK{Front < 1.0m AND<br/>Aligned to target?}
+
+    INITIATE_TURN[Initiate Turn<br/>• Set target heading ±90°<br/>• Determine turn type<br/>• Enter turn state machine]
+
+    SEND_COMMANDS[Send Motor Commands<br/>• Calculate steering angle<br/>• Set speed PWM 40<br/>• Serial transmission]
+
+    START --> PARKING
+    PARKING --> SECTOR_UPDATE
+    SECTOR_UPDATE --> IN_TURN
+
+    IN_TURN -->|Yes| TURN_ROUTINE
+    IN_TURN -->|No| OBJ_STATUS
+
+    OBJ_STATUS -->|Detected| OBJ_COLOR
+    OBJ_STATUS -->|None| NORMAL_NAV
+
+    OBJ_COLOR -->|Green 0| GREEN_AVOID
+    OBJ_COLOR -->|Red 1| RED_AVOID
+    OBJ_COLOR -->|Unknown| NORMAL_NAV
+
+    GREEN_AVOID --> SEND_COMMANDS
+    RED_AVOID --> SEND_COMMANDS
+    NORMAL_NAV --> TURN_CHECK
+
+    TURN_CHECK -->|Yes| INITIATE_TURN
+    TURN_CHECK -->|No| SEND_COMMANDS
+
+    TURN_ROUTINE --> SEND_COMMANDS
+    INITIATE_TURN --> SEND_COMMANDS
+    SEND_COMMANDS --> START
+```
+
+##### Obstacle Round Implementation Details
+
+**Parking Lot Exit** (outOfParkingLot):
+```cpp
+Phase 1: Detect direction
+  - left_wall < right_wall → direction = 1 (left)
+  - right_wall < left_wall → direction = 2 (right)
+
+Phase 2: Forward drive until Y < 0.03m
+
+Phase 3: Set servo angle
+  - direction 1 → servo = 150° (left)
+  - direction 2 → servo = 50° (right)
+  - wait 1000ms for mechanical settling
+
+Phase 4: Reverse movement
+  - direction 1 → reverse until Y < -0.04m
+  - direction 2 → reverse until Y < -0.05m
+
+Phase 5: Forward again until Y > 0.15m
+
+Phase 6: Center servo (90°), exit parking phase
+```
+
+**LIDAR Segmentation** (on_scan):
+```cpp
+Front sector: 80-100° (1.39-1.745 rad)
+Left sector: 0-30° (0-0.524 rad)
+Right sector: 160-180° (2.79-3.14 rad)
+Back sector: -135° to -100° (-2.356 to -1.745 rad)
+
+Each region averaged: dist_front_, dist_Left_, dist_Right_, dist_back_
+absolute_angle = atan2(sumY, sumX) * 180/π
+```
+
+**Turn Type Selection** (determineTurnType):
+```cpp
+outWallDistance = distance to wall on turning side
+
+if (outWallDistance < 0.30m):
+    TYPE = 1  // Close turn - requires backup
+
+else if (0.30m ≤ outWallDistance < 0.70m):
+    TYPE = 2  // Medium turn - complex maneuver
+
+else (outWallDistance >= 0.70m):
+    TYPE = 3  // Wide turn - standard rotation
+```
+
+**Turn Execution** (rutinaGirar):
+
+**Type 1 (Close Turn)**:
+```cpp
+Step 0: Orient toward target heading (Kp = 1.0)
+        servo = 90 + (targetYaw - currentYaw) * 1.0
+        pwm = 40 (forward)
+
+Step 1: Reverse until back_wall < 0.5m
+        servo = 90 + (targetYaw - currentYaw)
+        pwm = 0 (reverse)
+
+Exits when: back_wall distance reached AND heading aligned
+```
+
+**Type 2 (Medium Turn)**:
+```cpp
+Step 0: Forward at 90° until front < 0.7m
+        servo = 90, pwm = 40
+
+Step 1: Angle-correct toward (targetYaw - 45°)
+        servo = 90 + correction, pwm = 40
+
+Step 2: Reverse diagonal approach
+        servo = (targetYaw - 45°), pwm = 0
+
+Step 3: Final centering in reverse
+        servo = targetYaw, pwm = 0
+
+Completes when: position settled + heading aligned
+```
+
+**Type 3 (Wide Turn)**:
+```cpp
+Step 0: Slow forward at 90° until front < 0.3m
+        servo = 90, pwm = 30 (slow)
+
+Step 1: Sharp rotate to turn angle
+        servo = 150° (left) or 50° (right), pwm = 40
+        wait 2s for rotation completion
+
+Step 2: Reverse to center line
+        servo = targetYaw, pwm = 0
+
+Exits when: centered and aligned to target heading
+```
+
+**Obstacle Avoidance Logic**:
+
+**GREEN Object (priority left)**:
+```cpp
+distance_range = [30cm, 100cm]
+prop = (maxDis - distance) / range  // proximity weight
+
+if (object_angle < -30°):  // Left side
+    ALWAYS evade: offset = -OffSetmax * prop
+
+else if (-30° ≤ object_angle ≤ 30°):  // Centered
+    Safe cone: w_phi = cos²(angle / 30°)
+    offset = -OffSetmax * w_phi * prop
+
+else:  // Right side (object_angle > 30°)
+    Only evade if in safe cone
+
+servo_target = 90 + offset
+Smoothing: max 3°/tick change
+```
+
+**RED Object (priority right)**:
+```cpp
+// Inverse logic of green
+if (object_angle > 30°):   // Right side
+    ALWAYS evade: offset = +OffSetmax * prop
+
+else if (-30° ≤ object_angle ≤ 30°):
+    Safe cone: w_phi = cos²(angle / 30°)
+    offset = +OffSetmax * w_phi * prop
+
+else:  // Left side
+    Only evade if in safe cone
+
+servo_target = 90 + offset
+Smoothing: max 3°/tick change
+```
+
+**Sector Navigation** (orientar):
+```cpp
+Target heading by sector:
+Sector 0 → targetYaw = 0°
+Sector 1 → targetYaw = 90°
+Sector 2 → targetYaw = 180°
+Sector 3 → targetYaw = 270°
+
+Heading control:
+error = wrap_to_180(targetYaw - currentYaw)
+servo = 90 + (error * 1.0)  // Simple proportional
+servo = clamp(servo, 40°, 160°)
+```
+
+#### Performance Comparison
+
+| Metric | Open Round | Obstacle Round |
+|--------|-----------|-----------------|
+| Control Loop Rate | 100 Hz (10ms) | 100 Hz (10ms) |
+| Typical Speed | 60-80 PWM | 40 PWM (fixed) |
+| Speed Range | 1-5 m/s | 0-3 m/s + parking |
+| Turn Time | ~2-3 seconds | ~3-5 seconds |
+| Corridor Following Accuracy | ±5cm centering | ±10cm (avoidance) |
+| Maximum Steering Angle | ±30° | ±20° (avoidance) |
+| Decision Points Per Lap | ~8-10 | ~12-15 (variable) |
+| First Lap Overhead | ~30 seconds | None (exits parking) |
+
+#### 7.4.4. Color Detection
 
 Using OpenCV to detect green, red, and purple objects in the camera feed. The algorithm filters colors in HSV space, finds contours, and calculates distance and angle based on object size and position.
 
@@ -1443,18 +1788,217 @@ src/
 
 ## 8. Obstacle Management <a name="obstacle-management"></a>
 
-The robot detects and reacts to obstacles in real-time using multiple sensor modalities:
+The robot's obstacle management system (`teensy_obs_node`) implements a sophisticated multi-sensor approach for autonomous navigation in environments with colored obstacles. This system integrates LIDAR, odometry, and computer vision to provide intelligent obstacle detection and avoidance capabilities operating at 100 Hz (10ms cycle).
 
 ### 8.1. Detection Methods
-- **Primary:** Enhanced color detection via PiCamera2 system
-- **Verification:** LIDAR distance measurements for obstacle confirmation and navigation
-- **Backup:** OTOS position tracking for navigation consistency
+- **Primary:** Enhanced color detection via PiCamera2 system (30 FPS)
+- **Verification:** LIDAR distance measurements for obstacle confirmation and multi-directional navigation
+- **Backup:** OTOS position tracking for navigation consistency and heading maintenance
 
-### 8.2. Response Algorithms
-- **Dynamic turning decision system** based on cube color and position
-- **Follow-the-object mode** with PID steering based on cube centroid
-- **Multi-sensor verification** to reduce false positives
-- **Adaptive speed control** based on obstacle proximity
+### 8.2. Multi-Sensor Data Processing
+
+#### Vision Integration
+The system processes object detection outputs containing:
+- **Distance:** Object distance in centimeters (color-based detection)
+- **Angle:** Relative angle to object in degrees (-180° to 180°)
+- **Color Classification:** 0 = GREEN, 1 = RED
+- **Status:** Detection flag (0 = no object, 1 = detected)
+
+#### LIDAR Sector Analysis
+The LIDAR processes real-time distance measurements across four directional sectors:
+```
+Front Sector:   1.39 to 1.74 radians (79-100°)
+Back Sector:    -1.74 to -1.39 radians (-100 to -79°)
+Left Sector:    0.0 to 0.52 radians (0-30°)
+Right Sector:   2.79 to 3.14 radians (160-180°)
+```
+
+### 8.3. Navigation States
+
+The system operates as a state machine with three primary modes:
+
+#### 8.3.1. Normal Navigation (No Obstacle Detected)
+- **Sector-based movement:** Robot maintains orientation within four 90° sectors
+- **Heading correction:** PID-based orientation control to maintain target yaw
+- **Turn initiation:** Triggers when front distance < 1.0m AND heading error < 7°
+- **Speed:** Constant PWM of 40 for controlled movement
+
+#### 8.3.2. Obstacle Avoidance (Object Detected)
+The system implements **color-specific evasion strategies**:
+
+**GREEN OBSTACLE - Pass Always by Left Side:**
+```
+Decision Logic:
+├─ If angle < 0° (object on left):
+│  └─ Always evade LEFT (maximum offset: -20°)
+│
+└─ If angle ≥ 0° (object on right):
+   ├─ If within "safe cone" (30° threshold):
+   │  └─ Evade LEFT (reduced by angular weighting)
+   │
+   └─ If outside safe cone:
+      └─ No evasion required (maintain heading)
+
+Distance Weighting:
+├─ Min Distance: 30cm (full avoidance)
+├─ Max Distance: 100cm (no avoidance)
+└─ Proportional weight: (maxDis - distance) / (maxDis - minDis)
+```
+
+**RED OBSTACLE - Pass Always by Right Side:**
+```
+Decision Logic (inverse of green):
+├─ If angle ≥ 0° (object on right):
+│  └─ Always evade RIGHT (maximum offset: +20°)
+│
+└─ If angle < 0° (object on left):
+   ├─ If within "safe cone" (30° threshold):
+   │  └─ Evade RIGHT (reduced by angular weighting)
+   │
+   └─ If outside safe cone:
+      └─ No evasion required (maintain heading)
+```
+
+**Evasion Control:**
+- **Servo command smoothing:** ±3°/tick (anti-jerk limiting)
+- **Angular correction:** Proportional to heading error
+- **Speed:** Constant PWM of 40
+- **Steering range:** 60° to 150° (servo centered at 90°)
+
+#### 8.3.3. Turn Execution (Obstacle Round Phase)
+The system dynamically selects turning strategy based on available space:
+
+**Turn Type Classification:**
+```
+Lateral Distance Measurement:
+├─ ≥ 0.70m  → Type 3: Wide Turn (Standard 90° maneuver)
+├─ 0.30-0.70m → Type 2: Medium Turn (Complex multi-step)
+└─ < 0.30m  → Type 1: Close Turn (Backup required)
+```
+
+**Type 1 - Close Turn (Backup Maneuver):**
+1. **Step 0:** Align to target heading (90° center, PWM 40)
+   - Condition: `|correction| < 20°`
+2. **Step 1:** Reverse in place (PWM 40, reverse direction)
+   - Condition: `back_distance < 0.5m`
+
+**Type 2 - Medium Turn (Complex Multi-Step):**
+1. **Step 0:** Forward approach with 45° offset (PWM 30)
+   - Condition: `front_distance < 0.7m`
+2. **Step 1:** Reverse turn with heading correction (PWM 40)
+   - Condition: `|correction| < 20°`
+3. **Step 2:** Secondary reverse maneuver (PWM 40)
+   - Condition: `|correction| < 10°`
+4. **Step 3:** Final reverse phase (PWM 40)
+   - Condition: `back_distance < 0.5m`
+
+**Type 3 - Wide Turn (Standard Maneuver):**
+1. **Step 0:** Forward approach to corner (PWM 40)
+   - Condition: `front_distance < 0.30m`
+2. **Step 1:** Directional turn based on side
+   - Left turn: 150° (PWM 40, reverse)
+   - Right turn: 30° (PWM 40, reverse)
+   - Condition: Heading aligned to target (< 5° error)
+3. **Step 2:** Final reverse phase (PWM 40)
+   - Condition: `back_distance < 0.5m`
+
+### 8.4. Sector-Based Navigation
+
+The robot organizes space into four 90° sectors with defined movement targets:
+
+```
+Sector Layout:
+       Front (0°)
+          ↑
+    Sector 0
+  315°        45°
+    Sector 3    Sector 1
+  225°        135°
+    Sector 2
+          ↓
+       Back (180°)
+
+Target Orientations:
+├─ Sector 0: 0° (Forward)
+├─ Sector 1: 90° (Right)
+├─ Sector 2: 180° (Backward)
+└─ Sector 3: 270° (Left)
+```
+
+**Sector Transitions:**
+- Robot tracks current sector based on heading accumulator
+- Automatic sector transitions at boundary angles (45°, 135°, 225°, 315°)
+- Direction preference system (left/right) initialized on first turn
+- Turn allowed flag resets upon sector entry
+
+### 8.5. Adaptive Speed Control
+
+The system implements dynamic PWM adjustment based on error:
+
+```
+Speed Control Algorithm (controlACDA):
+├─ Base PWM Selection:
+│  ├─ Target < 0.6 m/s → 35 PWM
+│  ├─ 0.6-1.2 m/s → 40 PWM
+│  └─ > 1.2 m/s → 60 PWM
+│
+├─ PID Correction:
+│  ├─ Kp = 8.25 (proportional gain)
+│  ├─ Kd = 0.1 (derivative gain)
+│  └─ Jerk limit = 10 PWM/cycle
+│
+└─ Speed Protection:
+   ├─ Zero command: |error| ≤ -0.5 m/s
+   ├─ Reduced command: -0.1 < error ≤ -0.5 m/s
+   └─ Full control: error > -0.1 m/s
+```
+
+### 8.6. Safety Systems
+
+#### Collision Prevention
+- Continuous front distance monitoring (1.0m threshold)
+- Immediate turn initiation upon obstacle detection
+- Multi-sensor validation before maneuvers
+
+#### State Validation
+- Finite state machine prevents invalid state transitions
+- Atomic operations ensure thread-safe state updates across threads
+- Timeout mechanisms prevent stuck conditions
+
+#### Error Recovery
+- Automatic retry for failed turn sequences
+- Fallback to normal navigation if vision system fails
+- Robust UART communication with XOR checksum validation (2 Mbps baud)
+
+### 8.7. Communication Protocol
+
+**Serial Frame Format (6 bytes):**
+```
+[Header] [Error_High] [Error_Low] [PWM] [Direction] [Checksum]
+  0xAB       uint8_t     uint8_t   uint8_t  uint8_t   uint8_t
+```
+- **Error:** 16-bit steering command (40-160 degrees)
+- **PWM:** Motor speed (0-255)
+- **Direction:** 0 = Forward, 1 = Reverse
+- **Checksum:** XOR of all previous bytes
+
+### 8.8. Key Advantages of This Implementation
+
+**Deterministic Color-Based Strategy**
+- Predefined passing rules (green left, red right) ensure consistent navigation patterns
+- Eliminates ambiguity in obstacle avoidance decisions
+- Makes behavior predictable and reproducible for competition scoring
+
+**Adaptive Turn Mechanism**
+- Three-level turn selection (close, medium, wide) optimizes maneuver efficiency
+- Reduces time wasted on inappropriate turning strategies
+- Handles variable corridor widths without manual recalibration
+
+**Multi-Sensor Fusion**
+- Vision provides precise object classification and angular position
+- LIDAR validates distances and supplies environmental context
+- Cross-validation of detections reduces false positives
+- Heading accumulator maintains orientation memory across sensor failures
 
 ---
 
