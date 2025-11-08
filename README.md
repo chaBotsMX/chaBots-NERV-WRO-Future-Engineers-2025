@@ -306,14 +306,14 @@ For the steering system, the goal was to simplify the mechanism as much as possi
 #### 6.2.2. Base
 | Description  | Image |
 | ------------- | ------------- |
-| We designed the base around the servo, so that everything was symmetrical. We also designed the base to be modular and easily attach to the robot's chassis for easy repairs. We 3D printed the base using carbon fiber filament, as we did all the other robot parts, to increase strength. | ![Steering System Base](https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-base.png){ width=80% } |
+| We designed the base around the servo, so that everything was symmetrical. We also designed the base to be modular and easily attach to the robot's chassis for easy repairs. We 3D printed the base using carbon fiber filament, as we did all the other robot parts, to increase strength. | ![Steering System Base](https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-base.png)#id .class width=30 height=20px |
 
 #### 6.2.3. Connectors
 
 ##### 6.2.3.1. Servo Connector
 | Description  | Image |
 | ------------- | ------------- |
-| We designed the servo connector this way because, as an Ackermann system, the wheels needed to be connected independently of each other. If we used a single connector for the wheels, both would have the same turning angle, but by splitting it, each wheel would turn at a different angle. | ![Servo Connector](https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-servoconnector.png?raw=true){ width=80% } |
+| We designed the servo connector this way because, as an Ackermann system, the wheels needed to be connected independently of each other. If we used a single connector for the wheels, both would have the same turning angle, but by splitting it, each wheel would turn at a different angle. | ![Servo Connector](https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/steering-system/steering-system-servoconnector.png?raw=true){ #id .class width=30 height=20px } |
 
 ##### 6.2.3.2. Wheel Connectors
 | Description  | Image |
