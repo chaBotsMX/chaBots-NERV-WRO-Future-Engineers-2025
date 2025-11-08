@@ -237,7 +237,7 @@ Our approach to the WRO Future Engineers challenge evolved significantly:
 ### 5.1. RPLiDAR C1
 360° laser scanner for environmental mapping and obstacle detection.
 <div>
-  <img src="https://github.com/user-attachments/assets/6e67d0ac-5d60-4c0c-aa2a-dc37211ad280" height="350">  
+  <img src="https://github.com/user-attachments/assets/6e67d0ac-5d60-4c0c-aa2a-dc37211ad280" height="350">
 </div>
 
 **Tech specs:**
@@ -252,7 +252,7 @@ Our approach to the WRO Future Engineers challenge evolved significantly:
 High-resolution camera for color object detection.
 
 <div>
-  <img src="https://github.com/user-attachments/assets/aeb8fb7f-716d-4731-aa02-60a23a4a5158" height="350">  
+  <img src="https://github.com/user-attachments/assets/aeb8fb7f-716d-4731-aa02-60a23a4a5158" height="350">
 </div>
 
 **Tech specs:**
@@ -265,7 +265,7 @@ High-resolution camera for color object detection.
 High-precision odometry sensor for accurate position tracking.
 
 <div>
-  <img src="https://github.com/user-attachments/assets/f2fa519e-0818-484d-805f-129e02615010" height="350">  
+  <img src="https://github.com/user-attachments/assets/f2fa519e-0818-484d-805f-129e02615010" height="350">
 </div>
 
 **Tech specs:**
@@ -1162,6 +1162,165 @@ void getOptimalValues()
 #### 7.8.2. ROS2 Diagram
 
 <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/sw-docs/software-diagrams/ros2-diagram.png?raw=true">
+
+### 7.8.3. Open Source ROS2 Packages
+
+Our system leverages several well-maintained open-source ROS2 packages to provide robust sensor integration and perception capabilities:
+
+#### **RPLiDAR ROS2 Package**
+- **Repository:** [rplidar_ros](https://github.com/Slamtec/rplidar_ros)
+- **License:** BSD
+- **Purpose:** Real-time LiDAR data acquisition and ROS2 integration
+- **Version:** Compatible with ROS2 Humble and later
+- **Key Features:**
+  - Publishes `sensor_msgs/LaserScan` messages at configurable rates (up to 10 Hz)
+  - Angle range: 0° to 360° with 0.9° resolution
+  - Supports quality filtering to remove unreliable measurements
+  - Built-in motor speed control via PWM
+  - Configurable output frame ID for multi-robot scenarios
+
+- **Configuration:**
+  ```yaml
+  rplidar_node:
+    ros__parameters:
+      serial_port: "/dev/ttyUSB0"
+      serial_baudrate: 115200
+      frame_id: "lidar_link"
+      angle_compensate: true
+      scan_mode: "Sensitivity"
+  ```
+
+- **Published Topics:**
+  - `/scan` (sensor_msgs/LaserScan): Raw laser scan data
+
+- **Subscribed Topics:**
+  - None (hardware-only input)
+
+#### **PiCamera2 Integration**
+- **Framework:** libcamera (Official Raspberry Pi camera driver)
+- **Purpose:** High-performance camera capture for vision processing
+- **Version:** Python bindings for libcamera
+- **Key Features:**
+  - 12MP IMX708 sensor with High Dynamic Range (HDR) support
+  - Zero-copy buffer management for minimal latency
+  - Configurable ISP (Image Signal Processor) tuning
+  - Native support for various formats: RGB888, YUV420, JPEG
+  - Automatic exposure and white balance control
+  - Frame rates up to 90 FPS (VGA resolution)
+
+- **Configuration:**
+  ```python
+  from picamera2 import Picamera2
+
+  picam2 = Picamera2()
+  config = picam2.create_preview_configuration(
+      main={"format": 'RGB888', "size": (1280, 720)},
+      camera_properties={"NoiseReductionMode": libcamera.controls.draft.NoiseReductionModeEnum.HighQuality}
+  )
+  picam2.configure(config)
+  ```
+
+- **Custom ROS2 Node:**
+  - File: `src/vision_node/vision_node/color_detection_node.py`
+  - Publishes `/camera/image_raw` (sensor_msgs/Image)
+  - Subscribes to control topics for dynamic parameter adjustment
+  - Implements real-time HSV color filtering for obstacle detection
+
+#### **tf2 (Transform Library)**
+- **Repository:** [tf2](https://github.com/ros2/geometry2)
+- **License:** BSD
+- **Purpose:** Coordinate frame management and transforms
+- **Key Features:**
+  - Manages spatial relationships between robot components
+  - Static transforms: camera → lidar → base_link
+  - Dynamic transforms: odom → base_link (updated from OTOS)
+  - Integration with visualization tools (RViz2)
+
+- **Static Transforms (in launch file):**
+  ```python
+  static_transform_broadcaster = StaticTransformBroadcasterNode(
+      arguments=[
+          "lidar_link", "base_link", "0.0", "0.0", "0.15", "0", "0", "0",
+          "camera_link", "lidar_link", "0.0", "0.02", "0.04", "-1.57", "0", "0"
+      ]
+  )
+  ```
+
+#### **Custom OTOS ROS2 Package**
+- **Purpose:** High-precision odometry from SparkFun OTOS sensor
+- **File Location:** `src/otos_reader/`
+- **License:** MIT (Custom implementation)
+- **Communication:** UART over I2C to Qwiic connector
+- **Key Features:**
+  - 100 Hz update rate for smooth odometry
+  - Publishes `nav_msgs/Odometry` messages
+  - Implements ZUPT (Zero Velocity Update) detection for stationary calibration
+  - EMA (Exponential Moving Average) filtering for noise reduction
+  - Automatic bias correction for long-term accuracy
+
+- **Published Topics:**
+  - `/odom` (nav_msgs/Odometry): Position, velocity, and orientation
+  - `/tf` (tf2_msgs/TFMessage): Odometry frame transform
+
+- **Parameters:**
+  ```python
+  self.declare_parameter('port', '/dev/ttyAMA0')  # I2C/Serial port
+  self.declare_parameter('calibration_distance', 0.5)  # meters
+  self.declare_parameter('ema_alpha', 0.2)  # Smoothing factor
+  ```
+
+#### **geometry_msgs and sensor_msgs**
+- **Repository:** [common_interfaces](https://github.com/ros2/common_interfaces)
+- **License:** Apache 2.0
+- **Purpose:** Standard message definitions for interoperability
+- **Used Message Types:**
+  - `sensor_msgs/LaserScan`: LiDAR point cloud (polar format)
+  - `sensor_msgs/Image`: Camera frames
+  - `nav_msgs/Odometry`: Pose and velocity information
+  - `geometry_msgs/Twist`: Velocity commands (linear/angular)
+  - `std_msgs/Float32`: Scalar values (distances, angles)
+
+#### **Standard ROS2 Lifecycle**
+- **Repository:** [lifecycle](https://github.com/ros2/rcl_interfaces)
+- **License:** Apache 2.0
+- **Purpose:** Node lifecycle management
+- **Implemented States:**
+  - `unconfigured`: Node initialized but not ready
+  - `inactive`: Configured but not running
+  - `active`: Processing sensor data
+  - `finalized`: Cleanup on shutdown
+
+#### **Dependency Installation**
+
+To set up all ROS2 dependencies:
+
+```bash
+# Install system packages
+sudo apt-get install -y \
+    ros-humble-sensor-msgs \
+    ros-humble-geometry-msgs \
+    ros-humble-nav-msgs \
+    ros-humble-std-msgs \
+    ros-humble-tf2 \
+    ros-humble-tf2-geometry-msgs
+
+# Clone and build custom packages
+cd ~/ros2_ws/src
+git clone https://github.com/Slamtec/rplidar_ros.git -b ros2
+git clone https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025.git
+
+cd ~/ros2_ws
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+```
+
+#### **Package Maintenance and Contributions**
+
+- **RPLiDAR ROS2:** Actively maintained by Slamtec. Issues and PRs welcome.
+- **geometry2/tf2:** Core ROS2 package, part of official distribution
+- **Standard Messages:** Part of ROS2 core infrastructure
+- **OTOS Custom Package:** Maintained within our repository with regular calibration updates
+
 
 ### 7.9. Execution Commands
 
