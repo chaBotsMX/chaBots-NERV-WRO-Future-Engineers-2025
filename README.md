@@ -236,6 +236,9 @@ Our approach to the WRO Future Engineers challenge evolved significantly:
 
 ### 5.1. RPLiDAR C1
 360° laser scanner for environmental mapping and obstacle detection.
+<div>
+  <img src="https://github.com/user-attachments/assets/6e67d0ac-5d60-4c0c-aa2a-dc37211ad280" height="350">  
+</div>
 
 **Tech specs:**
 - 360° scanning with 0.9° resolution
@@ -248,6 +251,10 @@ Our approach to the WRO Future Engineers challenge evolved significantly:
 ### 5.2. Raspberry Pi Camera V3
 High-resolution camera for color object detection.
 
+<div>
+  <img src="https://github.com/user-attachments/assets/aeb8fb7f-716d-4731-aa02-60a23a4a5158" height="350">  
+</div>
+
 **Tech specs:**
 - 12MP IMX708 Quad Bayer sensor and features a High Dynamic Range mode
 - Supports 1080p30, 720p60, and VGA90 video modes
@@ -256,6 +263,10 @@ High-resolution camera for color object detection.
 
 ### 5.3. SparkFun Optical Tracking Odometry Sensor
 High-precision odometry sensor for accurate position tracking.
+
+<div>
+  <img src="https://github.com/user-attachments/assets/f2fa519e-0818-484d-805f-129e02615010" height="350">  
+</div>
 
 **Tech specs:**
 - Measures linear and angular displacement
