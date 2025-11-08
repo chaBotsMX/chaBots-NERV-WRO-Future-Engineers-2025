@@ -299,16 +299,11 @@ The powerhouse for the gearbox is the Maxon DCX19, a 19 mm brushed DC motor equi
 </table>
 
 #### 6.1.3. Gears
-<table style="width: 100%; table-layout: fixed;">
-  <tr>
-    <td>
-The custom-printed double helical gears transfer power from the motor's gearhead output to the wheel axle. This external gear stage was designed with a 1:1 gear ratio. This configuration was chosen because the Maxon motor's integrated gearhead already provided the ideal speed reduction (down to 600 RPM) and torque multiplication. The 1:1 external gears, therefore, act as a direct power transmission, simplifying the design while perfectly matching the motor's output speed to the drive wheels.
-    </td>
-    <td>
-      <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-gear.png" width="400" height="300">
-    </td>
-  </tr>
-</table>
+| Description  | Image |
+| ------------- | ------------- |
+| The custom-printed double helical gears transfer power from the motor's gearhead output to the wheel axle. This external gear stage was designed with a 1:1 gear ratio. This configuration was chosen because the Maxon motor's integrated gearhead already provided the ideal speed reduction (down to 600 RPM) and torque multiplication. The 1:1 external gears, therefore, act as a direct power transmission, simplifying the design while perfectly matching the motor's output speed to the drive wheels.  | <img src="https://github.com/chaBotsMX/chaBots-NERV-WRO-Future-Engineers-2025/blob/docs-international/models/gearbox/gearbox-gear.png" width="400" height="300">  |
+| Content Cell  | Content Cell  |
+
 
 #### 6.1.4. Wheels
 <table style="width: 100%;">
